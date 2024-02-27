@@ -9,9 +9,11 @@
 #include <DirectXMath.h>
 #include <memory>
 #include <vector>
-#include <agile.h>
-#include <concrt.h>
+//#include <agile.h>
+//#include <concrt.h>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
+
+using namespace DirectX;

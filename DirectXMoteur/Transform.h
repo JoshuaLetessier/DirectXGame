@@ -1,7 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
-
-using namespace DirectX;
+#include "pch.h"
 
 struct Transform {
 	XMFLOAT3 vPos;
@@ -18,5 +16,8 @@ struct Transform {
 
 	XMFLOAT4X4 matrix;
 
+	float roll, pitch, yaw;
+
 	void identity();
+	void rotate();
 };
