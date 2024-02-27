@@ -4,45 +4,45 @@ int Entity::nextId = 0;
 
 Entity::Entity()
 {
-	id = nextId;
+	m_id = nextId;
 	nextId++;
 }
 
-Entity::~Entity()
+ Entity::~Entity()
 {
 }
 
 void Entity::AddComponent(Component* component)
 {
-	mcomponents.push_back(component);
+	m_components.push_back(component);
 }
 
-void Entity::RemoveComponent(Component* component)
+void Entity::GetComponent(Component* component)
 {
-	for (int i = 0; i < mcomponents.size(); i++)
+	for (int i = 0; i < m_components.size(); i++)
 	{
-		if (mcomponents[i] == component)
+		if (m_components[i] == component)
 		{
-			mcomponents.erase(mcomponents.begin() + i);
-			break;
+			return;
 		}
 	}
 }
 
+
 Transform& Entity::GetTransform()
 {
-	return mtransform;
+	return m_transform;
 }
 
 int Entity::GetId() const
 {
-	return id;
+	return m_id;
 }
 
 void Entity::Update()
 {
-	for (int i = 0; i < mcomponents.size(); i++)
+	for (int i = 0; i < m_components.size(); i++)
 	{
-		mcomponents[i]->Update();
+		m_components[i]->Update();
 	}
 }

@@ -7,4 +7,3 @@ public:
 	~Component() {};
 	virtual void ~Component() = 0;
 };
-

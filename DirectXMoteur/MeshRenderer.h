@@ -4,7 +4,4 @@
 class MeshRenderer : public Component
 {
 	void meshRenderer();
-	
-
 };
-
