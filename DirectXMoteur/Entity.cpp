@@ -8,7 +8,7 @@ Entity::Entity()
 	nextId++;
 }
 
- Entity::~Entity()
+Entity::~Entity()
 {
 }
 
@@ -27,7 +27,6 @@ void Entity::GetComponent(Component* component)
 		}
 	}
 }
-
 
 Transform& Entity::GetTransform()
 {

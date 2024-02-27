@@ -15,7 +15,7 @@ private:
 
 public:
 	Entity();
-	virtual void ~Entity();
+	virtual ~Entity();
 
 	void AddComponent(Component* component);
 	void GetComponent(Component* component);
@@ -23,6 +23,6 @@ public:
 	Transform& GetTransform();
 
 	int GetId() const;
-	
+
 	void Update();
 };
