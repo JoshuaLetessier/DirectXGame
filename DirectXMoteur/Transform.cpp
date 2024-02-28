@@ -82,6 +82,7 @@ void Transform::rotate(float roll, float pitch, float yaw)
 
 void Transform::update()
 {
+	//Met a jour la matrix global
  	XMMATRIX mTempRotate = XMLoadFloat4x4(&mRotate);
 	XMMATRIX mTempScaling = XMLoadFloat4x4(&mScaling);
 	XMMATRIX mTempPos = XMLoadFloat4x4(&mPos);
