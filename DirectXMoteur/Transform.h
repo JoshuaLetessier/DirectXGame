@@ -16,8 +16,8 @@ struct Transform {
 
 	XMFLOAT4X4 matrix;
 
-	float roll, pitch, yaw;
 
 	void identity();
-	void rotate();
+	void rotate(float roll, float pitch, float yaw);
+	void update();
 };
