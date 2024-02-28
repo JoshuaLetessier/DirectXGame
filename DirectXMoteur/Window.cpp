@@ -55,8 +55,9 @@ void Window::Update()
 
 void Window::Render()
 {
+
     auto commandAllocator = DXParam::g_CommandAllocators[DXParam::g_CurrentBackBufferIndex];
-    auto backBuffer = DXParam::g_BackBuffers[DXParam::g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
+    auto backBuffer = DXParam::g_BackBuffers[DXParam::g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
 
     commandAllocator->Reset();                                                  // Alocator of commande and Array of commande are reset
     DXParam::g_CommandList->Reset(commandAllocator.Get(), nullptr);                      // Prepare array of commande for new register image
@@ -90,47 +91,47 @@ void Window::Render()
         };
         DXParam::g_CommandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);              // The command list is executed on the command queue using the ExecuteCommandLists method, which takes a list of command lists to execute.
 
-        UINT syncInterval = DXParam::g_VSync ? 1 : 0;
-        UINT presentFlags = DXParam::g_TearingSupported && !DXParam::g_VSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
+        UINT syncInterval = g_VSync ? 1 : 0;
+        UINT presentFlags = g_TearingSupported && !g_VSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
         ThrowIfFailed(DXParam::g_SwapChain->Present(syncInterval, presentFlags));                        // The current back buffer of the swap chain is presented to the screen using the Present method.
 
-        DXParam::g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex] = DXParam::Signal(DXParam::g_CommandQueue, DXParam::g_Fence, DXParam::g_FenceValue);
+        g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex] = DXParam::Signal(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue);
 
         DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();                    // The method is used to get the index of the current back buffer of the swap chain.
 
-        DXParam::WaitForFenceValue(DXParam::g_Fence, DXParam::g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex], DXParam::g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
+        DXParam::WaitForFenceValue(DXParam::g_Fence, g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
         // the content of the current back buffer, using the WaitForFenceValue function.
     }
 }
 
 void Window::Resize(uint32_t width, uint32_t height)
 {
-    if (DXParam::g_ClientWidth != width || DXParam::g_ClientHeight != height)
+    if (g_ClientWidth != width || g_ClientHeight != height)
     {
         // Don't allow 0 size swap chain back buffers.
-        DXParam::g_ClientWidth = std::max(1u, width);
-        DXParam::g_ClientHeight = std::max(1u, height);
+        g_ClientWidth = std::max(1u, width);
+        g_ClientHeight = std::max(1u, height);
 
         // Flush the GPU queue to make sure the swap chain's back buffers
         // are not being referenced by an in-flight command list.
-        DXParam::Flush(DXParam::g_CommandQueue, DXParam::g_Fence, DXParam::g_FenceValue, DXParam::g_FenceEvent);
+        DXParam::Flush(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue, g_FenceEvent);
 
         for (int i = 0; i < DXParam::g_NumFrames; ++i)
         {
             // Any references to the back buffers must be released
             // before the swap chain can be resized.
             DXParam::g_BackBuffers[i].Reset();
-            DXParam::g_FrameFenceValues[i] = DXParam::g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex];
+            g_FrameFenceValues[i] = g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex];
         }
 
         DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
         ThrowIfFailed(DXParam::g_SwapChain->GetDesc(&swapChainDesc));
-        ThrowIfFailed(DXParam::g_SwapChain->ResizeBuffers(DXParam::g_NumFrames, DXParam::g_ClientWidth, DXParam::g_ClientHeight,
+        ThrowIfFailed(DXParam::g_SwapChain->ResizeBuffers(DXParam::g_NumFrames, g_ClientWidth, g_ClientHeight,
             swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
 
         DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();
 
-        DXParam::UpdateRenderTargetViews(DXParam::g_Device, DXParam::g_SwapChain, DXParam::g_RTVDescriptorHeap);
+        DXParam::UpdateRenderTargetViews(g_Device, DXParam::g_SwapChain, DXParam::g_RTVDescriptorHeap);
     }
 }
 
@@ -144,7 +145,7 @@ void Window::SetFullscreen(bool fullscreen)
         {
             // Store the current window dimensions so they can be restored 
             // when switching out of fullscreen state.
-            ::GetWindowRect(g_hWnd, &g_WindowRect);
+            ::GetWindowRect(g_hWnd, &DXParam::g_WindowRect);
 
             // Set the window style to a borderless window so the client area fills
             // the entire screen.
@@ -174,10 +175,10 @@ void Window::SetFullscreen(bool fullscreen)
             ::SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 
             ::SetWindowPos(g_hWnd, HWND_NOTOPMOST,
-                g_WindowRect.left,
-                g_WindowRect.top,
-                g_WindowRect.right - g_WindowRect.left,
-                g_WindowRect.bottom - g_WindowRect.top,
+                DXParam::g_WindowRect.left,
+                DXParam::g_WindowRect.top,
+                DXParam::g_WindowRect.right - DXParam::g_WindowRect.left,
+                DXParam::g_WindowRect.bottom - DXParam::g_WindowRect.top,
                 SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
             ::ShowWindow(g_hWnd, SW_NORMAL);
@@ -261,7 +262,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
 
     // Window class name. Used for registering / creating the window.
     const wchar_t* windowClassName = L"DX12WindowClass";
-    ParseCommandLineArguments();
+    DXParam::ParseCommandLineArguments();
 
     EnableDebugLayer();
 

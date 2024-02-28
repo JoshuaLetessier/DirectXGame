@@ -8,6 +8,7 @@ DXParam::~DXParam()
 {
 }
 
+
 void DXParam::ParseCommandLineArguments()            // Replaces some of the globally defined variables by providing command line arguments when running the application.                                          
 {                                           // ParseCommandLineArguments function.
     int argc;
@@ -325,4 +326,3 @@ uint64_t DXParam::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12F
 
     return fenceValueForSignal;
 }
-
