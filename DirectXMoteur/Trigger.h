@@ -4,13 +4,13 @@
 class Trigger
 {
 private:
-	bool mtriggered;
+	bool m_triggered;
 
 public:
 	Trigger();
 	~Trigger();
 
-	void SetTriggered(bool mtriggered);
+	void SetTriggered(bool triggered);
 	bool GetTriggered() const;
 
 	void Update();

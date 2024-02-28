@@ -15,3 +15,5 @@
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
+
+using namespace DirectX;
