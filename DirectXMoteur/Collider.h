@@ -4,26 +4,20 @@
 class Collider
 {
 private:
-	float x, y, width, height;
-	bool isTrigger;
-    std::vector<Collider*> colliders;
-	std::vector<Collider*> collidingWith;
-	int m_x, m_y, m_width, m_height;
+	XMFLOAT3 m_position;
+	XMFLOAT3 m_size;
 
 public:
-
 	Collider();
 	~Collider();
 
-	void SetCollider(float x, float y, float width, float height);
-	void SetTrigger(bool isTrigger);
-	void AddCollider(Collider* collider);
-	void RemoveCollider(Collider* collider);
-	void CheckCollision(Collider* collider);
-	void CheckCollisions();
-	void Draw();
-	void Update();
-	void OnCollision(Collider* collider);
+	void SetPosition(const XMFLOAT3& newPosition);
+	const XMFLOAT3& GetPosition() const;
+	void SetSize(const XMFLOAT3& newSize);
+	const XMFLOAT3& GetSize() const;
+
+	bool IsColliding(const XMFLOAT3& point) const;
+
 
 };
 

@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMoteur.h" />
     <ClInclude Include="Entity.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Trigger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DirectXMoteur.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
