@@ -16,6 +16,9 @@
     <Filter Include="Fichiers de ressources\inc">
       <UniqueIdentifier>{6b3f8acf-eec9-4c4f-b661-4be6612ee023}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Communs">
+      <UniqueIdentifier>{7d945bfd-ca3a-4e01-a704-3a87a2bf21a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -42,6 +45,21 @@
     <ClInclude Include="pch.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderStructure.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Fichiers de ressources\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>Fichiers de ressources\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>Fichiers de ressources\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="UploadBuffer.h">
+      <Filter>Fichiers de ressources\inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXMoteur.cpp">
@@ -49,6 +67,12 @@
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>Fichiers de ressources\inc</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
+      <Filter>Fichiers de ressources\inc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,5 +87,8 @@
     <Image Include="DirectXMoteur.ico">
       <Filter>Fichiers de ressources</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shader.hlsl" />
   </ItemGroup>
 </Project>
