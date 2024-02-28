@@ -1,10 +1,13 @@
 #pragma once
 #include "pch.h"
+#include "DXParam.h"
 
 class Window
 {
 private:
 
+	// Window callback function.
+	LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 public:
 	void RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName);

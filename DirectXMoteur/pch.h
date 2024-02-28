@@ -15,7 +15,7 @@ using namespace Microsoft::WRL;
 #include <DirectXMath.h>
 
 // D3D12 extension library.
-//#include "d3dx12.h"
+#include "d3dx12.h"
 //#include "d3d12.h"
 
 // STL Headers
@@ -29,13 +29,11 @@ using namespace Microsoft::WRL;
 #include <concrt.h>
 
 // Helper functions
-//#include "Helpers.h"
+#include "Helpers.h"
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
-
-
 
 /* The min / max macros conflict with like - named member functions.
 	Only use std::min and std::max defined in <algorithm>.*/
