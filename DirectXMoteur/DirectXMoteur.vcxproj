@@ -137,11 +137,12 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Trigger.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DirectXMoteur.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Trigger.cpp" />
