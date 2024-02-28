@@ -1,6 +1,5 @@
 #include "Transform.h"
 
-
 void Transform::identity()
 {
 	//Initialisation des variables membres du struct
@@ -62,7 +61,6 @@ void Transform::rotate(float roll, float pitch, float yaw)
 	XMStoreFloat4(&qRotate, tempRotateDelta);
 
 	//Convertir le quaternion en une matrice
-	//XMVECTOR rotateMatrix = XMLoadFloat4(&qRotate);
 	XMMATRIX matrixRot = XMMatrixRotationQuaternion(tempRotate);
 	XMStoreFloat4x4(&mRotate, matrixRot);
 
@@ -92,4 +90,9 @@ void Transform::update()
 	mTempMatrix *= mTempPos;
 
 	XMStoreFloat4x4(&matrix, mTempMatrix);
+}
+
+void Transform::translate(float offsetX, float offsetY, float offsetZ)
+{
+	XMMATRIX matrixTranslate = XMMatrixTranslation(offsetX, offsetY, offsetZ);
 }
