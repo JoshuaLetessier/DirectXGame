@@ -130,22 +130,29 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="d3d12.h" />
+    <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXMoteur.h" />
+    <ClInclude Include="DXParam.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DirectXMoteur.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="DXParam.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXMoteur.rc" />
