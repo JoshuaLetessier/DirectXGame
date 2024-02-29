@@ -42,6 +42,6 @@ void Entity::Update()
 {
 	for (int i = 0; i < m_components.size(); i++)
 	{
-		m_components[i]->Update();
+		//m_components[i]->Update();
 	}
 }

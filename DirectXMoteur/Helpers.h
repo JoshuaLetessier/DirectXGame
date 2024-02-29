@@ -5,10 +5,10 @@
 #include <Windows.h> // For HRESULT
 #include <iostream>
 
-inline void ThrowIfFailed(HRESULT hr)
-{
-    if (FAILED(hr))
-    {
-        throw std::exception();
-    }
-}
+//inline void ThrowIfFailed(HRESULT hr)
+//{
+//    if (FAILED(hr))
+//    {
+//        throw std::exception();
+//    }
+//}

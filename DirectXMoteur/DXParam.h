@@ -18,7 +18,6 @@ public:
 	static void Flush(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence,
 		uint64_t& fenceValue, HANDLE fenceEvent);
 
-
 	static bool CheckTearingSupport();
 
 	static ComPtr<IDXGIAdapter4> GetAdapter(bool useWarp);
@@ -34,6 +33,9 @@ public:
 	static ComPtr<ID3D12GraphicsCommandList> CreateCommandList(ComPtr<ID3D12Device2> device,
 		ComPtr<ID3D12CommandAllocator> commandAllocator, D3D12_COMMAND_LIST_TYPE type); // "type"->Value typed who specify the type array of command create
 	static ComPtr<ID3D12Fence> CreateFence(ComPtr<ID3D12Device2> device);
+	static D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView();
+	static D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView();
+	static ID3D12Resource* CurrentBackBuffer();
 
 	static HANDLE CreateEventHandle();
 
@@ -64,7 +66,7 @@ public:
 	// They are referenced using the DirectX 12 interface.
 
 	static ComPtr<ID3D12Resource> g_BackBuffers[g_NumFrames];	// g_BackBuffers stores pointers to the back buffer resources of the swap chain.
-
+	
 	static ComPtr<ID3D12GraphicsCommandList> g_CommandList;	// The GPU commands are first recorded into a file. Typically, only one command list is needed
 	// to record GPU commands using a single thread. Since this demo uses the main thread to
 	// record all GPU commands, a single command list is defined.
@@ -85,6 +87,8 @@ public:
 												// Synchronization objects
 	static ComPtr<ID3D12Fence> g_Fence;			// Variable used to store the fence object described in the Fence section above.
 
+	static ComPtr<ID3D12PipelineState> g_Pso;
+	
 };
 
 

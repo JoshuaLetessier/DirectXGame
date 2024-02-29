@@ -22,9 +22,9 @@ public:
 private:
 	Cube cubeMesh;
 	std::vector<std::uint16_t> m_cubeIndices = cubeIndices;
-	Shape shapeMesh;
+	//Shape shapeMesh;
 	//unsigned short* p_shapeIndices = shapeIndices;
-	Pyramide pyramideMesh;
+	//Pyramide pyramideMesh;
 	//unsigned short* p_pyramideIndices = pyramideIndices;
 
 	UINT elementByteSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;
@@ -34,7 +34,7 @@ private:
 	ComPtr<ID3DBlob> mvsByteCode = nullptr;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
-
+	ComPtr<ID3D12CommandQueue> mCommandQueue;
 
 	std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mConstantBuffer = nullptr;
 
@@ -43,6 +43,11 @@ private:
 	UINT m4xMsaaQuality = 0;
 	DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	int mCurrBackBuffer = 0;
+	static const int SwapChainBufferCount = 2;
+
+
 };
 
 

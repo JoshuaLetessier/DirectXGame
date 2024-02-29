@@ -1,5 +1,6 @@
 #include "MeshRenderer.h"
 #include "d3dUtil.h"
+#include "DXParam.h"
 
 MeshRenderer::MeshRenderer()
 {
@@ -16,19 +17,19 @@ MeshRenderer::MeshRenderer()
 
 void MeshRenderer::Draw()
 {
-    ThrowIfFailed(mDirectCmdListAlloc->Reset());
+    ThrowIfFailed(DXParam::g_CommandAllocators->Reset());
 
-    ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), mPSO.Get()));
+    ThrowIfFailed(DXParam::g_CommandList->Reset(DXParam::g_CommandAllocators->Get(), DXParam::g_Pso.Get()));
 
     mCommandList->RSSetViewports(1, &mScreenViewport);
     mCommandList->RSSetScissorRects(1, &mScissorRect);
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(DXParam::CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-    mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-    mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    mCommandList->ClearRenderTargetView(DXParam::CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    mCommandList->ClearDepthStencilView(DXParam::DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-    mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+    mCommandList->OMSetRenderTargets(1, &DXParam::CurrentBackBufferView(), true, &DXParam::DepthStencilView());
 
     ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
     mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
@@ -42,7 +43,8 @@ void MeshRenderer::Draw()
 
     mCommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(DXParam::CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
     ThrowIfFailed(mCommandList->Close());
 
@@ -50,10 +52,10 @@ void MeshRenderer::Draw()
     mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
    
-    ThrowIfFailed(mSwapChain->Present(0, 0));
+    ThrowIfFailed(DXParam::g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
-    FlushCommandQueue();
+    DXParam::Flush;
 }
 
 void MeshRenderer::BuildDescriptorHeaps()
@@ -180,3 +182,4 @@ void MeshRenderer::BuildPSO()
 
     //ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
+
