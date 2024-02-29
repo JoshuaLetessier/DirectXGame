@@ -76,6 +76,8 @@ void Transform::rotate(float roll, float pitch, float yaw)
 	vDir.x = mRotate._31;
 	vDir.y = mRotate._32;
 	vDir.z = mRotate._33;
+
+	update();
 }
 
 void Transform::update()
@@ -88,11 +90,18 @@ void Transform::update()
 	XMMATRIX mTempMatrix = mTempRotate;
 	mTempMatrix *= mTempScaling;
 	mTempMatrix *= mTempPos;
-
+	
 	XMStoreFloat4x4(&matrix, mTempMatrix);
 }
 
 void Transform::translate(float offsetX, float offsetY, float offsetZ)
 {
 	XMMATRIX matrixTranslate = XMMatrixTranslation(offsetX, offsetY, offsetZ);
+
+
+	//XMStoreFloat4x4(&mTranslation, matrixTranslate);
+
+	update();
 }
+
+

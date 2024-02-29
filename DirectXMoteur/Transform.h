@@ -23,4 +23,5 @@ struct Transform {
 	void rotate(float roll, float pitch, float yaw);
 	void update();
 	void translate(float offsetX, float offsetY, float offsetZ);
+	void updateTranslation();
 };
