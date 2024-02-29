@@ -7,6 +7,7 @@
 #include <pix.h>
 #include <DirectXColors.h>
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
 #include <memory>
 #include <vector>
 //#include <agile.h>
