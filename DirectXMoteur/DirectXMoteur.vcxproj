@@ -129,12 +129,16 @@
   <ItemGroup>
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="d3d12.h" />
+    <ClInclude Include="d3dx12.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXMoteur.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="DXParam.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
@@ -143,6 +147,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UploadBuffer.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dUtil.cpp" />
@@ -150,8 +155,10 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="DXParam.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Trigger.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXMoteur.rc" />
