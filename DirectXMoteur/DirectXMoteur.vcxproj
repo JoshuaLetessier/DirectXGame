@@ -141,13 +141,11 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DirectXMoteur.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="DXParam.cpp" />
@@ -160,11 +158,6 @@
   <ItemGroup>
     <Image Include="DirectXMoteur.ico" />
     <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Shader.hlsl">
-      <FileType>Document</FileType>
-    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

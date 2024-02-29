@@ -29,7 +29,7 @@ using namespace Microsoft::WRL;
 #include <memory>
 //#include <agile.h>
 #include <vector>
-//#include <agile.h>
+#include <agile.h>
 #include <concrt.h>
 
 // Helper functions
