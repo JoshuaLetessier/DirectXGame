@@ -14,7 +14,7 @@ struct Transform {
 	XMFLOAT4X4 mRotate;
 	XMFLOAT4 qRotate;
 
-	XMFLOAT4X4 mTranslation;
+	//XMFLOAT4X4 mTranslation;
 
 	XMFLOAT4X4 matrix;
 
@@ -23,5 +23,4 @@ struct Transform {
 	void rotate(float roll, float pitch, float yaw);
 	void update();
 	void translate(float offsetX, float offsetY, float offsetZ);
-	void updateTranslation();
 };
