@@ -7,12 +7,13 @@
 #include "d3dx12.h"
 #include <DirectXColors.h>
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
 
 #include <pix.h>
 #include <memory>
 #include <vector>
 //#include <agile.h>
-#include <concrt.h>
+//#include <concrt.h>
 
 #include "ShaderStructure.h"
 #include "Component.h"
