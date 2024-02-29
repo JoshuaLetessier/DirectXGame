@@ -14,7 +14,6 @@ struct Transform {
 	XMFLOAT4X4 mRotate;
 	XMFLOAT4 qRotate;
 
-	//XMFLOAT4X4 mTranslation;
 
 	XMFLOAT4X4 matrix;
 

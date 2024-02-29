@@ -98,5 +98,3 @@ void Transform::translate(float offsetX, float offsetY, float offsetZ)
 	mPos._42 += offsetY;
 	mPos._43 += offsetZ;
 }
-
-
