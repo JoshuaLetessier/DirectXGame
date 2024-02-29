@@ -130,7 +130,7 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="d3d12.h" />
-    <ClInclude Include="d3dx12.h" />
+  
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DirectXMoteur.h" />
