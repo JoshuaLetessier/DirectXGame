@@ -39,7 +39,8 @@ public:
 
 	static uint64_t Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence,
 			uint64_t& fenceValue);
-
+	static ComPtr< ID3D12Resource> *CurrentBackBuffer();
+	
 
 	// The number of swap chain back buffers.
 	static const uint8_t g_NumFrames = 3;
@@ -84,6 +85,8 @@ public:
 
 												// Synchronization objects
 	static ComPtr<ID3D12Fence> g_Fence;			// Variable used to store the fence object described in the Fence section above.
+
+	static ComPtr<ID3D12PipelineState> g_Pso;
 
 };
 

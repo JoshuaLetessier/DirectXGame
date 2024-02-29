@@ -330,3 +330,8 @@ uint64_t DXParam::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12F
 
     return fenceValueForSignal;
 }
+
+ComPtr<ID3D12Resource> *DXParam::CurrentBackBuffer()
+{
+    return ComPtr<ID3D12Resource>();
+}

@@ -1,5 +1,6 @@
 #include "MeshRenderer.h"
 #include "d3dUtil.h"
+#include "DXParam.h"
 
 MeshRenderer::MeshRenderer()
 {
@@ -13,17 +14,16 @@ MeshRenderer::MeshRenderer()
 }
 
 
-
 void MeshRenderer::Draw()
 {
-    ThrowIfFailed(mDirectCmdListAlloc->Reset());
+    ThrowIfFailed(DXParam::g_CommandAllocators->Reset());
 
-    ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), mPSO.Get()));
+    ThrowIfFailed(DXParam::g_CommandList->Reset(DXParam::g_CommandAllocators->Get(), DXParam::g_Pso.Get()));
 
     mCommandList->RSSetViewports(1, &mScreenViewport);
     mCommandList->RSSetScissorRects(1, &mScissorRect);
-
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+    
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(DXParam::CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
     mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
     mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
@@ -47,10 +47,10 @@ void MeshRenderer::Draw()
     ThrowIfFailed(mCommandList->Close());
 
     ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
-    mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+    DXParam::g_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
    
-    ThrowIfFailed(mSwapChain->Present(0, 0));
+    ThrowIfFailed(DXParam::g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
     FlushCommandQueue();
