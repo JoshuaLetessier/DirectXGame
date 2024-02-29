@@ -2,6 +2,8 @@
 
 void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName)
 {
+    LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
     // Register a window class for creating our render window with.
     WNDCLASSEXW windowClass = {};
 
@@ -264,42 +266,42 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     const wchar_t* windowClassName = L"DX12WindowClass";
     DXParam::ParseCommandLineArguments();
 
-    EnableDebugLayer();
+    DXParam::EnableDebugLayer();
 
-    g_TearingSupported = CheckTearingSupport();                                             // Application tearing support is queried
+    g_TearingSupported = DXParam::CheckTearingSupport();                                             // Application tearing support is queried
 
     RegisterWindowClass(hInstance, windowClassName);
     g_hWnd = CreateWindow(windowClassName, hInstance, L"Learning DirectX 12",
         g_ClientWidth, g_ClientHeight);
 
     // Initialize the global window rect variable.
-    ::GetWindowRect(g_hWnd, &g_WindowRect);
+    ::GetWindowRect(g_hWnd, &DXParam::g_WindowRect);
 
-    ComPtr<IDXGIAdapter4> dxgiAdapter4 = GetAdapter(g_UseWarp);
+    ComPtr<IDXGIAdapter4> dxgiAdapter4 = DXParam::GetAdapter(DXParam::g_UseWarp);
 
-    g_Device = CreateDevice(dxgiAdapter4);
+    g_Device = DXParam::CreateDevice(dxgiAdapter4);
 
-    g_CommandQueue = CreateCommandQueue(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+    DXParam::g_CommandQueue = DXParam::CreateCommandQueue(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-    g_SwapChain = CreateSwapChain(g_hWnd, g_CommandQueue,
-        g_ClientWidth, g_ClientHeight, g_NumFrames);
+    DXParam::g_SwapChain = DXParam::CreateSwapChain(g_hWnd, DXParam::g_CommandQueue,
+        g_ClientWidth, g_ClientHeight, DXParam::g_NumFrames);
 
-    g_CurrentBackBufferIndex = g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
+    DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
 
-    g_RTVDescriptorHeap = CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, g_NumFrames);      // Segment memory RTV create and descrive size queries 
-    g_RTVDescriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    DXParam::g_RTVDescriptorHeap = DXParam::CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, DXParam::g_NumFrames);      // Segment memory RTV create and descrive size queries 
+    DXParam::g_RTVDescriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-    UpdateRenderTargetViews(g_Device, g_SwapChain, g_RTVDescriptorHeap);
+    DXParam::UpdateRenderTargetViews(g_Device, DXParam::g_SwapChain, DXParam::g_RTVDescriptorHeap);
 
-    for (int i = 0; i < g_NumFrames; ++i)
+    for (int i = 0; i < DXParam::g_NumFrames; ++i)
     {
-        g_CommandAllocators[i] = CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+        DXParam::g_CommandAllocators[i] = DXParam::CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
     }
-    g_CommandList = CreateCommandList(g_Device,
-        g_CommandAllocators[g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
+    DXParam::g_CommandList = DXParam::CreateCommandList(g_Device,
+        DXParam::g_CommandAllocators[DXParam::g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-    g_Fence = CreateFence(g_Device);                // Perform GPU synchronization
-    g_FenceEvent = CreateEventHandle();             // Handle used to block the CPU
+    DXParam::g_Fence = DXParam::CreateFence(g_Device);                // Perform GPU synchronization
+    g_FenceEvent = DXParam::CreateEventHandle();             // Handle used to block the CPU
 
     g_IsInitialized = true;                         // Window init
 
@@ -320,7 +322,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     // should not occur until the GPU has finished using them.
 
     // Make sure the command queue has finished all commands before closing.
-    Flush(g_CommandQueue, g_Fence, g_FenceValue, g_FenceEvent);
+    DXParam::Flush(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue, g_FenceEvent);
 
     ::CloseHandle(g_FenceEvent);
 

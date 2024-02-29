@@ -8,6 +8,9 @@ DXParam::~DXParam()
 {
 }
 
+uint32_t g_ClientWidth = 1280;
+uint32_t g_ClientHeight = 720;
+bool g_UseWarp = false;
 
 void DXParam::ParseCommandLineArguments()            // Replaces some of the globally defined variables by providing command line arguments when running the application.                                          
 {                                           // ParseCommandLineArguments function.
@@ -68,8 +71,9 @@ void DXParam::UpdateRenderTargetViews(ComPtr<ID3D12Device2> device, ComPtr<IDXGI
 }
 
 // Used to block the CPU thread if the fence has not yet reached a certain value. 
-void DXParam::WaitForFenceValue(ComPtr<ID3D12Fence> fence, uint64_t fenceValue, HANDLE fenceEvent, std::chrono::milliseconds duration = std::chrono::milliseconds::max())
+void DXParam::WaitForFenceValue(ComPtr<ID3D12Fence> fence, uint64_t fenceValue, HANDLE fenceEvent)
 {
+    std::chrono::milliseconds duration = std::chrono::milliseconds::max();
     if (fence->GetCompletedValue() < fenceValue)
     {
         ThrowIfFailed(fence->SetEventOnCompletion(fenceValue, fenceEvent));

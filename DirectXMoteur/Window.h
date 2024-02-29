@@ -7,7 +7,6 @@ class Window
 private:
 
 	// Window callback function.
-	LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 	uint64_t g_FenceValue = 0;					// The next fence value to signal the next command queue is stored in the variable.
 	uint64_t g_FrameFenceValues[DXParam::g_NumFrames] = {};				// For each rendered image that could be "in-flight" in the command queue,
 																// the fence value that was used to signal the command queue must be tracked

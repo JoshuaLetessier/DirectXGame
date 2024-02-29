@@ -1,10 +1,10 @@
-#pragma once
-#include "Component.h"
-
-class MeshRenderer : public Component
-{
-	void meshRenderer();
-	
-
-};
-
+//#pragma once
+//#include "Component.h"
+//
+//class MeshRenderer : public Component
+//{
+//	void meshRenderer();
+//	
+//
+//};
+//
