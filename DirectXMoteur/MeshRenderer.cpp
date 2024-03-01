@@ -18,6 +18,7 @@ MeshRenderer::MeshRenderer()
 
 void MeshRenderer::Draw()
 {
+
     DXParam dxParam;
     D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
     D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
