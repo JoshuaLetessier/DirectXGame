@@ -313,17 +313,17 @@ ComPtr<ID3D12Fence> DXParam::CreateFence(ComPtr<ID3D12Device2> device)
     return fence;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DXParam::DepthStencilView()
+D3D12_CPU_DESCRIPTOR_HANDLE DXParam::DepthStencilView() const
 {
     return g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView()
+D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView() const
 {
     return CD3DX12_CPU_DESCRIPTOR_HANDLE(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_CurrentBackBufferIndex, g_RTVDescriptorSize);
 }
 
-ID3D12Resource* DXParam::CurrentBackBuffer()
+ID3D12Resource* DXParam::CurrentBackBuffer() const 
 {
     return g_BackBuffers[g_NumFrames].Get();
 }

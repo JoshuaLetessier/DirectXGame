@@ -48,6 +48,12 @@ private:
 	static const int SwapChainBufferCount = 2;
 
 
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+	Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
+
+	D3D12_VIEWPORT mScreenViewport;
+	D3D12_RECT mScissorRect;
+
 };
 
 

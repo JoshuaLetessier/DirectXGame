@@ -48,11 +48,6 @@ using namespace DirectX;
 using namespace shaderStruct;
 using namespace renderObject;
 
-Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
-Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
-
-D3D12_VIEWPORT mScreenViewport;
-D3D12_RECT mScissorRect;
 
 /* The min / max macros conflict with like - named member functions.
 	Only use std::min and std::max defined in <algorithm>.*/
