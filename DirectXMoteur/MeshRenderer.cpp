@@ -1,6 +1,7 @@
 #include "MeshRenderer.h"
 #include "d3dUtil.h"
 #include "DXParam.h"
+#include "Window.h"
 
 MeshRenderer::MeshRenderer()
 {
@@ -16,33 +17,43 @@ MeshRenderer::MeshRenderer()
 
 void MeshRenderer::Draw()
 {
-    ThrowIfFailed(DXParam::g_CommandAllocators->Reset());
+    DXParam dxParam;
+    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
+    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
+    D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(dxParam.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    ThrowIfFailed(DXParam::g_CommandList->Reset(DXParam::g_CommandAllocators->Get(), DXParam::g_Pso.Get()));
+    ThrowIfFailed(dxParam.g_CommandAllocators->Reset());
+
+    ThrowIfFailed(dxParam.g_CommandList->Reset(dxParam.g_CommandAllocators->Get(), dxParam.g_Pso.Get()));
 
     mCommandList->RSSetViewports(1, &mScreenViewport);
     mCommandList->RSSetScissorRects(1, &mScissorRect);
-    
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(DXParam::CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-    mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-    mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    mCommandList->ResourceBarrier(1, &transition);
 
-    mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+    mCommandList->ClearRenderTargetView(dxParam.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    mCommandList->ClearDepthStencilView(dxParam.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+   
+    mCommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
+
 
     ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
     mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
     mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    mCommandList->IASetVertexBuffers(0, 1, &mCubeGeo->VertexBufferView());
-    mCommandList->IASetIndexBuffer(&mCubeGeo->IndexBufferView());
+    mCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+    mCommandList->IASetIndexBuffer(&indexBufferView);
     mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
     mCommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
-    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+    mCommandList->ResourceBarrier(1, &transition);
 
     ThrowIfFailed(mCommandList->Close());
 
@@ -50,10 +61,11 @@ void MeshRenderer::Draw()
     DXParam::g_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
    
-    ThrowIfFailed(DXParam::g_SwapChain->Present(0, 0));
+    ThrowIfFailed(dxParam.g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
-    FlushCommandQueue();
+    Window window;
+    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, window.g_FenceValue, window.g_FenceEvent );
 }
 
 void MeshRenderer::BuildDescriptorHeaps()
@@ -180,3 +192,4 @@ void MeshRenderer::BuildPSO()
 
     //ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
+

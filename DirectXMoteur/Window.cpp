@@ -44,9 +44,9 @@ void Window::Update()
         sprintf_s(buffer, 500, "FPS: %f\n", fps);
 
         //Converse Buffer to Char
-        int bufferSize = strlen(buffer) + 1;
+        size_t bufferSize = strlen(buffer) + 1;
         WCHAR wBuffer[500];
-        MultiByteToWideChar(CP_ACP, 0, buffer, -1, wBuffer, bufferSize);
+        MultiByteToWideChar(CP_ACP, 0, buffer, -1, wBuffer, static_cast<int>(bufferSize));
 
         OutputDebugString(wBuffer);
 
@@ -58,11 +58,11 @@ void Window::Update()
 void Window::Render()
 {
 
-    auto commandAllocator = DXParam::g_CommandAllocators[DXParam::g_CurrentBackBufferIndex];
-    auto backBuffer = DXParam::g_BackBuffers[DXParam::g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
+    auto commandAllocator = dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex];
+    auto backBuffer = dxParam.g_BackBuffers[dxParam.g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
 
     commandAllocator->Reset();                                                  // Alocator of commande and Array of commande are reset
-    DXParam::g_CommandList->Reset(commandAllocator.Get(), nullptr);                      // Prepare array of commande for new register image
+    dxParam.g_CommandList->Reset(commandAllocator.Get(), nullptr);                      // Prepare array of commande for new register image
 
     // Clear the render target.
     {
@@ -70,13 +70,13 @@ void Window::Render()
             backBuffer.Get(),
             D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);      // The structure is a helper structure that facilitates easy initialization of various resource barriers.
         // In this case, the method is used to create a transition resource barrier. By default, all sub-resources will transition to the same state.
-        DXParam::g_CommandList->ResourceBarrier(1, &barrier);
+        dxParam.g_CommandList->ResourceBarrier(1, &barrier);
 
         FLOAT clearColor[] = { 0.9f, 0.6f, 0.9f, 1.0f };
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(DXParam::g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-            DXParam::g_CurrentBackBufferIndex, DXParam::g_RTVDescriptorSize);
+        CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(dxParam.g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+            dxParam.g_CurrentBackBufferIndex, dxParam.g_RTVDescriptorSize);
 
-        DXParam::g_CommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+        dxParam.g_CommandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
     }
 
     // Present
@@ -84,24 +84,24 @@ void Window::Render()
         CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
             backBuffer.Get(),
             D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-        DXParam::g_CommandList->ResourceBarrier(1, &barrier);
+        dxParam.g_CommandList->ResourceBarrier(1, &barrier);
 
         // This method must be called in the command list before it is executed in the command queue.
-        ThrowIfFailed(DXParam::g_CommandList->Close());
+        ThrowIfFailed(dxParam.g_CommandList->Close());
         ID3D12CommandList* const commandLists[] = {
-            DXParam::g_CommandList.Get()
+            dxParam.g_CommandList.Get()
         };
-        DXParam::g_CommandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);              // The command list is executed on the command queue using the ExecuteCommandLists method, which takes a list of command lists to execute.
+        dxParam.g_CommandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);              // The command list is executed on the command queue using the ExecuteCommandLists method, which takes a list of command lists to execute.
 
         UINT syncInterval = g_VSync ? 1 : 0;
         UINT presentFlags = g_TearingSupported && !g_VSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
-        ThrowIfFailed(DXParam::g_SwapChain->Present(syncInterval, presentFlags));                        // The current back buffer of the swap chain is presented to the screen using the Present method.
+        ThrowIfFailed(dxParam.g_SwapChain->Present(syncInterval, presentFlags));                        // The current back buffer of the swap chain is presented to the screen using the Present method.
 
-        g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex] = DXParam::Signal(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue);
+        g_FrameFenceValues[dxParam.g_CurrentBackBufferIndex] = dxParam.Signal(dxParam.g_CommandQueue, dxParam.g_Fence, g_FenceValue);
 
-        DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();                    // The method is used to get the index of the current back buffer of the swap chain.
+        dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();                    // The method is used to get the index of the current back buffer of the swap chain.
 
-        DXParam::WaitForFenceValue(DXParam::g_Fence, g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
+        dxParam.WaitForFenceValue(dxParam.g_Fence, g_FrameFenceValues[dxParam.g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
         // the content of the current back buffer, using the WaitForFenceValue function.
     }
 }
@@ -116,24 +116,24 @@ void Window::Resize(uint32_t width, uint32_t height)
 
         // Flush the GPU queue to make sure the swap chain's back buffers
         // are not being referenced by an in-flight command list.
-        DXParam::Flush(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue, g_FenceEvent);
+        dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, g_FenceValue, g_FenceEvent);
 
-        for (int i = 0; i < DXParam::g_NumFrames; ++i)
+        for (int i = 0; i < dxParam.g_NumFrames; ++i)
         {
             // Any references to the back buffers must be released
             // before the swap chain can be resized.
-            DXParam::g_BackBuffers[i].Reset();
-            g_FrameFenceValues[i] = g_FrameFenceValues[DXParam::g_CurrentBackBufferIndex];
+            dxParam.g_BackBuffers[i].Reset();
+            g_FrameFenceValues[i] = g_FrameFenceValues[dxParam.g_CurrentBackBufferIndex];
         }
 
         DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-        ThrowIfFailed(DXParam::g_SwapChain->GetDesc(&swapChainDesc));
-        ThrowIfFailed(DXParam::g_SwapChain->ResizeBuffers(DXParam::g_NumFrames, g_ClientWidth, g_ClientHeight,
+        ThrowIfFailed(dxParam.g_SwapChain->GetDesc(&swapChainDesc));
+        ThrowIfFailed(dxParam.g_SwapChain->ResizeBuffers(dxParam.g_NumFrames, g_ClientWidth, g_ClientHeight,
             swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
 
-        DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();
+        dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();
 
-        DXParam::UpdateRenderTargetViews(g_Device, DXParam::g_SwapChain, DXParam::g_RTVDescriptorHeap);
+        dxParam.UpdateRenderTargetViews(g_Device, dxParam.g_SwapChain, dxParam.g_RTVDescriptorHeap);
     }
 }
 
@@ -147,7 +147,7 @@ void Window::SetFullscreen(bool fullscreen)
         {
             // Store the current window dimensions so they can be restored 
             // when switching out of fullscreen state.
-            ::GetWindowRect(g_hWnd, &DXParam::g_WindowRect);
+            ::GetWindowRect(g_hWnd, &dxParam.g_WindowRect);
 
             // Set the window style to a borderless window so the client area fills
             // the entire screen.
@@ -177,10 +177,10 @@ void Window::SetFullscreen(bool fullscreen)
             ::SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 
             ::SetWindowPos(g_hWnd, HWND_NOTOPMOST,
-                DXParam::g_WindowRect.left,
-                DXParam::g_WindowRect.top,
-                DXParam::g_WindowRect.right - DXParam::g_WindowRect.left,
-                DXParam::g_WindowRect.bottom - DXParam::g_WindowRect.top,
+                dxParam.g_WindowRect.left,
+                dxParam.g_WindowRect.top,
+                dxParam.g_WindowRect.right - dxParam.g_WindowRect.left,
+                dxParam.g_WindowRect.bottom - dxParam.g_WindowRect.top,
                 SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
             ::ShowWindow(g_hWnd, SW_NORMAL);
@@ -264,44 +264,44 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
 
     // Window class name. Used for registering / creating the window.
     const wchar_t* windowClassName = L"DX12WindowClass";
-    DXParam::ParseCommandLineArguments();
+    dxParam.ParseCommandLineArguments();
 
-    DXParam::EnableDebugLayer();
+    dxParam.EnableDebugLayer();
 
-    g_TearingSupported = DXParam::CheckTearingSupport();                                             // Application tearing support is queried
+    g_TearingSupported = dxParam.CheckTearingSupport();                                             // Application tearing support is queried
 
     RegisterWindowClass(hInstance, windowClassName);
     g_hWnd = CreateWindow(windowClassName, hInstance, L"Learning DirectX 12",
         g_ClientWidth, g_ClientHeight);
 
     // Initialize the global window rect variable.
-    ::GetWindowRect(g_hWnd, &DXParam::g_WindowRect);
+    ::GetWindowRect(g_hWnd, &dxParam.g_WindowRect);
 
-    ComPtr<IDXGIAdapter4> dxgiAdapter4 = DXParam::GetAdapter(DXParam::g_UseWarp);
+    ComPtr<IDXGIAdapter4> dxgiAdapter4 = dxParam.GetAdapter(dxParam.g_UseWarp);
 
-    g_Device = DXParam::CreateDevice(dxgiAdapter4);
+    g_Device = dxParam.CreateDevice(dxgiAdapter4);
 
-    DXParam::g_CommandQueue = DXParam::CreateCommandQueue(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+    dxParam.g_CommandQueue = dxParam.CreateCommandQueue(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-    DXParam::g_SwapChain = DXParam::CreateSwapChain(g_hWnd, DXParam::g_CommandQueue,
-        g_ClientWidth, g_ClientHeight, DXParam::g_NumFrames);
+    dxParam.g_SwapChain = dxParam.CreateSwapChain(g_hWnd, dxParam.g_CommandQueue,
+        g_ClientWidth, g_ClientHeight, dxParam.g_NumFrames);
 
-    DXParam::g_CurrentBackBufferIndex = DXParam::g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
+    dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
 
-    DXParam::g_RTVDescriptorHeap = DXParam::CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, DXParam::g_NumFrames);      // Segment memory RTV create and descrive size queries 
-    DXParam::g_RTVDescriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    dxParam.g_RTVDescriptorHeap = dxParam.CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, dxParam.g_NumFrames);      // Segment memory RTV create and descrive size queries 
+    dxParam.g_RTVDescriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-    DXParam::UpdateRenderTargetViews(g_Device, DXParam::g_SwapChain, DXParam::g_RTVDescriptorHeap);
+    dxParam.UpdateRenderTargetViews(g_Device, dxParam.g_SwapChain, dxParam.g_RTVDescriptorHeap);
 
-    for (int i = 0; i < DXParam::g_NumFrames; ++i)
+    for (int i = 0; i < dxParam.g_NumFrames; ++i)
     {
-        DXParam::g_CommandAllocators[i] = DXParam::CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+        dxParam.g_CommandAllocators[i] = dxParam.CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
     }
-    DXParam::g_CommandList = DXParam::CreateCommandList(g_Device,
-        DXParam::g_CommandAllocators[DXParam::g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
+    dxParam.g_CommandList = dxParam.CreateCommandList(g_Device,
+        dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-    DXParam::g_Fence = DXParam::CreateFence(g_Device);                // Perform GPU synchronization
-    g_FenceEvent = DXParam::CreateEventHandle();             // Handle used to block the CPU
+    dxParam.g_Fence = dxParam.CreateFence(g_Device);                // Perform GPU synchronization
+    g_FenceEvent = dxParam.CreateEventHandle();             // Handle used to block the CPU
 
     g_IsInitialized = true;                         // Window init
 
@@ -322,7 +322,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     // should not occur until the GPU has finished using them.
 
     // Make sure the command queue has finished all commands before closing.
-    DXParam::Flush(DXParam::g_CommandQueue, DXParam::g_Fence, g_FenceValue, g_FenceEvent);
+    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, g_FenceValue, g_FenceEvent);
 
     ::CloseHandle(g_FenceEvent);
 

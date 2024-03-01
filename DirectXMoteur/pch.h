@@ -6,7 +6,6 @@
 using namespace Microsoft::WRL;
 
 // DirectX 12 specific headers.
-#include <d3d12.h>
 #include <dxgi.h>
 #include <dxgi1_4.h>
 #include <dxgi1_6.h>
@@ -16,7 +15,7 @@ using namespace Microsoft::WRL;
 
 // D3D12 extension library.
 #include "d3dx12.h"
-//#include "d3d12.h"
+#include <d3d12.h>
 
 // STL Headers
 #include <algorithm>
@@ -31,6 +30,7 @@ using namespace Microsoft::WRL;
 #include <vector>
 //#include <agile.h>
 //#include <concrt.h>
+
 
 #include "ShaderStructure.h"
 #include "Component.h"
@@ -48,12 +48,6 @@ using namespace Microsoft::WRL;
 using namespace DirectX;
 using namespace shaderStruct;
 using namespace renderObject;
-
-Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
-Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
-
-D3D12_VIEWPORT mScreenViewport;
-D3D12_RECT mScissorRect;
 
 
 /* The min / max macros conflict with like - named member functions.

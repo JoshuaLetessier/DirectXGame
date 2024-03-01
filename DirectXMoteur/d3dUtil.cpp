@@ -1,4 +1,3 @@
-
 #include "d3dUtil.h"
 #include <comdef.h>
 #include <fstream>
@@ -45,23 +44,24 @@ Microsoft::WRL::ComPtr<ID3D12Resource> d3dUtil::CreateDefaultBuffer(
     ComPtr<ID3D12Resource> defaultBuffer;
 
     // Create the actual default buffer resource.
-    ThrowIfFailed(device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(byteSize),
-		D3D12_RESOURCE_STATE_COMMON,
-        nullptr,
-        IID_PPV_ARGS(defaultBuffer.GetAddressOf())));
+
+    {
+        CD3DX12_RESOURCE_DESC buffer = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
+        CD3DX12_HEAP_PROPERTIES typeDefault = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+        HRESULT hr__ = (device->CreateCommittedResource(&typeDefault, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_COMMON, nullptr, __uuidof(**(defaultBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(defaultBuffer.GetAddressOf()))); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\d3dUtil.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+            throw DxException(hr__, L"device->CreateCommittedResource( &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(byteSize), D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(defaultBuffer.GetAddressOf()))", wfn, 54);
+        }
+    };
 
     // In order to copy CPU memory data into our default buffer, we need to create
     // an intermediate upload heap. 
-    ThrowIfFailed(device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(byteSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
+    {
+        CD3DX12_RESOURCE_DESC buffer = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
+        CD3DX12_HEAP_PROPERTIES typeUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+        HRESULT hr__ = (device->CreateCommittedResource(&typeUpload, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, __uuidof(**(uploadBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(uploadBuffer.GetAddressOf()))); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\d3dUtil.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+            throw DxException(hr__, L"device->CreateCommittedResource( &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(byteSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(uploadBuffer.GetAddressOf()))", wfn, 64);
+        }
+    };
 
 
     // Describe the data we want to copy into the default buffer.
@@ -73,11 +73,13 @@ Microsoft::WRL::ComPtr<ID3D12Resource> d3dUtil::CreateDefaultBuffer(
     // Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
     // will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
     // the intermediate upload heap data will be copied to mBuffer.
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(), 
-		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+        D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	cmdList->ResourceBarrier(1, &transition);
+    transition = CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
     UpdateSubresources<1>(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
-	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+	cmdList->ResourceBarrier(1, &transition);
 
     // Note: uploadBuffer has to be kept alive after the above function calls because
     // the command list has not been executed yet that performs the actual copy.

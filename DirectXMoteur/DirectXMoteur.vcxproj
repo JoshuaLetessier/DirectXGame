@@ -160,7 +160,6 @@
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="DXParam.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="Trigger.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
