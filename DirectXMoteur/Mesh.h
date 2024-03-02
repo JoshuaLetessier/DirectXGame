@@ -22,7 +22,7 @@ namespace renderObject
 		};
 	};
 
-	std::vector<std::uint16_t> cubeIndices =
+	__declspec(selectany)std::vector<std::uint16_t> cubeIndices =
 	{
 			0, 2, 1, // -x
 			1, 2, 3,

@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "DirectXMoteur.h"
+#include "Window.h"
 
 #define MAX_LOADSTRING 100
 
@@ -22,12 +23,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
+
+	Window win;
+	win.Init();
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	// TODO: Placez le code ici.
+	//// TODO: Placez le code ici.
 
-	// Initialise les chaînes globales
+	//// Initialise les chaînes globales
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_DIRECTXMOTEUR, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);

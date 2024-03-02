@@ -136,8 +136,10 @@ void MeshRenderer::InputElement()
 
 void MeshRenderer::CreateCubeGeometry()
 {	
-	const UINT c_vertexBufferSize = sizeof(cubeMesh) * sizeof(VertexPositionColor);
-	const UINT c_indicesBufferSize = sizeof(m_cubeIndices) * sizeof(std::uint16_t);
+    const UINT  sizeCubeMesh = sizeof(cubeMesh);
+    const UINT  sizeIndicesCubeMesh = sizeof(m_cubeIndices);
+	const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
+	const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
 
 	mCubeGeo = std::make_unique<MeshGeometry>();
 	mCubeGeo->Name = "cubeGeo";
