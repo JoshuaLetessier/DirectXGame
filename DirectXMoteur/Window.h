@@ -13,16 +13,10 @@ private:
 																// the fence value that was used to signal the command queue must be tracked
 																// to ensure that all resources still referenced by the command queue are not overwritten.
 
-	
-
 	ComPtr<ID3D12Device2> g_Device;				// g_Device stores the DirectX 12 device object.
 
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
-
-	uint32_t g_ClientWidth = 1280;
-	uint32_t g_ClientHeight = 720;
-
 
 	// Set to true once the DX12 objects have been initialized.
 	bool g_IsInitialized = false;

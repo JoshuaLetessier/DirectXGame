@@ -8,9 +8,7 @@ DXParam::~DXParam()
 {
 }
 
-uint32_t g_ClientWidth = 1280;
-uint32_t g_ClientHeight = 720;
-bool g_UseWarp = false;
+
 
 void DXParam::ParseCommandLineArguments()            // Replaces some of the globally defined variables by providing command line arguments when running the application.                                          
 {                                           // ParseCommandLineArguments function.
@@ -325,7 +323,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView() const
 
 ID3D12Resource* DXParam::CurrentBackBuffer() const 
 {
-    return g_BackBuffers[g_NumFrames].Get();
+    return g_BackBuffers[3].Get();
 }
 
 HANDLE DXParam::CreateEventHandle()

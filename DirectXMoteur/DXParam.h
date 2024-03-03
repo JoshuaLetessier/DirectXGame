@@ -46,10 +46,10 @@ public:
 	// The number of swap chain back buffers.
 	static const uint8_t g_NumFrames = 3;
 	// Use WARP adapter
-	 bool g_UseWarp;
 
-     uint32_t g_ClientWidth;
-     uint32_t g_ClientHeight;
+	 uint32_t g_ClientWidth = 1280;
+	 uint32_t g_ClientHeight = 720;
+	 bool g_UseWarp = false;
 
 
 

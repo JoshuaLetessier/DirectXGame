@@ -19,7 +19,7 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.hInstance = hInst;                                  // hInstance: Handle to the instance that contains the window procedure for the class
     windowClass.hIcon = ::LoadIcon(hInst, NULL);                    // Icon loader Up-Left 
     windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);            // Cursor default handle
-  // windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // Background Color
+    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // Background Color
     windowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
     windowClass.lpszMenuName = NULL;                                // Pointer to the name of the class menu resource in the resource file.
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
@@ -77,7 +77,7 @@ void Window::Render()
         // In this case, the method is used to create a transition resource barrier. By default, all sub-resources will transition to the same state.
         dxParam.g_CommandList->ResourceBarrier(1, &barrier);
 
-        FLOAT clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        FLOAT clearColor[] = { 0.1f, 0.3f, 0.7f, 1.0f };
         CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(dxParam.g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
             dxParam.g_CurrentBackBufferIndex, dxParam.g_RTVDescriptorSize);
 
@@ -113,11 +113,11 @@ void Window::Render()
 
 void Window::Resize(uint32_t width, uint32_t height)
 {
-    if (g_ClientWidth != width || g_ClientHeight != height)
+    if (dxParam.g_ClientWidth != width || dxParam.g_ClientHeight != height)
     {
         // Don't allow 0 size swap chain back buffers.
-        g_ClientWidth = std::max(1u, width);
-        g_ClientHeight = std::max(1u, height);
+        dxParam.g_ClientWidth = std::max(1u, width);
+        dxParam.g_ClientHeight = std::max(1u, height);
 
         // Flush the GPU queue to make sure the swap chain's back buffers
         // are not being referenced by an in-flight command list.
@@ -133,8 +133,11 @@ void Window::Resize(uint32_t width, uint32_t height)
 
         DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
         ThrowIfFailed(dxParam.g_SwapChain->GetDesc(&swapChainDesc));
-        ThrowIfFailed(dxParam.g_SwapChain->ResizeBuffers(dxParam.g_NumFrames, g_ClientWidth, g_ClientHeight,
-            swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
+        {
+            HRESULT hr__ = (dxParam.g_SwapChain->ResizeBuffers(dxParam.g_NumFrames, dxParam.g_ClientWidth, dxParam.g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)); std::wstring wfn = AnsiToWString("C:\\Users\\Askeladd\\Desktop\\CODE\\DirectXGame\\DirectXMoteur\\Window.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+                throw DxException(hr__, L"dxParam.g_SwapChain->ResizeBuffers(dxParam.g_NumFrames, g_ClientWidth, g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)", wfn, 137);
+            }
+        };
 
         dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();
 
@@ -282,8 +285,8 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     g_TearingSupported = dxParam.CheckTearingSupport();                                             // Application tearing support is queried
 
     RegisterWindowClass(hInstance, windowClassName);
-    g_hWnd = CreateWindow(windowClassName, hInstance, L"Learning DirectX 12",
-        g_ClientWidth, g_ClientHeight);
+    g_hWnd = CreateWindow(windowClassName, hInstance, L"DirectX 12 : ",
+        dxParam.g_ClientWidth, dxParam.g_ClientHeight);
 
     // Initialize the global window rect variable.
     ::GetWindowRect(g_hWnd, &dxParam.g_WindowRect);
@@ -295,7 +298,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     dxParam.g_CommandQueue = dxParam.CreateCommandQueue(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
     dxParam.g_SwapChain = dxParam.CreateSwapChain(g_hWnd, dxParam.g_CommandQueue,
-        g_ClientWidth, g_ClientHeight, dxParam.g_NumFrames);
+        dxParam.g_ClientWidth, dxParam.g_ClientHeight, dxParam.g_NumFrames);
 
     dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
 
