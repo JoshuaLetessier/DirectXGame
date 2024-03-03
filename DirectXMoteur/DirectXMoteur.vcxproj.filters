@@ -92,9 +92,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXMoteur.cpp">
-      <Filter>Fichiers sources\DX_src</Filter>
-    </ClCompile>
     <ClCompile Include="DXParam.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>

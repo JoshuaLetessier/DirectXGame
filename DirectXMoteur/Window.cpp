@@ -3,10 +3,11 @@
 Window::Window()
 {
 }
+Window win;
+
 
 void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName)
 {
-    LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
     // Register a window class for creating our render window with.
     WNDCLASSEXW windowClass = {};
@@ -19,7 +20,7 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.hInstance = hInst;                                  // hInstance: Handle to the instance that contains the window procedure for the class
     windowClass.hIcon = ::LoadIcon(hInst, NULL);                    // Icon loader Up-Left 
     windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);            // Cursor default handle
-    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // Background Color
+    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);         // Background Color
     windowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
     windowClass.lpszMenuName = NULL;                                // Pointer to the name of the class menu resource in the resource file.
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
@@ -63,8 +64,8 @@ void Window::Update()
 void Window::Render()
 {
 
-    auto commandAllocator = dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex];
-    auto backBuffer = dxParam.g_BackBuffers[dxParam.g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
+    auto& commandAllocator = dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex];
+    auto& backBuffer = dxParam.g_BackBuffers[dxParam.g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
 
     commandAllocator->Reset();                                                  // Alocator of commande and Array of commande are reset
     dxParam.g_CommandList->Reset(commandAllocator.Get(), nullptr);                      // Prepare array of commande for new register image
@@ -77,7 +78,7 @@ void Window::Render()
         // In this case, the method is used to create a transition resource barrier. By default, all sub-resources will transition to the same state.
         dxParam.g_CommandList->ResourceBarrier(1, &barrier);
 
-        FLOAT clearColor[] = { 0.1f, 0.3f, 0.7f, 1.0f };
+        FLOAT clearColor[] = { 0.1f, 0.3f, 0.7f, 0.5f };
         CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(dxParam.g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
             dxParam.g_CurrentBackBufferIndex, dxParam.g_RTVDescriptorSize);
 
@@ -204,13 +205,14 @@ void Window::Init()
 
 LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (g_IsInitialized)
+
+    if (win.g_IsInitialized)
     {
         switch (message)
         {
         case WM_PAINT:
-            Update();
-            Render();
+            win.Update();
+            win.Render();
             break;
 
         case WM_SYSKEYDOWN:
@@ -221,7 +223,7 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wParam)
             {
             case 'V':
-                g_VSync = !g_VSync;
+                win.g_VSync = !win.g_VSync;
                 break;
             case VK_ESCAPE:
                 ::PostQuitMessage(0);
@@ -230,7 +232,7 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (alt)
                 {
             case VK_F11:
-                SetFullscreen(!g_Fullscreen);
+                win.SetFullscreen(!win.g_Fullscreen);
                 }
                 break;
             }
@@ -245,12 +247,12 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SIZE:
         {
             RECT clientRect = {};
-            ::GetClientRect(g_hWnd, &clientRect);
+            ::GetClientRect(win.g_hWnd, &clientRect);
 
             int width = clientRect.right - clientRect.left;
             int height = clientRect.bottom - clientRect.top;
 
-            Resize(width, height);
+            win.Resize(width, height);
         }
         break;
         case WM_DESTROY:
