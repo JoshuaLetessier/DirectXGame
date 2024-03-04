@@ -4,11 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXGame", "DirectXGame\DirectXGame.vcxproj", "{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}"
-	ProjectSection(ProjectDependencies) = postProject
-		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B} = {309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXMoteur", "DirectXMoteur\DirectXMoteur.vcxproj", "{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED} = {1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,7 +19,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Debug|x64.ActiveCfg = Debug|x64
-		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Debug|x64.Build.0 = Debug|x64
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Debug|x86.ActiveCfg = Debug|Win32
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Debug|x86.Build.0 = Debug|Win32
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Release|x64.ActiveCfg = Release|x64
@@ -27,6 +26,7 @@ Global
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Release|x86.ActiveCfg = Release|Win32
 		{1439A1C9-4B4B-4563-AAC3-F8FE28BC2FED}.Release|x86.Build.0 = Release|Win32
 		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}.Debug|x64.ActiveCfg = Debug|x64
+		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}.Debug|x64.Build.0 = Debug|x64
 		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}.Debug|x86.ActiveCfg = Debug|Win32
 		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}.Debug|x86.Build.0 = Debug|Win32
 		{309FE2A7-8BEC-41E6-B158-8AFDD77FB32B}.Release|x64.ActiveCfg = Release|x64

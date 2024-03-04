@@ -361,8 +361,8 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.hInstance = hInst;                                  // hInstance: Handle to the instance that contains the window procedure for the class
     windowClass.hIcon = ::LoadIcon(hInst, NULL);                    // Icon loader Up-Left 
     windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);            // Cursor default handle
-    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);         // Background Color
-    windowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
+    //windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);         // Background Color
+    windowClass.hbrBackground = CreateSolidBrush(RGB(60, 5, 0));
     windowClass.lpszMenuName = NULL;                                // Pointer to the name of the class menu resource in the resource file.
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
     windowClass.hIconSm = ::LoadIcon(hInst, NULL);
@@ -419,7 +419,7 @@ void Window::Render()
         // In this case, the method is used to create a transition resource barrier. By default, all sub-resources will transition to the same state.
         g_CommandList->ResourceBarrier(1, &barrier);
 
-        FLOAT clearColor[] = { 0.1f, 0.3f, 0.7f, 0.5f };
+        FLOAT clearColor[] = { 0.9f, 0.9f, 0.9f, 1.0f };
         CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
             g_CurrentBackBufferIndex, g_RTVDescriptorSize);
 

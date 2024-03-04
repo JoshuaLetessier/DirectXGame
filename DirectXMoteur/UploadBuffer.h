@@ -2,6 +2,7 @@
 
 #include "d3dUtil.h"
 
+
 template<typename T>
 class UploadBuffer
 {
@@ -23,8 +24,9 @@ public:
 
         {
             CD3DX12_HEAP_PROPERTIES typeUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-            CD3DX12_RESOURCE_DESC buffer = CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize * elementCount);
-            HRESULT hr__ = (device->CreateCommittedResource(&typeUpload, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, __uuidof(**(&mUploadBuffer)), IID_PPV_ARGS_Helper(&mUploadBuffer))); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\UploadBuffer.h"); if ((((HRESULT)(hr__)) < 0)) {
+            CD3DX12_RESOURCE_DESC buffer = CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize * static_cast<UINT64>(elementCount));
+            HRESULT hr__ = (device->CreateCommittedResource(&typeUpload, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, __uuidof(**(&mUploadBuffer)), IID_PPV_ARGS_Helper(&mUploadBuffer)));
+            std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\UploadBuffer.h"); if ((((HRESULT)(hr__)) < 0)) {
                 throw DxException(hr__, L"device->CreateCommittedResource( &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize*elementCount), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&mUploadBuffer))", wfn, 30);
             }
         };

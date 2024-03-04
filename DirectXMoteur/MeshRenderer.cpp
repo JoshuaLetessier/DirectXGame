@@ -120,20 +120,20 @@ void MeshRenderer::BuildDescriptorHeaps()
     else
     {
         printf("test %p\n", md3dDevice);
-        ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
+        //ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
     }
 
 }
 
 void MeshRenderer::BuildConstantBufferVertex()
 {
-    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);//pourquoi on le fait pas dans le h?
+    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(window.g_Device.Get(), 1, true);//pourquoi on le fait pas dans le h?
     UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
 
     D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
 
     int boxCBufIndex = 0;
-    cbAddress += boxCBufIndex * mCBByteSize;
+    cbAddress += boxCBufIndex * static_cast<unsigned long long>(mCBByteSize);
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
     cbvDesc.BufferLocation = cbAddress;

@@ -7,7 +7,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	MessageBox(NULL, L"Bonjour, c'est une application Windows !", L"Hello", MB_OK);
+	//MessageBox(NULL, L"Bonjour, c'est une application Windows !", L"Hello", MB_OK);
 	Window win;
 	win.Init();
 

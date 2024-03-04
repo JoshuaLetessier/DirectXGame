@@ -39,12 +39,6 @@
     <ClInclude Include="pch.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXMoteur.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
-    <ClInclude Include="DXParam.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
@@ -90,11 +84,11 @@
     <ClInclude Include="UploadBuffer.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
+    <ClInclude Include="DXmoteur.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DXParam.cpp">
-      <Filter>Fichiers sources\DX_src</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -112,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>Fichiers de ressources\inc</Filter>
+    </ClCompile>
+    <ClCompile Include="DXmoteur.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
