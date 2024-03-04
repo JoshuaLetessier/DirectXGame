@@ -20,10 +20,11 @@ private:
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
 
+public:
 	uint32_t g_ClientWidth = 1280;
 	uint32_t g_ClientHeight = 720;
 
-
+private:
 	// Set to true once the DX12 objects have been initialized.
 	bool g_IsInitialized = false;
 	// By default, enable V-Sync.

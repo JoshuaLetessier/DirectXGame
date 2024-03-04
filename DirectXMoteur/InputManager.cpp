@@ -28,7 +28,7 @@ void InputManager::OnMouseMove(WPARAM btnState, int x, int y)
         // Restrict the angle mPhi.
         mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
     }
-    //else if ((btnState & MK_RBUTTON) != 0)
+    //else if ((btnState & MK_LBUTTON) != 0)
     //{
        
     //}
