@@ -1,9 +1,12 @@
 #include "Window.h"
+#include "MeshRenderer.h"
+
+Window win;
+MeshRenderer meshRenderer;
 
 Window::Window()
 {
 }
-Window win;
 
 Window::~Window()
 {
@@ -668,6 +671,23 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         {
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
+        }
+        else
+        {
+            Render();
+            for (int i = 0; i < 3; i++)
+            {
+                Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = g_CommandAllocators[i];
+                if (meshRenderer.Initialize(g_CommandList, m_commandAllocators))
+                {
+                    meshRenderer.Draw();
+                }
+                else
+                {
+                    printf("Init false");
+                    return 0;
+                }
+            }
         }
     }
 
