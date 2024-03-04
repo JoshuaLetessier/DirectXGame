@@ -6,7 +6,7 @@ class Shooter
 {
 private:
 	std::vector<Entity> m_Entity;
-	Component balle;
+	MeshRenderer balle;
 public:
 
 	Shooter();
