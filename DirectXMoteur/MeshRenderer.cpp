@@ -1,7 +1,8 @@
 #include "MeshRenderer.h"
 #include "d3dUtil.h"
-#include "DXParam.h"
 #include "Window.h"
+
+Window Win;
 
 MeshRenderer::MeshRenderer()
 {
@@ -18,25 +19,23 @@ MeshRenderer::MeshRenderer()
 
 void MeshRenderer::Draw()
 {
-
-    DXParam dxParam;
-    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
-    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
+    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = Win.CurrentBackBufferView();
+    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = Win.DepthStencilView();
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
     D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
-    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(dxParam.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(Win.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    ThrowIfFailed(dxParam.g_CommandAllocators->Reset());
+    ThrowIfFailed(Win.g_CommandAllocators->Reset());
 
-    ThrowIfFailed(dxParam.g_CommandList->Reset(dxParam.g_CommandAllocators->Get(), dxParam.g_Pso.Get()));
+    ThrowIfFailed(Win.g_CommandList->Reset(Win.g_CommandAllocators->Get(), Win.g_Pso.Get()));
 
     mCommandList->RSSetViewports(1, &mScreenViewport);
     mCommandList->RSSetScissorRects(1, &mScissorRect);
 
     mCommandList->ResourceBarrier(1, &transition);
 
-    mCommandList->ClearRenderTargetView(dxParam.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-    mCommandList->ClearDepthStencilView(dxParam.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    mCommandList->ClearRenderTargetView(Win.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    mCommandList->ClearDepthStencilView(Win.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
    
     mCommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
@@ -63,11 +62,11 @@ void MeshRenderer::Draw()
     mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
    
-    ThrowIfFailed(dxParam.g_SwapChain->Present(0, 0));
+    ThrowIfFailed(Win.g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
     Window window;
-    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, window.g_FenceValue, window.g_FenceEvent );
+    Win.Flush(Win.g_CommandQueue, Win.g_Fence, window.g_FenceValue, window.g_FenceEvent );
 }
 
 void MeshRenderer::BuildDescriptorHeaps()
