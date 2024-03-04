@@ -37,6 +37,7 @@ using namespace Microsoft::WRL;
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
+#include "MeshRenderer.h"
 
 // Helper functions
 #include "Helpers.h"

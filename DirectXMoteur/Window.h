@@ -45,6 +45,8 @@ private:
 	UINT message;
 	WPARAM wParam;
 	LPARAM lParam;
+
+	MeshRenderer meshRenderer;
 public:
 	Window();
 	void RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName);

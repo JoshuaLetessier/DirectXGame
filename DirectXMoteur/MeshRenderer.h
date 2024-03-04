@@ -3,13 +3,19 @@
 
 
 using Microsoft::WRL::ComPtr;
+using namespace renderObject;
 
 class MeshRenderer : public Component
 {
 public:
 	MeshRenderer();
 
+	bool Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_CommandAllocators);
+
+	//void OnResize();
+	//void Update();
 	void Draw();
+	
 	void BuildDescriptorHeaps();
 	void BuildConstantBufferVertex();
 	void BuildRootSignature();
@@ -18,7 +24,7 @@ public:
 	void CreateCubeGeometry();
 	void BuildPSO();
 
-
+	Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
 private:
 	Cube cubeMesh;
 	std::vector<std::uint16_t> m_cubeIndices = cubeIndices;
@@ -26,6 +32,8 @@ private:
 	//unsigned short* p_shapeIndices = shapeIndices;
 	//Pyramide pyramideMesh;
 	//unsigned short* p_pyramideIndices = pyramideIndices;
+
+	
 
 	UINT elementByteSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;
 	
@@ -47,9 +55,7 @@ private:
 	int mCurrBackBuffer = 0;
 	static const int SwapChainBufferCount = 2;
 
-
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
-	Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
+	
 
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
