@@ -36,12 +36,25 @@ private:
 	// Can be toggled with the Alt+Enter or F11
 	bool g_Fullscreen = false;
 
+	HINSTANCE hInstance;
+	HINSTANCE hPrevInstance;
+	PWSTR lpCmdLine;
+	int nCmdShow;
+
+	HWND hwnd;
+	UINT message;
+	WPARAM wParam;
+	LPARAM lParam;
+
+	MeshRenderer meshRenderer;
 public:
+	Window();
 	void RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName);
 	void Update();
 	void Render();
 	void Resize(uint32_t width, uint32_t height);
 	void SetFullscreen(bool fullscreen);
+	void Init();
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow);
 

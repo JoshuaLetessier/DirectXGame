@@ -1,13 +1,18 @@
-#include "DirectXGame.h"
-#ifdef _DEBUG
-#include <crtdbg.h>
-#endif
-#include "../x64/Debug/DirectXMoteur.lib"
+#include <sal.h>
+#include <wtypes.h>
+// DirectXGame.cpp : Définit le point d'entrée de l'application.
+//
 #include "../DirectXMoteur/Window.h"
+#include "Resource.h"
 
-Window window;
-
-int main() 
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    
+	Window win;
+	win.Init();
+	MessageBox(NULL, L"Bonjour, c'est une application Windows basique !", L"Hello", MB_OK);
+
+	return 0;
 }
+
+
+

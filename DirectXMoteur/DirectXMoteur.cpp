@@ -1,8 +1,9 @@
 // DirectXMoteur.cpp : Définit le point d'entrée de l'application.
 //
-
+#include <iostream>
 #include "framework.h"
 #include "DirectXMoteur.h"
+#include "Window.h"
 
 #define MAX_LOADSTRING 100
 
@@ -22,12 +23,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
+
+
+	AllocConsole();
+
+	FILE* pCin;
+	FILE* pCout;
+	FILE* pCerr;
+
+	// Utilise freopen_s pour éviter les avertissements de sécurité
+	if (freopen_s(&pCin, "CONIN$", "r", stdin) != 0 ||
+		freopen_s(&pCout, "CONOUT$", "w", stdout) != 0 ||
+		freopen_s(&pCerr, "CONOUT$", "w", stderr) != 0) {
+		// Gestion des erreurs ici si nécessaire
+		std::cerr << "Erreur lors de la redirection des flux.\n";
+		return 1; // Quitte le programme en cas d'erreur
+	}
+
+	Window win;
+	win.Init();
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	// TODO: Placez le code ici.
+	//// TODO: Placez le code ici.
 
-	// Initialise les chaînes globales
+	//// Initialise les chaînes globales
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_DIRECTXMOTEUR, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
@@ -51,7 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			DispatchMessage(&msg);
 		}
 	}
-
+	FreeConsole();
 	return (int)msg.wParam;
 }
 

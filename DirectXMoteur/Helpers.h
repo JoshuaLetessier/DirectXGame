@@ -1,13 +1,13 @@
-#pragma once
-
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h> // For HRESULT
-#include <iostream>
-
-//inline void ThrowIfFailed(HRESULT hr)
-//{
-//    if (FAILED(hr))
-//    {
-//        throw std::exception();
-//    }
-//}
+//#pragma once
+//// DirectX 12 specific headers.
+//#include "pch.h"
+//#include "d3dUtil.h"
+//#include "DXParam.h"
+//#include "MeshRenderer.h"
+//#include "Collider.h"
+//#include "Entity.h"
+//#include "framework.h"
+//#include "Resource.h"
+//#include "targetver.h"
+//#include "Transform.h"
+//#include "Window.h"

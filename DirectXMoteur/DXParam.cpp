@@ -1,4 +1,5 @@
 #include "DXParam.h"
+#include <iostream>
 
 DXParam::DXParam()
 {
@@ -128,13 +129,15 @@ ComPtr<IDXGIAdapter4> DXParam::GetAdapter(bool useWarp)
     ComPtr<IDXGIAdapter1> dxgiAdapter1;
     ComPtr<IDXGIAdapter4> dxgiAdapter4;
 
+    printf("useWarp %d\n", useWarp);
     if (useWarp)
     {
         ThrowIfFailed(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&dxgiAdapter1)));
         ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
-    }
 
-    else
+        return dxgiAdapter4;
+    }
+    else if(!useWarp)
     {
         SIZE_T maxDedicatedVideoMemory = 0;
         for (UINT i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapter1) != DXGI_ERROR_NOT_FOUND; ++i)
@@ -145,25 +148,28 @@ ComPtr<IDXGIAdapter4> DXParam::GetAdapter(bool useWarp)
             // Check to see if the adapter can create a D3D12 device without actually 
             // creating it. The adapter with the largest dedicated video memory
             // is favored.
-            if ((dxgiAdapterDesc1.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
+           /* if ((dxgiAdapterDesc1.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
                 SUCCEEDED(D3D12CreateDevice(dxgiAdapter1.Get(),
                     D3D_FEATURE_LEVEL_11_0, __uuidof(ID3D12Device), nullptr)) &&
                 dxgiAdapterDesc1.DedicatedVideoMemory > maxDedicatedVideoMemory)
-            {
+            {*/
                 maxDedicatedVideoMemory = dxgiAdapterDesc1.DedicatedVideoMemory;
                 ThrowIfFailed(dxgiAdapter1.As(&dxgiAdapter4));
-            }
+            //}
         }
+        return dxgiAdapter4;
     }
 
-    return dxgiAdapter4;
+   
 }
 
 ComPtr<ID3D12Device2> DXParam::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
 {
     ComPtr<ID3D12Device2> d3d12Device2;
-    ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
 
+    ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
+    
+    
     HRESULT WINAPI D3D12CreateDevice(
         _In_opt_  IUnknown * pAdapter,                  //Carte video or default
         D3D_FEATURE_LEVEL MinimumFeatureLevel,
@@ -207,7 +213,7 @@ ComPtr<ID3D12Device2> DXParam::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
         ThrowIfFailed(pInfoQueue->PushStorageFilter(&NewFilter));
     }
 #endif
-
+    ComPtr<IDXGIAdapter4> m_adapter = adapter;
     return d3d12Device2;
 }
 
@@ -315,12 +321,27 @@ ComPtr<ID3D12Fence> DXParam::CreateFence(ComPtr<ID3D12Device2> device)
 
 D3D12_CPU_DESCRIPTOR_HANDLE DXParam::DepthStencilView() const
 {
-    return g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    if (g_RTVDescriptorHeap != 0)
+    {
+        return g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+    }
+    else
+    {
+        std::cout << "machin2 null " << std::endl;
+    }
+   
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView() const
 {
-    return CD3DX12_CPU_DESCRIPTOR_HANDLE(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_CurrentBackBufferIndex, g_RTVDescriptorSize);
+    if (g_RTVDescriptorSize != 0)
+    {
+        return CD3DX12_CPU_DESCRIPTOR_HANDLE(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_CurrentBackBufferIndex, g_RTVDescriptorSize);
+    }
+    else
+    {
+        std::cout << "machin null " << std::endl;
+    }
 }
 
 ID3D12Resource* DXParam::CurrentBackBuffer() const 

@@ -1,4 +1,9 @@
 #include "Window.h"
+#include <iostream>
+
+Window::Window()
+{
+}
 
 void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName)
 {
@@ -15,7 +20,8 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.hInstance = hInst;                                  // hInstance: Handle to the instance that contains the window procedure for the class
     windowClass.hIcon = ::LoadIcon(hInst, NULL);                    // Icon loader Up-Left 
     windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);            // Cursor default handle
-    windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);         // Background Color
+  // windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // Background Color
+    windowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
     windowClass.lpszMenuName = NULL;                                // Pointer to the name of the class menu resource in the resource file.
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
     windowClass.hIconSm = ::LoadIcon(hInst, NULL);
@@ -57,7 +63,6 @@ void Window::Update()
 
 void Window::Render()
 {
-
     auto commandAllocator = dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex];
     auto backBuffer = dxParam.g_BackBuffers[dxParam.g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
 
@@ -72,7 +77,7 @@ void Window::Render()
         // In this case, the method is used to create a transition resource barrier. By default, all sub-resources will transition to the same state.
         dxParam.g_CommandList->ResourceBarrier(1, &barrier);
 
-        FLOAT clearColor[] = { 0.9f, 0.6f, 0.9f, 1.0f };
+        FLOAT clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
         CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(dxParam.g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
             dxParam.g_CurrentBackBufferIndex, dxParam.g_RTVDescriptorSize);
 
@@ -103,6 +108,8 @@ void Window::Render()
 
         dxParam.WaitForFenceValue(dxParam.g_Fence, g_FrameFenceValues[dxParam.g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
         // the content of the current back buffer, using the WaitForFenceValue function.
+       
+        
     }
 }
 
@@ -188,6 +195,14 @@ void Window::SetFullscreen(bool fullscreen)
     }
 }
 
+void Window::Init()
+{
+    wWinMain(hInstance,hPrevInstance, lpCmdLine, nCmdShow);
+    WndProc(hwnd, message, wParam, lParam);
+   // Render();
+    
+}
+
 LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (g_IsInitialized)
@@ -266,6 +281,24 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     const wchar_t* windowClassName = L"DX12WindowClass";
     dxParam.ParseCommandLineArguments();
 
+    // Try to create hardware device.
+    HRESULT hardwareResult = D3D12CreateDevice(
+        nullptr,             // default adapter
+        D3D_FEATURE_LEVEL_11_0,
+        IID_PPV_ARGS(&meshRenderer.md3dDevice));
+
+    //// Fallback to WARP device.
+    //if (FAILED(hardwareResult))
+    //{
+    //    ComPtr<IDXGIAdapter> pWarpAdapter;
+    //    ThrowIfFailed(mdxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pWarpAdapter)));
+
+    //    ThrowIfFailed(D3D12CreateDevice(
+    //        pWarpAdapter.Get(),
+    //        D3D_FEATURE_LEVEL_11_0,
+    //        IID_PPV_ARGS(&md3dDevice)));
+    //}
+
     dxParam.EnableDebugLayer();
 
     g_TearingSupported = dxParam.CheckTearingSupport();                                             // Application tearing support is queried
@@ -297,8 +330,12 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     {
         dxParam.g_CommandAllocators[i] = dxParam.CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
     }
-    dxParam.g_CommandList = dxParam.CreateCommandList(g_Device,
-        dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
+    dxParam.g_CommandList = dxParam.CreateCommandList(g_Device, dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
+   /* if (dxParam.g_CommandList == nullptr)
+    {
+        printf("dxParam.g_CommandList = nullptr %p\n", dxParam.g_CommandList);
+    }*/
+    
 
     dxParam.g_Fence = dxParam.CreateFence(g_Device);                // Perform GPU synchronization
     g_FenceEvent = dxParam.CreateEventHandle();             // Handle used to block the CPU
@@ -314,6 +351,25 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         {
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
+        }
+        else
+        {
+            Render();
+            for (int i = 0; i < 3; i++)
+            {
+                Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = dxParam.g_CommandAllocators[i];
+                if (meshRenderer.Initialize(dxParam.g_CommandList, m_commandAllocators))
+                {
+                    meshRenderer.Draw();
+                }
+                else
+                {
+                    printf("ta mère suce des ours");
+                    return 0;
+                }
+            }
+           
+           
         }
     }
 
