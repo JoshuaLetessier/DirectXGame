@@ -323,7 +323,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView() const
 
 ID3D12Resource* DXParam::CurrentBackBuffer() const 
 {
-    return g_BackBuffers[3].Get();
+    return g_BackBuffers[g_NumFrames].Get();
 }
 
 HANDLE DXParam::CreateEventHandle()
