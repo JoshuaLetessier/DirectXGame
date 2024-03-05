@@ -98,8 +98,8 @@ void MeshRenderer::Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_Command
     ID3D12CommandList* cmdsLists[] = { stockCommandList.Get() };
     stockCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-   
-    ThrowIfFailed(dxParam.g_SwapChain->Present(0, 0));
+
+    ThrowIfFailed(window.g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
     
@@ -133,7 +133,7 @@ void MeshRenderer::BuildConstantBufferVertex()
     D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
 
     int boxCBufIndex = 0;
-    cbAddress += boxCBufIndex * mCBByteSize;
+    cbAddress += boxCBufIndex * static_cast<unsigned long long>(mCBByteSize);
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
     cbvDesc.BufferLocation = cbAddress;
@@ -172,11 +172,11 @@ void MeshRenderer::BuildShader()
 
 void MeshRenderer::InputElement()
 {
-	D3D12_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-	};
+    D3D12_INPUT_ELEMENT_DESC vertexDesc[] =
+    {
+        {"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    };
 }
 
 void MeshRenderer::CreateCubeGeometry()
@@ -185,11 +185,11 @@ void MeshRenderer::CreateCubeGeometry()
 
     const UINT  sizeCubeMesh = sizeof(cubeMesh);
     const UINT  sizeIndicesCubeMesh = sizeof(m_cubeIndices);
-	const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
-	const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
+    const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
+    const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
 
-	mCubeGeo = std::make_unique<MeshGeometry>();
-	mCubeGeo->Name = "cubeGeo";
+    mCubeGeo = std::make_unique<MeshGeometry>();
+    mCubeGeo->Name = "cubeGeo";
 
     ThrowIfFailed(D3DCreateBlob(c_vertexBufferSize, &mCubeGeo->VertexBufferCPU));
     CopyMemory(mCubeGeo->VertexBufferCPU->GetBufferPointer(), cubeMesh.cubeVertices.data(), c_vertexBufferSize);
@@ -225,11 +225,11 @@ void MeshRenderer::BuildPSO()
      reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
      mvsByteCode->GetBufferSize()
     };
-   /* psoDesc.PS =
-    {
-     reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
-     mpsByteCode->GetBufferSize()
-    };*/
+    /* psoDesc.PS =
+     {
+      reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
+      mpsByteCode->GetBufferSize()
+     };*/
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);

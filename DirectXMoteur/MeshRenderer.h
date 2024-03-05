@@ -16,6 +16,7 @@ public:
 	//void Update();
 	void Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_CommandAllocators);
 	
+
 	void BuildDescriptorHeaps();
 	void BuildConstantBufferVertex();
 	void BuildRootSignature();
@@ -44,7 +45,7 @@ private:
 	
 
 	UINT elementByteSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;
-	
+
 	std::unique_ptr<MeshGeometry> mCubeGeo = nullptr;
 
 	ComPtr<ID3DBlob> mvsByteCode = nullptr;

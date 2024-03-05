@@ -1,18 +1,18 @@
-// DirectXMoteur.cpp : DÃ©finit le point d'entrÃ©e de l'application.
+// DirectXMoteur.cpp : Définit le point d'entrée de l'application.
 //
 #include <iostream>
 #include "framework.h"
-#include "DirectXMoteur.h"
+#include "DXMoteur.h"
 #include "Window.h"
 
 #define MAX_LOADSTRING 100
 
-// Variables globalesÂ :
+// Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
-WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenÃªtre principale
+WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre principale
 
-// DÃ©clarations anticipÃ©es des fonctions incluses dans ce module de codeÂ :
+// Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -31,11 +31,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	FILE* pCout;
 	FILE* pCerr;
 
-	// Utilise freopen_s pour Ã©viter les avertissements de sÃ©curitÃ©
+	// Utilise freopen_s pour éviter les avertissements de sécurité
 	if (freopen_s(&pCin, "CONIN$", "r", stdin) != 0 ||
 		freopen_s(&pCout, "CONOUT$", "w", stdout) != 0 ||
 		freopen_s(&pCerr, "CONOUT$", "w", stderr) != 0) {
-		// Gestion des erreurs ici si nÃ©cessaire
+		// Gestion des erreurs ici si nécessaire
 		std::cerr << "Erreur lors de la redirection des flux.\n";
 		return 1; // Quitte le programme en cas d'erreur
 	}
@@ -47,12 +47,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//// TODO: Placez le code ici.
 
-	//// Initialise les chaÃ®nes globales
+	//// Initialise les chaînes globales
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_DIRECTXMOTEUR, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	// Effectue l'initialisation de l'applicationÂ :
+	// Effectue l'initialisation de l'application :
 	if (!InitInstance(hInstance, nCmdShow))
 	{
 		return FALSE;
@@ -62,7 +62,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	// Boucle de messages principaleÂ :
+	// Boucle de messages principale :
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -76,9 +76,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 }
 
 //
-//  FONCTIONÂ : MyRegisterClass()
+//  FONCTION : MyRegisterClass()
 //
-//  OBJECTIFÂ : Inscrit la classe de fenÃªtre.
+//  OBJECTIF : Inscrit la classe de fenêtre.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -102,14 +102,14 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 //
-//   FONCTIONÂ : InitInstance(HINSTANCE, int)
+//   FONCTION : InitInstance(HINSTANCE, int)
 //
-//   OBJECTIFÂ : enregistre le handle d'instance et crÃ©e une fenÃªtre principale
+//   OBJECTIF : enregistre le handle d'instance et crée une fenêtre principale
 //
-//   COMMENTAIRESÂ :
+//   COMMENTAIRES :
 //
 //        Dans cette fonction, nous enregistrons le handle de l'instance dans une variable globale, puis
-//        nous crÃ©ons et affichons la fenÃªtre principale du programme.
+//        nous créons et affichons la fenêtre principale du programme.
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -130,13 +130,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  FONCTIONÂ : WndProc(HWND, UINT, WPARAM, LPARAM)
+//  FONCTION : WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  OBJECTIFÂ : Traite les messages pour la fenÃªtre principale.
+//  OBJECTIF : Traite les messages pour la fenêtre principale.
 //
 //  WM_COMMAND  - traite le menu de l'application
-//  WM_PAINT    - Dessine la fenÃªtre principale
-//  WM_DESTROY  - gÃ©nÃ¨re un message d'arrÃªt et retourne
+//  WM_PAINT    - Dessine la fenêtre principale
+//  WM_DESTROY  - génère un message d'arrêt et retourne
 //
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -146,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);
-		// Analyse les sÃ©lections de menuÂ :
+		// Analyse les sélections de menu :
 		switch (wmId)
 		{
 		case IDM_ABOUT:
@@ -177,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-// Gestionnaire de messages pour la boÃ®te de dialogue Ã€ propos de.
+// Gestionnaire de messages pour la boîte de dialogue À propos de.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
