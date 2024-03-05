@@ -2,9 +2,26 @@
 #include "d3dUtil.h"
 #include "DXParam.h"
 #include "Window.h"
+#include <iostream>
 
 MeshRenderer::MeshRenderer()
 {
+}
+
+
+bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, ComPtr<ID3D12CommandAllocator> m_CommandAllocators)
+{
+    DXParam dxParam;
+    Window window;
+    // Reset the command list to prep for initialization commands.
+
+
+    //ComPtr<ID3D12GraphicsCommandList> m_CommandList = dxParam.g_CommandList;
+
+    ThrowIfFailed(m_CommandList->Reset(m_CommandAllocators.Get(), nullptr));
+
+
+
     BuildDescriptorHeaps();
     BuildConstantBufferVertex();
     BuildRootSignature();
@@ -12,7 +29,41 @@ MeshRenderer::MeshRenderer()
     InputElement();
     CreateCubeGeometry();
     BuildPSO();
+
+    // Execute the initialization commands.
+    ThrowIfFailed(dxParam.g_CommandList->Close());
+    ID3D12CommandList* cmdsLists[] = { dxParam.g_CommandList.Get() };
+    mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+    // Wait until initialization is complete.
+    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, window.g_FenceValue, window.g_FenceEvent);
+
+    return true;
 }
+
+void MeshRenderer::Update()
+{
+    XMMATRIX world = XMMatrixIdentity();
+    XMMATRIX view = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+    XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f * XM_PI, 800 / 600, 1.0f, 1000.0f);
+
+    XMMATRIX worldProj = world * proj;
+
+    worldProj = XMMatrixTranspose(worldProj);
+
+    XMFLOAT4X4 worldProjFloat4x4;
+    XMStoreFloat4x4(&worldProjFloat4x4, worldProj);
+}
+
+//void MeshRenderer::OnResize()
+//{
+//    window.Resize();
+//
+//    // The window resized, so update the aspect ratio and recompute the projection matrix.
+//    XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+//    XMStoreFloat4x4(&mProj, P);
+//}
+
 
 
 
@@ -20,54 +71,57 @@ void MeshRenderer::Draw()
 {
 
     DXParam dxParam;
-    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
-    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
-    D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
+    Window window;
+
     CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(dxParam.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
 
     ThrowIfFailed(dxParam.g_CommandAllocators->Reset());
 
     ThrowIfFailed(dxParam.g_CommandList->Reset(dxParam.g_CommandAllocators->Get(), dxParam.g_Pso.Get()));
 
-    mCommandList->RSSetViewports(1, &mScreenViewport);
-    mCommandList->RSSetScissorRects(1, &mScissorRect);
+    dxParam.g_CommandList->RSSetViewports(1, &mScreenViewport);
+    dxParam.g_CommandList->RSSetScissorRects(1, &mScissorRect);
 
-    mCommandList->ResourceBarrier(1, &transition);
+    dxParam.g_CommandList->ResourceBarrier(1, &transition);
 
-    mCommandList->ClearRenderTargetView(dxParam.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-    mCommandList->ClearDepthStencilView(dxParam.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    dxParam.g_CommandList->ClearRenderTargetView(dxParam.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    dxParam.g_CommandList->ClearDepthStencilView(dxParam.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-   
-    mCommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
+    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
+    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
+    dxParam.g_CommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
 
 
     ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
-    mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-    mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+    dxParam.g_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+    dxParam.g_CommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    mCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-    mCommandList->IASetIndexBuffer(&indexBufferView);
-    mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
+    dxParam.g_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-    mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+    D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
+    dxParam.g_CommandList->IASetIndexBuffer(&indexBufferView);
+    dxParam.g_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    mCommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+    dxParam.g_CommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+    dxParam.g_CommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 
-    mCommandList->ResourceBarrier(1, &transition);
+    dxParam.g_CommandList->ResourceBarrier(1, &transition);
 
-    ThrowIfFailed(mCommandList->Close());
+    ThrowIfFailed(dxParam.g_CommandList->Close());
 
-    ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+    ID3D12CommandList* cmdsLists[] = { dxParam.g_CommandList.Get() };
     mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
-   
+
     ThrowIfFailed(dxParam.g_SwapChain->Present(0, 0));
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
-    Window window;
-    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, window.g_FenceValue, window.g_FenceEvent );
+
+    dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, window.g_FenceValue, window.g_FenceEvent);
 }
 
 void MeshRenderer::BuildDescriptorHeaps()
@@ -77,8 +131,16 @@ void MeshRenderer::BuildDescriptorHeaps()
     cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     cbvheapDesc.NodeMask = 0;
+    if (md3dDevice != NULL)
+    {
+        return;
+    }
+    else
+    {
+        printf("test %p\n", md3dDevice);
+        ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
+    }
 
-    ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
 }
 
 void MeshRenderer::BuildConstantBufferVertex()
@@ -127,22 +189,24 @@ void MeshRenderer::BuildShader()
 
 void MeshRenderer::InputElement()
 {
-	D3D12_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-	};
+    D3D12_INPUT_ELEMENT_DESC vertexDesc[] =
+    {
+        {"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    };
 }
 
 void MeshRenderer::CreateCubeGeometry()
-{	
+{
+    DXParam dxParam;
+
     const UINT  sizeCubeMesh = sizeof(cubeMesh);
     const UINT  sizeIndicesCubeMesh = sizeof(m_cubeIndices);
-	const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
-	const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
+    const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
+    const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
 
-	mCubeGeo = std::make_unique<MeshGeometry>();
-	mCubeGeo->Name = "cubeGeo";
+    mCubeGeo = std::make_unique<MeshGeometry>();
+    mCubeGeo->Name = "cubeGeo";
 
     ThrowIfFailed(D3DCreateBlob(c_vertexBufferSize, &mCubeGeo->VertexBufferCPU));
     CopyMemory(mCubeGeo->VertexBufferCPU->GetBufferPointer(), cubeMesh.cubeVertices.data(), c_vertexBufferSize);
@@ -150,8 +214,8 @@ void MeshRenderer::CreateCubeGeometry()
     ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
     CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
 
-    mCubeGeo->VertexBufferGPU = d3dUtil:: CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
-    mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
+    mCubeGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), dxParam.g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
+    mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), dxParam.g_CommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
 
     mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
     mCubeGeo->VertexBufferByteSize = c_vertexBufferSize;
@@ -178,11 +242,11 @@ void MeshRenderer::BuildPSO()
      reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
      mvsByteCode->GetBufferSize()
     };
-   /* psoDesc.PS =
-    {
-     reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
-     mpsByteCode->GetBufferSize()
-    };*/
+    /* psoDesc.PS =
+     {
+      reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
+      mpsByteCode->GetBufferSize()
+     };*/
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -196,4 +260,3 @@ void MeshRenderer::BuildPSO()
 
     //ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
-
