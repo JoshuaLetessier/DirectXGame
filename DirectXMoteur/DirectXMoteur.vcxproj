@@ -149,6 +149,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="d3d12.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
     <ClCompile Include="Transform.cpp" />

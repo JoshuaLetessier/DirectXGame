@@ -77,6 +77,8 @@ public:
 		uint32_t width, uint32_t height, uint32_t bufferCount);
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ComPtr<ID3D12Device2> device,
 		D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors);
+	ComPtr<D3D12_CONSTANT_BUFFER_VIEW_DESC> CreateConstantBufferView(ComPtr<ID3D12Device2> device, D3D12_GPU_VIRTUAL_ADDRESS BufferLocation, UINT SizeInBytes);
+
 	ComPtr<ID3D12CommandAllocator> CreateCommandAllocator(ComPtr<ID3D12Device2> device,
 		D3D12_COMMAND_LIST_TYPE type);   // "type"->Value typed who specify the type of allocator command create
 	ComPtr<ID3D12GraphicsCommandList> CreateCommandList(ComPtr<ID3D12Device2> device,
@@ -90,6 +92,9 @@ public:
 
 	uint64_t Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence,
 		uint64_t& fenceValue);
+
+	void BuildDescriptorHeaps();
+	void BuildConstantBufferVertex();
 
 
 	// DirectX 12 Objects
@@ -144,4 +149,6 @@ public:
 
 
 	ComPtr<ID3D12PipelineState> g_Pso;
+
+	std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mConstantBuffer = nullptr;
 };

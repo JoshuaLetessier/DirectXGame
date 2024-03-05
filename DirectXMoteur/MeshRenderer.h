@@ -29,6 +29,7 @@ public:
 	ComPtr<ID3D12GraphicsCommandList> stockCommandList;
 	ComPtr<ID3D12CommandQueue> stockCommandQueue;
 	ComPtr<ID3D12Fence> stockFence;
+	ComPtr<ID3D12DescriptorHeap> stockRTVDescriptorHeap;
 
 	const static uint8_t stockNumFrames = 3;
 	ComPtr<ID3D12CommandAllocator> stockCommandAllocators[stockNumFrames];

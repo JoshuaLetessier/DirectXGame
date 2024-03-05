@@ -5,6 +5,10 @@
 #include "DXMoteur.h"
 #include "Window.h"
 
+#ifdef _DEBUG
+#include <crtdbg.h>
+#endif
+
 #define MAX_LOADSTRING 100
 
 // Variables globales :
@@ -24,6 +28,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 
+#ifdef _DEBUG
+	_CrtMemState memStateInit;
+	_CrtMemCheckpoint(&memStateInit);
+#endif
 
 	AllocConsole();
 
@@ -72,6 +80,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 	FreeConsole();
+
+#ifdef _DEBUG
+	_CrtMemState memStateEnd, memStateDiff;
+	_CrtMemCheckpoint(&memStateEnd);
+	if (_CrtMemDifference(&memStateDiff, &memStateInit, &memStateEnd))
+	{
+		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
+	}
+#endif
+
 	return (int)msg.wParam;
 }
 

@@ -3,8 +3,6 @@
 #include "Window.h"
 #include <iostream>
 
-class DXParam;
-DXParam dxParam;
 
 Window window;
 ComPtr<ID3D12Device2> m_Device = window.g_Device;
@@ -19,8 +17,8 @@ bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, M
     
      ThrowIfFailed(m_CommandList->Reset(m_CommandAllocators.Get(), nullptr));
   
-    BuildDescriptorHeaps();
-    BuildConstantBufferVertex();
+   // BuildDescriptorHeaps();
+    //BuildConstantBufferVertex();
     BuildRootSignature();
     BuildShader();
     InputElement();
@@ -34,7 +32,7 @@ bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, M
     stockCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
     // Wait until initialization is complete.
-    dxParam.Flush(stockCommandQueue, stockFence, window.g_FenceValue, window.g_FenceEvent);
+    window.Flush(stockCommandQueue, stockFence, window.g_FenceValue, window.g_FenceEvent);
 
     return true;
 }
@@ -55,7 +53,7 @@ void MeshRenderer::Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_Command
 {    
     Window window;
 
-    ThrowIfFailed(stockCommandList->Reset(m_CommandAllocators.Get(), dxParam.g_Pso.Get()));
+    ThrowIfFailed(stockCommandList->Reset(m_CommandAllocators.Get(), window.g_Pso.Get()));
       
     stockCommandList->RSSetViewports(1, &mScreenViewport);
     stockCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -65,13 +63,13 @@ void MeshRenderer::Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_Command
     stockCommandList->ResourceBarrier(1, &transition);
 
     printf("test");
-    stockCommandList->ClearRenderTargetView(dxParam.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    stockCommandList->ClearRenderTargetView(window.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
 
 
-    stockCommandList->ClearDepthStencilView(dxParam.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    stockCommandList->ClearDepthStencilView(window.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = dxParam.CurrentBackBufferView();
-    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = dxParam.DepthStencilView();
+    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = window.CurrentBackBufferView();
+    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = window.DepthStencilView();
     stockCommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
 
 
@@ -103,7 +101,7 @@ void MeshRenderer::Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_Command
     mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
 
     
-    dxParam.Flush(stockCommandQueue, stockFence, window.g_FenceValue, window.g_FenceEvent);
+    window.Flush(stockCommandQueue, stockFence, window.g_FenceValue, window.g_FenceEvent);
 }
 
 void MeshRenderer::BuildDescriptorHeaps()
@@ -113,21 +111,14 @@ void MeshRenderer::BuildDescriptorHeaps()
     cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     cbvheapDesc.NodeMask = 0;
-    if (m_Device != NULL)
-    {
-        return;
-    }
-    else
-    {
-        ThrowIfFailed(stockDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
-    }
-    
+
+    window.CreateDescriptorHeap(m_Device ,cbvheapDesc.Type, cbvheapDesc.NumDescriptors);
 }
 
 void MeshRenderer::BuildConstantBufferVertex()
 {
     printf("md3D %p\n", &m_Device);
-    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(stockDevice.Get(), 1, true);
+    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(m_Device.Get(), 1, true);
     UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
 
     D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
@@ -197,8 +188,8 @@ void MeshRenderer::CreateCubeGeometry()
     ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
     CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
 
-    mCubeGeo->VertexBufferGPU = d3dUtil:: CreateDefaultBuffer(stockDevice.Get(), stockCommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
-    mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(stockDevice.Get(), stockCommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
+    mCubeGeo->VertexBufferGPU = d3dUtil:: CreateDefaultBuffer(m_Device.Get(), window.g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
+    mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(window.g_Device.Get(), window.g_CommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
 
     mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
     mCubeGeo->VertexBufferByteSize = c_vertexBufferSize;

@@ -58,6 +58,7 @@ void Window::UpdateRenderTargetViews(ComPtr<ID3D12Device2> device, ComPtr<IDXGIS
     auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);      // This method retrieves the starting point in a descriptor heap, allowing iteration through descriptors.
     // It returns a structure that simplifies handling of this starting point.
 
+    descriptorHeap->GetCPUDescriptorHandleForHeapStart();
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(descriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
     for (int i = 0; i < g_NumFrames; ++i)
@@ -214,7 +215,6 @@ ComPtr<ID3D12Device2> Window::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
     return d3d12Device2;
 }
 
-
 ComPtr<ID3D12CommandQueue> Window::CreateCommandQueue(ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE type)   // The command queue is created using the CreateCommandQueue method of the ID3D12Device interface,
 {                                                                                                           // which takes a D3D12_COMMAND_QUEUE_DESC structure as its first argument.
     ComPtr<ID3D12CommandQueue> d3d12CommandQueue;
@@ -276,7 +276,7 @@ ComPtr<IDXGISwapChain4> Window::CreateSwapChain(HWND hWnd, ComPtr<ID3D12CommandQ
 // The function described above creates a descriptor heap of a specific type.
 ComPtr<ID3D12DescriptorHeap>Window::CreateDescriptorHeap(ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)    // "type" Value typed specify type of describes heap ; "numDescriptors"  Number of describes of heap
 {
-    ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+    ComPtr<ID3D12DescriptorHeap> descriptorHeap = g_RTVDescriptorHeap;
 
     D3D12_DESCRIPTOR_HEAP_DESC desc = {};
     desc.NumDescriptors = numDescriptors;
@@ -347,6 +347,66 @@ uint64_t Window::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fe
 
     return fenceValueForSignal;
 }
+
+void Window::BuildDescriptorHeaps()
+{
+    D3D12_DESCRIPTOR_HEAP_DESC cbvheapDesc;
+    cbvheapDesc.NumDescriptors = g_NumFrames;
+    cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    cbvheapDesc.NodeMask = 0;
+
+    CreateDescriptorHeap(g_Device, cbvheapDesc.Type, cbvheapDesc.NumDescriptors);
+}
+
+void Window::BuildConstantBufferVertex()
+{
+    if (!g_RTVDescriptorHeap)
+    {
+        D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+        rtvHeapDesc.NumDescriptors = 3; // tailleDuTampon
+        rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+        HRESULT hr = g_Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&g_RTVDescriptorHeap));
+
+        if (FAILED(hr))
+        {
+            OutputDebugString(L"Erreur lors de la création du tampon de descripteur.\n");
+            std::cerr << "Erreur lors de la création du tampon de descripteur : " << hr << std::endl;
+            return;
+        }
+    }
+
+    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(g_Device.Get(), 1, true);
+    UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+
+    D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
+
+    int boxCBufIndex = 0;
+    cbAddress += boxCBufIndex * mCBByteSize;
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+    cbvDesc.BufferLocation = cbAddress;
+    cbvDesc.SizeInBytes = sizeof(ModelViewProjectionConstantBuffer);
+
+    UINT descriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    D3D12_CPU_DESCRIPTOR_HANDLE value = g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
+    // Vérifie si la handle de descripteur est dans la plage valide du tampon
+    if (value.ptr < g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr ||
+        value.ptr >= g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr + descriptorSize * 3)
+    {
+        OutputDebugString(L"Erreur : La handle de descripteur ne pointe pas vers un emplacement valide dans le tampon de descripteur.\n");
+        return;
+    }
+
+    // Crée la vue de tampon constant
+    g_Device->CreateConstantBufferView(&cbvDesc, value);
+}
+
+
+
 
 void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName)
 {
@@ -652,6 +712,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     g_CurrentBackBufferIndex = g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
 
     g_RTVDescriptorHeap = CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, g_NumFrames);      // Segment memory RTV create and descrive size queries 
+    meshRenderer.stockRTVDescriptorHeap = g_RTVDescriptorHeap;
     g_RTVDescriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     UpdateRenderTargetViews(g_Device, g_SwapChain, g_RTVDescriptorHeap);
@@ -681,12 +742,15 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         else
         {
             Render();
+            BuildDescriptorHeaps();
+            BuildConstantBufferVertex();
             for (int i = 0; i < 3; i++)
             {
                 Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = g_CommandAllocators[i];
+       
                 if (meshRenderer.Initialize(g_CommandList, m_commandAllocators))
                 {
-                    meshRenderer.Draw();
+                    meshRenderer.Draw(m_commandAllocators);
                 }
                 else
                 {
@@ -744,3 +808,5 @@ HWND Window::CreateWindow(const wchar_t* windowClassName, HINSTANCE hInst, const
 
     return hWnd;
 }
+
+

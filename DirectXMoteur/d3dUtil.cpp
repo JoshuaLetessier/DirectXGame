@@ -48,7 +48,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> d3dUtil::CreateDefaultBuffer(
     {
         CD3DX12_RESOURCE_DESC buffer = CD3DX12_RESOURCE_DESC::Buffer(byteSize);
         CD3DX12_HEAP_PROPERTIES typeDefault = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-        HRESULT hr__ = (device->CreateCommittedResource(&typeDefault, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_COMMON, nullptr, __uuidof(**(defaultBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(defaultBuffer.GetAddressOf()))); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\d3dUtil.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+        HRESULT hr__ = (device->CreateCommittedResource(&typeDefault, D3D12_HEAP_FLAG_NONE, &buffer, D3D12_RESOURCE_STATE_COMMON, nullptr, __uuidof(**(defaultBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(defaultBuffer.GetAddressOf()))); 
+        std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\d3dUtil.cpp"); 
+        if ((((HRESULT)(hr__)) < 0)) {
             throw DxException(hr__, L"device->CreateCommittedResource( &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(byteSize), D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(defaultBuffer.GetAddressOf()))", wfn, 54);
         }
     };
