@@ -11,8 +11,8 @@ void Ennemies::spawnEnnemies()
 	for (int i = 0; i < sizeof(m_Entity); i++) {
 		m_Entity[i].AddComponent(&ennemy);
 		m_Entity[i].GetTransform().translate(offset['x'], offset['y'], offset['z']);
+		m_matrixEnnemy = m_Entity[i].addMatrix();
 	}
-	ennemy.Draw();
 }
 
 std::vector<int> Ennemies::spawnAleatoire()

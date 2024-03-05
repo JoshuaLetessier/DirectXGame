@@ -39,6 +39,12 @@
     <ClInclude Include="Ennemies.h">
       <Filter>Fichiers d%27en-tête\Component</Filter>
     </ClInclude>
+    <ClInclude Include="LunchGame.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame.cpp">
@@ -49,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="Ennemies.cpp">
       <Filter>Fichiers sources\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LunchGame.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

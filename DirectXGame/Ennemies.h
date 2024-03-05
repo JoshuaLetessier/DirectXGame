@@ -7,6 +7,8 @@ private:
 	MeshRenderer ennemy;
 	std::vector<Entity> m_Entity;
 public:
+	XMFLOAT4X4 m_matrixEnnemy;
+public:
 	Ennemies();
 	void spawnEnnemies();
 	std::vector<int> spawnAleatoire();

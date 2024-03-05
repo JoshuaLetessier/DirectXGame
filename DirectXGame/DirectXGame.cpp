@@ -4,12 +4,21 @@
 //
 #include "../DirectXMoteur/Window.h"
 #include "Resource.h"
+#include "LunchGame.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Window win;
+    LunchGame lunchGame;
 	win.Init();
-	MessageBox(NULL, L"Bonjour, c'est une application Windows basique !", L"Hello", MB_OK);
 
-	return 0;
+    try
+    {
+        return lunchGame.run();
+    }
+    catch (DxException& e)
+    {
+        MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+        return 0;
+    }
 }

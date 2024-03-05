@@ -49,6 +49,7 @@ using namespace Microsoft::WRL;
 using namespace DirectX;
 using namespace shaderStruct;
 using namespace renderObject;
+using namespace std;
 
 
 /* The min / max macros conflict with like - named member functions.
