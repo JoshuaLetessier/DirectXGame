@@ -52,7 +52,7 @@ void Window::EnableDebugLayer()
 #endif
 }
 
-void Window::UpdateRenderTargetViews(ComPtr<ID3D12Device2> device, ComPtr<IDXGISwapChain4> swapChain, ComPtr<ID3D12DescriptorHeap> descriptorHeap)
+void Window::UpdateRenderTargetViews(ComPtr<ID3D12Device> device, ComPtr<IDXGISwapChain4> swapChain, ComPtr<ID3D12DescriptorHeap> descriptorHeap)
 {
     auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);      // This method retrieves the starting point in a descriptor heap, allowing iteration through descriptors.
     // It returns a structure that simplifies handling of this starting point.
@@ -161,9 +161,9 @@ ComPtr<IDXGIAdapter4> Window::GetAdapter(bool useWarp)
     return dxgiAdapter4;
 }
 
-ComPtr<ID3D12Device2> Window::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
+ComPtr<ID3D12Device> Window::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
 {
-    ComPtr<ID3D12Device2> d3d12Device2;
+    ComPtr<ID3D12Device> d3d12Device2;
     ThrowIfFailed(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3d12Device2)));
 
     HRESULT WINAPI D3D12CreateDevice(
@@ -214,7 +214,7 @@ ComPtr<ID3D12Device2> Window::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
 }
 
 
-ComPtr<ID3D12CommandQueue> Window::CreateCommandQueue(ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE type)   // The command queue is created using the CreateCommandQueue method of the ID3D12Device interface,
+ComPtr<ID3D12CommandQueue> Window::CreateCommandQueue(ComPtr<ID3D12Device> device, D3D12_COMMAND_LIST_TYPE type)   // The command queue is created using the CreateCommandQueue method of the ID3D12Device interface,
 {                                                                                                           // which takes a D3D12_COMMAND_QUEUE_DESC structure as its first argument.
     ComPtr<ID3D12CommandQueue> d3d12CommandQueue;
 
@@ -273,7 +273,7 @@ ComPtr<IDXGISwapChain4> Window::CreateSwapChain(HWND hWnd, ComPtr<ID3D12CommandQ
 }
 
 // The function described above creates a descriptor heap of a specific type.
-ComPtr<ID3D12DescriptorHeap>Window::CreateDescriptorHeap(ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)    // "type" Value typed specify type of describes heap ; "numDescriptors"  Number of describes of heap
+ComPtr<ID3D12DescriptorHeap>Window::CreateDescriptorHeap(ComPtr<ID3D12Device> device, D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors)    // "type" Value typed specify type of describes heap ; "numDescriptors"  Number of describes of heap
 {
     ComPtr<ID3D12DescriptorHeap> descriptorHeap;
 
@@ -286,7 +286,7 @@ ComPtr<ID3D12DescriptorHeap>Window::CreateDescriptorHeap(ComPtr<ID3D12Device2> d
     return descriptorHeap;
 }
 
-ComPtr<ID3D12CommandAllocator> Window::CreateCommandAllocator(ComPtr<ID3D12Device2> device,
+ComPtr<ID3D12CommandAllocator> Window::CreateCommandAllocator(ComPtr<ID3D12Device> device,
     D3D12_COMMAND_LIST_TYPE type)   // "type"->Value typed who specify the type of allocator command create
 {
     ComPtr<ID3D12CommandAllocator> commandAllocator; // Pointer to the block memory who recive a pointer to the allocator command interface
@@ -295,7 +295,7 @@ ComPtr<ID3D12CommandAllocator> Window::CreateCommandAllocator(ComPtr<ID3D12Devic
     return commandAllocator;
 }
 
-ComPtr<ID3D12GraphicsCommandList> Window::CreateCommandList(ComPtr<ID3D12Device2> device,
+ComPtr<ID3D12GraphicsCommandList> Window::CreateCommandList(ComPtr<ID3D12Device> device,
     ComPtr<ID3D12CommandAllocator> commandAllocator, D3D12_COMMAND_LIST_TYPE type)      // "type"->Value typed who specify the type array of command create
 {
     ComPtr<ID3D12GraphicsCommandList> commandList;
@@ -306,7 +306,7 @@ ComPtr<ID3D12GraphicsCommandList> Window::CreateCommandList(ComPtr<ID3D12Device2
     return commandList;
 }
 
-ComPtr<ID3D12Fence> Window::CreateFence(ComPtr<ID3D12Device2> device)
+ComPtr<ID3D12Fence> Window::CreateFence(ComPtr<ID3D12Device> device)
 {
     ComPtr<ID3D12Fence> fence;
     ThrowIfFailed(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
@@ -541,7 +541,6 @@ void Window::SetFullscreen(bool fullscreen)
 void Window::Init()
 {
     wWinMain(hInstance,hPrevInstance, lpCmdLine, nCmdShow);
-    WndProc(hwnd, message, wParam, lParam);
 }
 
 LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
