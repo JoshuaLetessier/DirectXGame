@@ -15,7 +15,7 @@ private:
 
 	
 
-	ComPtr<ID3D12Device2> g_Device;				// g_Device stores the DirectX 12 device object.
+			// g_Device stores the DirectX 12 device object.
 
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
@@ -66,5 +66,7 @@ public:
 	uint64_t g_FenceValue = 0;					// The next fence value to signal the next command queue is stored in the variable.
 	HANDLE g_FenceEvent;		// Variable used as a handle to a system event object for receiving notification
 	// when a fence reaches a specific value.
+
+	ComPtr<ID3D12Device2> g_Device;
 };
 

@@ -17,7 +17,7 @@ struct VertexIn
 struct VertexOut
 {
     float4 posOut : SV_Position;
-    float4 colorOut : COLOR;
+    float4 colorOut : COLOR0;
 };
 
 VertexOut VS(VertexIn _vertexIn)
@@ -30,4 +30,9 @@ VertexOut VS(VertexIn _vertexIn)
     vertexOut.colorOut = _vertexIn.colorInt;
     
     return vertexOut;
+}
+
+float4 PS(VertexOut _vertexOut) : SV_Target
+{
+    return _vertexOut.colorOut;
 }

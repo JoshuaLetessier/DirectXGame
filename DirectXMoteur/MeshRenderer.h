@@ -14,7 +14,7 @@ public:
 
 	//void OnResize();
 	//void Update();
-	void Draw();
+	void Draw(Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_CommandAllocators);
 	
 	void BuildDescriptorHeaps();
 	void BuildConstantBufferVertex();
@@ -24,7 +24,15 @@ public:
 	void CreateCubeGeometry();
 	void BuildPSO();
 
-	Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
+	Microsoft::WRL::ComPtr<ID3D12Device2> stockDevice;
+	ComPtr<ID3D12GraphicsCommandList> stockCommandList;
+	ComPtr<ID3D12CommandQueue> stockCommandQueue;
+	ComPtr<ID3D12Fence> stockFence;
+
+	const static uint8_t stockNumFrames = 3;
+	ComPtr<ID3D12CommandAllocator> stockCommandAllocators[stockNumFrames];
+	ComPtr<ID3D12Resource> stockBackBuffers[stockNumFrames];
+	
 private:
 	Cube cubeMesh;
 	std::vector<std::uint16_t> m_cubeIndices = cubeIndices;
@@ -40,9 +48,10 @@ private:
 	std::unique_ptr<MeshGeometry> mCubeGeo = nullptr;
 
 	ComPtr<ID3DBlob> mvsByteCode = nullptr;
+	ComPtr<ID3DBlob> mpsByteCode = nullptr;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
-	ComPtr<ID3D12CommandQueue> mCommandQueue;
+
 
 	std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mConstantBuffer = nullptr;
 
@@ -59,7 +68,6 @@ private:
 
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
-
 };
 
 

@@ -131,6 +131,8 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader.hlsl" />
+    <Text Include="Shader.hlsl">
+      <Filter>Fichiers sources\DX_src</Filter>
+    </Text>
   </ItemGroup>
 </Project>

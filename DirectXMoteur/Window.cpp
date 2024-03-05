@@ -21,7 +21,7 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.hIcon = ::LoadIcon(hInst, NULL);                    // Icon loader Up-Left 
     windowClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);            // Cursor default handle
   // windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // Background Color
-    windowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
+    windowClass.hbrBackground = CreateSolidBrush(RGB(60, 0, 0));
     windowClass.lpszMenuName = NULL;                                // Pointer to the name of the class menu resource in the resource file.
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
     windowClass.hIconSm = ::LoadIcon(hInst, NULL);
@@ -65,6 +65,8 @@ void Window::Render()
 {
     auto commandAllocator = dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex];
     auto backBuffer = dxParam.g_BackBuffers[dxParam.g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
+    meshRenderer.stockBackBuffers[meshRenderer.stockNumFrames] = dxParam.g_BackBuffers[dxParam.g_NumFrames];
+
 
     commandAllocator->Reset();                                                  // Alocator of commande and Array of commande are reset
     dxParam.g_CommandList->Reset(commandAllocator.Get(), nullptr);                      // Prepare array of commande for new register image
@@ -285,7 +287,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     HRESULT hardwareResult = D3D12CreateDevice(
         nullptr,             // default adapter
         D3D_FEATURE_LEVEL_11_0,
-        IID_PPV_ARGS(&meshRenderer.md3dDevice));
+        IID_PPV_ARGS(&g_Device));
 
     //// Fallback to WARP device.
     //if (FAILED(hardwareResult))
@@ -319,6 +321,8 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     dxParam.g_SwapChain = dxParam.CreateSwapChain(g_hWnd, dxParam.g_CommandQueue,
         g_ClientWidth, g_ClientHeight, dxParam.g_NumFrames);
 
+    meshRenderer.stockCommandQueue = dxParam.g_CommandQueue;
+
     dxParam.g_CurrentBackBufferIndex = dxParam.g_SwapChain->GetCurrentBackBufferIndex();                                    // Directly queries from the swap chain about the current back buffer index
 
     dxParam.g_RTVDescriptorHeap = dxParam.CreateDescriptorHeap(g_Device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, dxParam.g_NumFrames);      // Segment memory RTV create and descrive size queries 
@@ -331,15 +335,14 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         dxParam.g_CommandAllocators[i] = dxParam.CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
     }
     dxParam.g_CommandList = dxParam.CreateCommandList(g_Device, dxParam.g_CommandAllocators[dxParam.g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
-   /* if (dxParam.g_CommandList == nullptr)
-    {
-        printf("dxParam.g_CommandList = nullptr %p\n", dxParam.g_CommandList);
-    }*/
+    meshRenderer.stockCommandList = dxParam.g_CommandList;
+   
     
 
     dxParam.g_Fence = dxParam.CreateFence(g_Device);                // Perform GPU synchronization
     g_FenceEvent = dxParam.CreateEventHandle();             // Handle used to block the CPU
-
+    meshRenderer.stockDevice = g_Device;
+    meshRenderer.stockFence = dxParam.g_Fence;
     g_IsInitialized = true;                         // Window init
 
     ::ShowWindow(g_hWnd, SW_SHOW);
@@ -355,21 +358,20 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         else
         {
             Render();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = dxParam.g_CommandAllocators[i];
                 if (meshRenderer.Initialize(dxParam.g_CommandList, m_commandAllocators))
                 {
-                    meshRenderer.Draw();
+                    std::cout << i;
+                    meshRenderer.Draw(m_commandAllocators);
                 }
                 else
                 {
-                    printf("ta mère suce des ours");
+                    printf("Init false");
                     return 0;
                 }
             }
-           
-           
         }
     }
 
@@ -379,6 +381,8 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
 
     // Make sure the command queue has finished all commands before closing.
     dxParam.Flush(dxParam.g_CommandQueue, dxParam.g_Fence, g_FenceValue, g_FenceEvent);
+
+
 
     ::CloseHandle(g_FenceEvent);
 

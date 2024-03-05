@@ -1,6 +1,7 @@
 #include "DXParam.h"
 #include <iostream>
 
+
 DXParam::DXParam()
 {
 }
@@ -148,7 +149,7 @@ ComPtr<IDXGIAdapter4> DXParam::GetAdapter(bool useWarp)
             // Check to see if the adapter can create a D3D12 device without actually 
             // creating it. The adapter with the largest dedicated video memory
             // is favored.
-           /* if ((dxgiAdapterDesc1.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
+           /*if ((dxgiAdapterDesc1.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
                 SUCCEEDED(D3D12CreateDevice(dxgiAdapter1.Get(),
                     D3D_FEATURE_LEVEL_11_0, __uuidof(ID3D12Device), nullptr)) &&
                 dxgiAdapterDesc1.DedicatedVideoMemory > maxDedicatedVideoMemory)
@@ -314,34 +315,26 @@ ComPtr<ID3D12Fence> DXParam::CreateFence(ComPtr<ID3D12Device2> device)
 {
     ComPtr<ID3D12Fence> fence;
 
-    ThrowIfFailed(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
+    if (fence == NULL)
+    {
+        ThrowIfFailed(device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
+        return fence;
+    }
+    else
+        return NULL;
+    
 
-    return fence;
+    
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DXParam::DepthStencilView() const
 {
-    if (g_RTVDescriptorHeap != 0)
-    {
-        return g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    }
-    else
-    {
-        std::cout << "machin2 null " << std::endl;
-    }
-   
+    return g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DXParam::CurrentBackBufferView() const
 {
-    if (g_RTVDescriptorSize != 0)
-    {
-        return CD3DX12_CPU_DESCRIPTOR_HANDLE(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_CurrentBackBufferIndex, g_RTVDescriptorSize);
-    }
-    else
-    {
-        std::cout << "machin null " << std::endl;
-    }
+    return CD3DX12_CPU_DESCRIPTOR_HANDLE(g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), g_CurrentBackBufferIndex, g_RTVDescriptorSize);
 }
 
 ID3D12Resource* DXParam::CurrentBackBuffer() const 
@@ -362,6 +355,9 @@ HANDLE DXParam::CreateEventHandle()
 uint64_t DXParam::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence, uint64_t& fenceValue)
 {
     uint64_t fenceValueForSignal = ++fenceValue;
+    assert(commandQueue != nullptr);
+    assert(fence != nullptr);
+
     ThrowIfFailed(commandQueue->Signal(fence.Get(), fenceValueForSignal));
 
     return fenceValueForSignal;
