@@ -141,21 +141,25 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UploadBuffer.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
+    <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXMoteur.rc" />

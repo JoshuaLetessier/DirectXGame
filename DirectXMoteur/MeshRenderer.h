@@ -16,6 +16,7 @@ public:
 	//void Update();
 	void Draw();
 
+	void Update();
 	void BuildDescriptorHeaps();
 	void BuildConstantBufferVertex();
 	void BuildRootSignature();
@@ -25,6 +26,8 @@ public:
 	void BuildPSO();
 
 	Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
+	ComPtr<ID3DBlob> mvsByteCode = nullptr;
+	ComPtr < ID3DBlob> mpsByteCode = nullptr;
 private:
 	Cube cubeMesh;
 	std::vector<std::uint16_t> m_cubeIndices = cubeIndices;
@@ -39,7 +42,7 @@ private:
 
 	std::unique_ptr<MeshGeometry> mCubeGeo = nullptr;
 
-	ComPtr<ID3DBlob> mvsByteCode = nullptr;
+
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 	ComPtr<ID3D12CommandQueue> mCommandQueue;
@@ -59,6 +62,16 @@ private:
 
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
+
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = XM_PIDIV4;
+	float mRadius = 5.0f;
+	
 
 };
 

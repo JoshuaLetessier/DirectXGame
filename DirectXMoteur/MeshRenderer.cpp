@@ -22,11 +22,11 @@ bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, M
 
     //BuildDescriptorHeaps();
     //BuildConstantBufferVertex();
-    BuildRootSignature();
+   // BuildRootSignature();
     BuildShader();
     InputElement();
-    CreateCubeGeometry();
-    BuildPSO();
+    //CreateCubeGeometry();
+    //BuildPSO();
 
     // Execute the initialization commands.
     ThrowIfFailed(window.g_CommandList->Close());
@@ -48,62 +48,81 @@ bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, M
 //    XMStoreFloat4x4(&mProj, P);
 //}
 
-
+void MeshRenderer::Update()
+{
+    // Convert Spherical to Cartesian coordinates.
+    float x = mRadius * sinf(mPhi) * cosf(mTheta);
+    float z = mRadius * sinf(mPhi) * sinf(mTheta);
+    float y = mRadius * cosf(mPhi);
+    // Build the view matrix.
+    XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+    XMVECTOR target = XMVectorZero();
+    XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+    XMStoreFloat4x4(&mView, view);
+    XMMATRIX world = XMLoadFloat4x4(&mWorld);
+    XMMATRIX proj = XMLoadFloat4x4(&mProj);
+    XMMATRIX worldViewProj = world * view * proj;
+    // Update the constant buffer with the latest worldViewProj matrix.
+    ModelViewProjectionConstantBuffer objConstants;
+    XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+    window.mConstantBuffer->CopyData(0, objConstants);
+}
 
 
 void MeshRenderer::Draw()
 {
 
 
-    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(window.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    //CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(window.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 
-    ThrowIfFailed(window.g_CommandAllocators->Reset());
+    //ThrowIfFailed(window.g_CommandAllocators->Reset());
 
-    ThrowIfFailed(window.g_CommandList->Reset(window.g_CommandAllocators->Get(), window.g_Pso.Get()));
+    //ThrowIfFailed(window.g_CommandList->Reset(window.g_CommandAllocators->Get(), window.g_Pso.Get()));
 
-    window.g_CommandList->RSSetViewports(1, &mScreenViewport);
-    window.g_CommandList->RSSetScissorRects(1, &mScissorRect);
+    //window.g_CommandList->RSSetViewports(1, &mScreenViewport);
+    //window.g_CommandList->RSSetScissorRects(1, &mScissorRect);
 
-    window.g_CommandList->ResourceBarrier(1, &transition);
+    //window.g_CommandList->ResourceBarrier(1, &transition);
 
-    window.g_CommandList->ClearRenderTargetView(window.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-    window.g_CommandList->ClearDepthStencilView(window.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+    //window.g_CommandList->ClearRenderTargetView(window.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    //window.g_CommandList->ClearDepthStencilView(window.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = window.CurrentBackBufferView();
-    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = window.DepthStencilView();
-    window.g_CommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
-
-
-    ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
-    window.g_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-    window.g_CommandList->SetGraphicsRootSignature(mRootSignature.Get());
-
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
-    window.g_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-    D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
-    window.g_CommandList->IASetIndexBuffer(&indexBufferView);
-    window.g_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    window.g_CommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-
-    window.g_CommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+    //D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = window.CurrentBackBufferView();
+    //D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = window.DepthStencilView();
+    //window.g_CommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
 
 
-    window.g_CommandList->ResourceBarrier(1, &transition);
+    //ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
+    //window.g_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+    //window.g_CommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    ThrowIfFailed(window.g_CommandList->Close());
+    //D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
+    //window.g_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-    ID3D12CommandList* cmdsLists[] = { window.g_CommandList.Get() };
-    mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+    //D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
+    //window.g_CommandList->IASetIndexBuffer(&indexBufferView);
+    //window.g_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    //window.g_CommandList->SetGraphicsRootConstantBufferView(0, window.mConstantBuffer->Resource()->GetGPUVirtualAddress());
+    //window.g_CommandList->SetPipelineState(window.g_Pso.Get());
+    //window.g_CommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 
-    ThrowIfFailed(window.g_SwapChain->Present(0, 0));
-    mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+    //window.g_CommandList->ResourceBarrier(1, &transition);
+
+    //ThrowIfFailed(window.g_CommandList->Close());
+
+    //ID3D12CommandList* cmdsLists[] = { window.g_CommandList.Get() };
+    //mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 
-    window.Flush(window.g_CommandQueue, window.g_Fence, window.g_FenceValue, window.g_FenceEvent);
+    //ThrowIfFailed(window.g_SwapChain->Present(0, 0));
+    //mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+
+
+    //window.Flush(window.g_CommandQueue, window.g_Fence, window.g_FenceValue, window.g_FenceEvent);
 }
 
 void MeshRenderer::BuildRootSignature()
@@ -129,13 +148,15 @@ void MeshRenderer::BuildRootSignature()
 
 void MeshRenderer::BuildShader()
 {
-    HRESULT hr = S_OK;
-    mvsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "PS", "ps_5_0");
+    //HRESULT hr = S_OK;
+
+    mvsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "VS", "vs_5_0");
+    mpsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "PS", "ps_5_0");
 }
 
 void MeshRenderer::InputElement()
 {
-    D3D12_INPUT_ELEMENT_DESC vertexDesc[] =
+    window.mInputLayout =
     {
         {"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
@@ -158,7 +179,7 @@ void MeshRenderer::CreateCubeGeometry()
     ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
     CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
 
-    mCubeGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), window.g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
+    mCubeGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(window.g_Device.Get(), window.g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
     mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), window.g_CommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
 
     mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
@@ -186,11 +207,11 @@ void MeshRenderer::BuildPSO()
      reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
      mvsByteCode->GetBufferSize()
     };
-    /* psoDesc.PS =
+     psoDesc.PS =
      {
       reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
       mpsByteCode->GetBufferSize()
-     };*/
+     };
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -202,5 +223,5 @@ void MeshRenderer::BuildPSO()
     psoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
     psoDesc.DSVFormat = mDepthStencilFormat;
 
-    //ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
+    ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&window.g_Pso)));
 }

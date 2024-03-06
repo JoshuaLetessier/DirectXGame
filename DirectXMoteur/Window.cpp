@@ -1,9 +1,12 @@
 #include "Window.h"
 #include "MeshRenderer.h"
 #include <iostream>
+#include "UploadBuffer.h"
+
 
 Window win;
 MeshRenderer meshRenderer;
+
 
 Window::Window()
 {
@@ -11,6 +14,7 @@ Window::Window()
 
 Window::~Window()
 {
+    int o = 0;
 }
 
 
@@ -87,8 +91,28 @@ void Window::WaitForFenceValue(ComPtr<ID3D12Fence> fence, uint64_t fenceValue, H
 // It is used to wait for the fence to be signaled with a specified value.
 void Window::Flush(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence, uint64_t& fenceValue, HANDLE fenceEvent)
 {
-    uint64_t fenceValueForSignal = Signal(commandQueue, fence, fenceValue);
-    WaitForFenceValue(fence, fenceValueForSignal, fenceEvent);
+
+    // Advance the fence value to mark commands up to this fence point.
+    mCurrentFence++;
+
+    // Add an instruction to the command queue to set a new fence point.  Because we 
+    // are on the GPU timeline, the new fence point won't be set until the GPU finishes
+    // processing all the commands prior to this Signal().
+    ThrowIfFailed(g_CommandQueue->Signal(g_Fence.Get(), mCurrentFence));
+
+    // Wait until the GPU has completed commands up to this fence point.
+    if (g_Fence->GetCompletedValue() < mCurrentFence)
+    {
+        LPCWSTR lpName = 0;
+        HANDLE eventHandle = CreateEventExW(nullptr, lpName, false, EVENT_ALL_ACCESS);
+
+        // Fire event when GPU hits current fence.  
+        ThrowIfFailed(g_Fence->SetEventOnCompletion(mCurrentFence, eventHandle));
+
+        // Wait until the GPU hits current fence event is fired.
+        WaitForSingleObject(eventHandle, INFINITE);
+        CloseHandle(eventHandle);
+    }
 }
 
 bool Window::CheckTearingSupport()
@@ -211,35 +235,6 @@ ComPtr<ID3D12Device> Window::CreateDevice(ComPtr<IDXGIAdapter4> adapter)
 #endif
 
     return D3D12Device;
-}
-
-void Window::BuildDescriptorHeaps()
-{
-    D3D12_DESCRIPTOR_HEAP_DESC cbvheapDesc;
-    cbvheapDesc.NumDescriptors = 1;
-    cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    cbvheapDesc.NodeMask = 0;
-    
-    CreateDescriptorHeap(g_Device, cbvheapDesc.Type, cbvheapDesc.NumDescriptors);
-
-}
-
-void Window::BuildConstantBufferVertex()
-{
-    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(g_Device.Get(), 1, true);//pourquoi on le fait pas dans le h?
-    UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
-
-    D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
-
-    int boxCBufIndex = 0;
-    cbAddress += boxCBufIndex * static_cast<unsigned long long>(mCBByteSize);
-
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-    cbvDesc.BufferLocation = cbAddress;
-    cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
-
-    g_Device->CreateConstantBufferView(&cbvDesc, g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 ComPtr<ID3D12CommandQueue> Window::CreateCommandQueue(ComPtr<ID3D12Device> device, D3D12_COMMAND_LIST_TYPE type)   // The command queue is created using the CreateCommandQueue method of the ID3D12Device interface,
@@ -370,7 +365,7 @@ HANDLE Window::CreateEventHandle()
 uint64_t Window::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fence> fence, uint64_t& fenceValue)
 {
     uint64_t fenceValueForSignal = ++fenceValue;
-    ThrowIfFailed(commandQueue->Signal(fence.Get(), fenceValueForSignal));
+    ThrowIfFailed(g_CommandQueue->Signal(fence.Get(), fenceValueForSignal));
 
     return fenceValueForSignal;
 }
@@ -398,6 +393,11 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     static ATOM atom = ::RegisterClassExW(&windowClass);
     assert(atom > 0);
 }
+
+
+
+
+
 
 void Window::Update()
 {
@@ -427,13 +427,14 @@ void Window::Update()
 
         frameCounter = 0;
         elapsedSeconds = 0.0;
+
     }
 }
 
 void Window::Render()
 {
 
-    auto& commandAllocator = g_CommandAllocators[g_CurrentBackBufferIndex];
+    auto& commandAllocator = g_CommandAllocators;
     auto& backBuffer = g_BackBuffers[g_CurrentBackBufferIndex];                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.                  // Pointers to the command allocator and back buffer resource are retrieved based on the current back buffer index.
 
     commandAllocator->Reset();                                                  // Alocator of commande and Array of commande are reset
@@ -478,40 +479,6 @@ void Window::Render()
 
         WaitForFenceValue(g_Fence, g_FrameFenceValues[g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
         // the content of the current back buffer, using the WaitForFenceValue function.
-    }
-}
-
-void Window::Resize(uint32_t width, uint32_t height)
-{
-    if (g_ClientWidth != width || g_ClientHeight != height)
-    {
-        // Don't allow 0 size swap chain back buffers.
-        g_ClientWidth = std::max(1u, width);
-        g_ClientHeight = std::max(1u, height);
-
-        // Flush the GPU queue to make sure the swap chain's back buffers
-        // are not being referenced by an in-flight command list.
-        Flush(g_CommandQueue, g_Fence, g_FenceValue, g_FenceEvent);
-
-        for (int i = 0; i < g_NumFrames; ++i)
-        {
-            // Any references to the back buffers must be released
-            // before the swap chain can be resized.
-            g_BackBuffers[i].Reset();
-            g_FrameFenceValues[i] = g_FrameFenceValues[g_CurrentBackBufferIndex];
-        }
-
-        DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-        ThrowIfFailed(g_SwapChain->GetDesc(&swapChainDesc));
-        {
-            HRESULT hr__ = (g_SwapChain->ResizeBuffers(g_NumFrames, g_ClientWidth, g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)); std::wstring wfn = AnsiToWString("C:\\Users\\Askeladd\\Desktop\\CODE\\DirectXGame\\DirectXMoteur\\Window.cpp"); if ((((HRESULT)(hr__)) < 0)) {
-                throw DxException(hr__, L"g_SwapChain->ResizeBuffers(g_NumFrames, g_ClientWidth, g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)", wfn, 137);
-            }
-        };
-
-        g_CurrentBackBufferIndex = g_SwapChain->GetCurrentBackBufferIndex();
-
-        UpdateRenderTargetViews(g_Device, g_SwapChain, g_RTVDescriptorHeap);
     }
 }
 
@@ -569,19 +536,19 @@ void Window::SetFullscreen(bool fullscreen)
 void Window::Init()
 {
     wWinMain(hInstance,hPrevInstance, lpCmdLine, nCmdShow);
+    
 }
 
 LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
-    if (win.g_IsInitialized)
+    if (!win.g_IsInitialized)
     {
         switch (message)
         {
-        case WM_PAINT:
+       /* case WM_PAINT:
             win.Update();
             win.Render();
-            break;
+            break;*/
 
         case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
@@ -679,21 +646,22 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
 
     for (int i = 0; i < g_NumFrames; ++i)
     {
-        g_CommandAllocators[i] = CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
+        g_CommandAllocators = CreateCommandAllocator(g_Device, D3D12_COMMAND_LIST_TYPE_DIRECT);
     }
     g_CommandList = CreateCommandList(g_Device,
-        g_CommandAllocators[g_CurrentBackBufferIndex], D3D12_COMMAND_LIST_TYPE_DIRECT);
+        g_CommandAllocators, D3D12_COMMAND_LIST_TYPE_DIRECT);
 
     g_Fence = CreateFence(g_Device);                // Perform GPU synchronization
     g_FenceEvent = CreateEventHandle();             // Handle used to block the CPU
 
-    g_IsInitialized = true;                         // Window init
+                           // Window init
 
     ::ShowWindow(g_hWnd, SW_SHOW);
 
     MSG msg = {};
     while (msg.message != WM_QUIT)
     {
+        g_IsInitialized = true;
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             ::TranslateMessage(&msg);
@@ -701,19 +669,30 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         }
         else
         {
-            Render();
-            for (int i = 0; i < 3; i++)
+            //Render();
+           
+            WndProc(hwnd, message, wParam, lParam);
+            for (int i = 0; i < g_NumFrames; i++)
             {
-                Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = g_CommandAllocators[i];
-                if (meshRenderer.Initialize(g_CommandList, m_commandAllocators))
-                {
-                    meshRenderer.Draw();
-                }
-                else
-                {
-                    printf("Init false");
-                    return 0;
-                }
+                Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocators = g_CommandAllocators;
+                
+                ThrowIfFailed(g_CommandList->Reset(m_commandAllocators.Get(), nullptr));
+                BuildDescriptorHeaps();
+                BuildConstantBufferVertex();
+                BuildRootSignature();
+                meshRenderer.BuildShader();
+                InputElement();
+                BuildPSO();
+                MeshUpdate();
+                Draw();
+
+                ThrowIfFailed(g_CommandList->Close());
+                ID3D12CommandList* cmdsLists[] = {g_CommandList.Get() };
+                g_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+                // Wait until initialization is complete.
+                Flush(g_CommandQueue,g_Fence, g_FenceValue, g_FenceEvent);
+
             }
         }
     }
@@ -723,7 +702,7 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
     // should not occur until the GPU has finished using them.
 
     // Make sure the command queue has finished all commands before closing.
-    Flush(g_CommandQueue, g_Fence, g_FenceValue, g_FenceEvent);
+    
 
     ::CloseHandle(g_FenceEvent);
 
@@ -762,4 +741,267 @@ HWND Window::CreateWindowE(const wchar_t* windowClassName, HINSTANCE hInst, cons
     assert(hWnd && "Failed to create window");
 
     return hWnd;
+}
+
+void Window::Resize(uint32_t width, uint32_t height)
+{
+    if (g_ClientWidth != width || g_ClientHeight != height)
+    {
+        // Don't allow 0 size swap chain back buffers.
+        g_ClientWidth = std::max(1u, width);
+        g_ClientHeight = std::max(1u, height);
+
+        // Flush the GPU queue to make sure the swap chain's back buffers
+        // are not being referenced by an in-flight command list.
+        printf("test %p\n", g_CommandQueue);
+        Flush(g_CommandQueue, g_Fence, g_FenceValue, g_FenceEvent);
+
+        ThrowIfFailed(g_CommandList->Reset(g_CommandAllocators.Get(), nullptr));
+
+        for (int i = 0; i < g_NumFrames; ++i)
+        {
+            // Any references to the back buffers must be released
+            // before the swap chain can be resized.
+            g_BackBuffers[i].Reset();
+            g_FrameFenceValues[i] = g_FrameFenceValues[g_CurrentBackBufferIndex];
+        }
+
+        DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+        ThrowIfFailed(g_SwapChain->GetDesc(&swapChainDesc));
+        {
+            HRESULT hr__ = (g_SwapChain->ResizeBuffers(g_NumFrames, g_ClientWidth, g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)); std::wstring wfn = AnsiToWString("C:\\Users\\Askeladd\\Desktop\\CODE\\DirectXGame\\DirectXMoteur\\Window.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+                throw DxException(hr__, L"g_SwapChain->ResizeBuffers(g_NumFrames, g_ClientWidth, g_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags)", wfn, 137);
+            }
+        };
+
+        g_CurrentBackBufferIndex = g_SwapChain->GetCurrentBackBufferIndex();
+
+        UpdateRenderTargetViews(g_Device, g_SwapChain, g_RTVDescriptorHeap);
+    }
+}
+
+
+
+void Window::BuildDescriptorHeaps()
+{
+    D3D12_DESCRIPTOR_HEAP_DESC cbvheapDesc;
+    cbvheapDesc.NumDescriptors = g_NumFrames;
+    cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    cbvheapDesc.NodeMask = 0;
+
+    CreateDescriptorHeap(g_Device, cbvheapDesc.Type, cbvheapDesc.NumDescriptors);
+
+}
+
+void Window::BuildConstantBufferVertex()
+{
+    if (!g_RTVDescriptorHeap)
+    {
+        D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+        rtvHeapDesc.NumDescriptors = 3; // tailleDuTampon
+        rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+        HRESULT hr = g_Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&g_RTVDescriptorHeap));
+        if (FAILED(hr))
+        {
+            OutputDebugString(L"Erreur lors de la création du tampon de descripteur.\n");
+            std::cerr << "Erreur lors de la création du tampon de descripteur : " << hr << std::endl;
+            return;
+        }
+    }
+
+    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(g_Device.Get(), 1, true);
+
+    //UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+
+    //D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
+
+    //int boxCBufIndex = 0;
+    //cbAddress += boxCBufIndex * mCBByteSize;
+
+    //D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+    //cbvDesc.BufferLocation = cbAddress;
+    //cbvDesc.SizeInBytes = sizeof(ModelViewProjectionConstantBuffer);
+
+    //UINT descriptorSize = g_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    //D3D12_CPU_DESCRIPTOR_HANDLE value = g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
+    //// Vérifie si la handle de descripteur est dans la plage valide du tampon
+    //if (value.ptr < g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr ||
+    //    value.ptr >= g_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart().ptr + descriptorSize * 3)
+    //{
+    //    OutputDebugString(L"Erreur : La handle de descripteur ne pointe pas vers un emplacement valide dans le tampon de descripteur.\n");
+    //    return;
+    //}
+
+    //// Crée la vue de tampon constant
+    //g_Device->CreateConstantBufferView(&cbvDesc, value);
+}
+
+void Window::BuildRootSignature()
+{
+    CD3DX12_ROOT_PARAMETER slotRootParem[1];
+
+    slotRootParem[0].InitAsConstantBufferView(0);
+
+    CD3DX12_ROOT_SIGNATURE_DESC rootSign(1, slotRootParem, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+    ComPtr<ID3D10Blob> serializedRootSig = nullptr;
+    ComPtr<ID3D10Blob> errorBlob = nullptr;
+
+    HRESULT hr = D3D12SerializeRootSignature(&rootSign, D3D_ROOT_SIGNATURE_VERSION_1_0, serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+    if (errorBlob != nullptr)
+        ::OutputDebugStringA((char*)errorBlob->GetBufferPointer());//les deux point pour dire que c'est une fonction globale
+    ThrowIfFailed(hr);
+
+    ThrowIfFailed(g_Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&mRootSignature))); /*erreur à traiter*/
+}
+
+void Window::CreateCubeGeometry()
+{
+    const UINT  sizeCubeMesh = sizeof(cubeMesh);
+    const UINT  sizeIndicesCubeMesh = sizeof(m_cubeIndices);
+    const UINT c_vertexBufferSize = sizeCubeMesh * sizeof(VertexPositionColor);
+    const UINT c_indicesBufferSize = sizeIndicesCubeMesh * sizeof(std::uint16_t);
+
+    mCubeGeo = std::make_unique<MeshGeometry>();
+    mCubeGeo->Name = "cubeGeo";
+
+    ThrowIfFailed(D3DCreateBlob(c_vertexBufferSize, &mCubeGeo->VertexBufferCPU));
+    CopyMemory(mCubeGeo->VertexBufferCPU->GetBufferPointer(), cubeMesh.cubeVertices.data(), c_vertexBufferSize);
+
+    ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
+    CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
+
+    mCubeGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(g_Device.Get(), g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
+    mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(g_Device.Get(), g_CommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
+
+    mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
+    mCubeGeo->VertexBufferByteSize = c_vertexBufferSize;
+    mCubeGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
+    mCubeGeo->IndexBufferByteSize = c_indicesBufferSize;
+
+    SubmeshGeometry submesh;
+    submesh.IndexCount = (UINT)sizeof(m_cubeIndices);
+    submesh.StartIndexLocation = 0;
+    submesh.BaseVertexLocation = 0;
+
+    mCubeGeo->DrawArgs["box"] = submesh;
+
+}
+
+void Window::InputElement()
+{
+    mInputLayout =
+    {
+        {"POSITION",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    };
+}
+
+void Window::BuildPSO()
+{
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+    ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+    psoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
+
+    psoDesc.pRootSignature = mRootSignature.Get();
+    psoDesc.VS =
+    {
+     reinterpret_cast<BYTE*>(meshRenderer.mvsByteCode->GetBufferPointer()),
+     meshRenderer.mvsByteCode->GetBufferSize()
+    };
+    psoDesc.PS =
+    {
+     reinterpret_cast<BYTE*>(meshRenderer.mpsByteCode->GetBufferPointer()),
+     meshRenderer.mpsByteCode->GetBufferSize()
+    };
+    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+    psoDesc.SampleMask = UINT_MAX;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    psoDesc.NumRenderTargets = 3;
+    psoDesc.RTVFormats[0] = mBackBufferFormat;
+    psoDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+    psoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+    psoDesc.DSVFormat = mDepthStencilFormat;
+
+    ThrowIfFailed(g_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&g_Pso)));
+}
+
+void Window::MeshUpdate()
+{
+    // Convert Spherical to Cartesian coordinates.
+    float x = mRadius * sinf(mPhi) * cosf(mTheta);
+    float z = mRadius * sinf(mPhi) * sinf(mTheta);
+    float y = mRadius * cosf(mPhi);
+    // Build the view matrix.
+    XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+    XMVECTOR target = XMVectorZero();
+    XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+    XMStoreFloat4x4(&mView, view);
+    XMMATRIX world = XMLoadFloat4x4(&mWorld);
+    XMMATRIX proj = XMLoadFloat4x4(&mProj);
+    XMMATRIX worldViewProj = world * view * proj;
+    // Update the constant buffer with the latest worldViewProj matrix.
+    ModelViewProjectionConstantBuffer objConstants;
+    XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+    mConstantBuffer->CopyData(0, objConstants);
+}
+
+void Window::Draw()
+{
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    printf("test %p\n", g_CommandAllocators);
+
+    ThrowIfFailed(g_CommandAllocators->Reset());
+
+    ThrowIfFailed(g_CommandList->Reset(g_CommandAllocators.Get(), g_Pso.Get()));
+
+    g_CommandList->RSSetViewports(1, &mScreenViewport);
+    g_CommandList->RSSetScissorRects(1, &mScissorRect);
+
+    g_CommandList->ResourceBarrier(1, &transition);
+
+    g_CommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+    g_CommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE currentBackBufferView = CurrentBackBufferView();
+    D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = DepthStencilView();
+    g_CommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
+
+
+    ID3D12DescriptorHeap* descriptorHeaps[] = { g_RTVDescriptorHeap.Get() };
+    g_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+    g_CommandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView = mCubeGeo->VertexBufferView();
+    g_CommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+    D3D12_INDEX_BUFFER_VIEW indexBufferView = mCubeGeo->IndexBufferView();
+    g_CommandList->IASetIndexBuffer(&indexBufferView);
+    g_CommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    g_CommandList->SetGraphicsRootConstantBufferView(0, mConstantBuffer->Resource()->GetGPUVirtualAddress());
+    g_CommandList->SetPipelineState(g_Pso.Get());
+    g_CommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+
+
+    g_CommandList->ResourceBarrier(1, &transition);
+
+    ThrowIfFailed(g_CommandList->Close());
+
+    ID3D12CommandList* cmdsLists[] = { g_CommandList.Get() };
+    g_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+
+    ThrowIfFailed(g_SwapChain->Present(0, 0));
+    mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+
+
+    Flush(g_CommandQueue, g_Fence, g_FenceValue, g_FenceEvent);
 }

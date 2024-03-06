@@ -17,7 +17,6 @@ using namespace Microsoft::WRL;
 #include "d3dx12.h"
 #include <d3d12.h>
 
-
 // STL Headers
 #include <algorithm>
 #include <cassert>

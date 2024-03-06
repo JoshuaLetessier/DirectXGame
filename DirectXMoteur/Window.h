@@ -6,7 +6,7 @@ class Window
 {
 private:
 	// The number of swap chain back buffers.
-	static const uint8_t g_NumFrames = 3;
+	static const uint8_t g_NumFrames = 1;
 	// Use WARP adapter
 	bool g_UseWarp = false;
 
@@ -71,6 +71,14 @@ public:
 	ComPtr<ID3D12Device> CreateDevice(ComPtr<IDXGIAdapter4> adapter);
 	void BuildDescriptorHeaps();
 	void BuildConstantBufferVertex();
+	void BuildRootSignature();
+	void CreateCubeGeometry();
+	void InputElement();
+	void BuildPSO();
+
+	void Draw();
+	void MeshUpdate();
+
 	ComPtr<ID3D12CommandQueue> CreateCommandQueue(ComPtr<ID3D12Device> device,
 		D3D12_COMMAND_LIST_TYPE type);
 	ComPtr<IDXGISwapChain4> CreateSwapChain(HWND hWnd, ComPtr<ID3D12CommandQueue> commandQueue,
@@ -107,7 +115,7 @@ public:
 	// record all GPU commands, a single command list is defined.
 	// The variable is used to store the pointer to the file.
 
-	ComPtr<ID3D12CommandAllocator> g_CommandAllocators[g_NumFrames];	// Backup memory for recording GPU commands into a command list. 
+	ComPtr<ID3D12CommandAllocator> g_CommandAllocators;	// Backup memory for recording GPU commands into a command list. 
 	// Cannot be reused until all recorded commands finish executing on the GPU.
 	// There must be at least one command allocator per render image.
 
@@ -131,6 +139,8 @@ public:
 	HANDLE g_FenceEvent;												// Variable used as a handle to a system event object for receiving notification
 	// when a fence reaches a specific value.
 
+	Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
+	Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
 	// By default, enable V-Sync.
 	// Can be toggled with the V key.
 
@@ -143,6 +153,33 @@ public:
 	bool g_Fullscreen = false;
 
 	std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mConstantBuffer = nullptr;
+	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 
 	ComPtr<ID3D12PipelineState> g_Pso;
+
+	Cube cubeMesh;
+	std::vector<std::uint16_t> m_cubeIndices = cubeIndices;
+
+	std::unique_ptr<MeshGeometry> mCubeGeo = nullptr;
+
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+	DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	bool m4xMsaaState = false;
+	UINT m4xMsaaQuality = 0;
+
+	D3D12_VIEWPORT mScreenViewport;
+	D3D12_RECT mScissorRect;
+	int mCurrBackBuffer = 0;
+	static const int SwapChainBufferCount = 2;
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = XM_PIDIV4;
+	float mRadius = 5.0f;
+
+	UINT64 mCurrentFence = 0;
 };
