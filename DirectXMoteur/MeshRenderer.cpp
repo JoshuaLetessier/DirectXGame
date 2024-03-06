@@ -20,8 +20,8 @@ bool MeshRenderer::Initialize(ComPtr<ID3D12GraphicsCommandList> m_CommandList, M
     ThrowIfFailed(m_CommandList->Reset(m_CommandAllocators.Get(), nullptr));
 
 
-    BuildDescriptorHeaps();
-    BuildConstantBufferVertex();
+    //BuildDescriptorHeaps();
+    //BuildConstantBufferVertex();
     BuildRootSignature();
     BuildShader();
     InputElement();
@@ -106,42 +106,6 @@ void MeshRenderer::Draw()
     window.Flush(window.g_CommandQueue, window.g_Fence, window.g_FenceValue, window.g_FenceEvent);
 }
 
-void MeshRenderer::BuildDescriptorHeaps()
-{
-    D3D12_DESCRIPTOR_HEAP_DESC cbvheapDesc;
-    cbvheapDesc.NumDescriptors = 1;
-    cbvheapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvheapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-    cbvheapDesc.NodeMask = 0;
-    if (md3dDevice != NULL)
-    {
-        return;
-    }
-    else
-    {
-        printf("test %p\n", md3dDevice);
-        //ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvheapDesc, IID_PPV_ARGS(&mCbvHeap)));
-    }
-
-}
-
-void MeshRenderer::BuildConstantBufferVertex()
-{
-    mConstantBuffer = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(window.g_Device.Get(), 1, true);//pourquoi on le fait pas dans le h?
-    UINT mCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
-
-    D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mConstantBuffer->Resource()->GetGPUVirtualAddress();
-
-    int boxCBufIndex = 0;
-    cbAddress += boxCBufIndex * static_cast<unsigned long long>(mCBByteSize);
-
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-    cbvDesc.BufferLocation = cbAddress;
-    cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
-
-    md3dDevice->CreateConstantBufferView(&cbvDesc, mCbvHeap->GetCPUDescriptorHandleForHeapStart());
-}
-
 void MeshRenderer::BuildRootSignature()
 {
     CD3DX12_ROOT_PARAMETER slotRootParem[1];
@@ -160,7 +124,7 @@ void MeshRenderer::BuildRootSignature()
         ::OutputDebugStringA((char*)errorBlob->GetBufferPointer());//les deux point pour dire que c'est une fonction globale
     ThrowIfFailed(hr);
 
-    //ThrowIfFailed(md3dDevice->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&mRootSignature))); erreur à traiter
+    ThrowIfFailed(md3dDevice->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&mRootSignature))); /*erreur à traiter*/
 }
 
 void MeshRenderer::BuildShader()

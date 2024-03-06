@@ -81,11 +81,11 @@
     <ClInclude Include="MathHelper.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
-    <ClInclude Include="UploadBuffer.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
     <ClInclude Include="DXmoteur.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="UploadBuffer.h">
+      <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
