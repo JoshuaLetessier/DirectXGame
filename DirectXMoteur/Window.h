@@ -2,6 +2,7 @@
 #include "pch.h"
 //#include "DXParam.h"
 
+
 class Window
 {
 private:
@@ -18,6 +19,7 @@ private:
 
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
+	Timer timer;
 
 public:
 	uint32_t g_ClientWidth = 1280;

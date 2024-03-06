@@ -93,6 +93,7 @@ void MeshRenderer::Draw()
     //D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = window.DepthStencilView();
     //window.g_CommandList->OMSetRenderTargets(1, &currentBackBufferView, true, &depthStencilView);
 
+	dxParam.g_CommandList->DrawIndexedInstanced(mCubeGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
     //ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
     //window.g_CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
@@ -127,21 +128,21 @@ void MeshRenderer::Draw()
 
 void MeshRenderer::BuildRootSignature()
 {
-    CD3DX12_ROOT_PARAMETER slotRootParem[1];
+	CD3DX12_ROOT_PARAMETER slotRootParem[1];
 
-    CD3DX12_DESCRIPTOR_RANGE cbvTable;
-    cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-    slotRootParem[0].InitAsDescriptorTable(1, &cbvTable);
+	CD3DX12_DESCRIPTOR_RANGE cbvTable;
+	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	slotRootParem[0].InitAsDescriptorTable(1, &cbvTable);
 
-    CD3DX12_ROOT_SIGNATURE_DESC rootSign(1, slotRootParem, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	CD3DX12_ROOT_SIGNATURE_DESC rootSign(1, slotRootParem, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    ComPtr<ID3D10Blob> serializedRootSig = nullptr;
-    ComPtr<ID3D10Blob> errorBlob = nullptr;
+	ComPtr<ID3D10Blob> serializedRootSig = nullptr;
+	ComPtr<ID3D10Blob> errorBlob = nullptr;
 
-    HRESULT hr = D3D12SerializeRootSignature(&rootSign, D3D_ROOT_SIGNATURE_VERSION_1_0, serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
-    if (errorBlob != nullptr)
-        ::OutputDebugStringA((char*)errorBlob->GetBufferPointer());//les deux point pour dire que c'est une fonction globale
-    ThrowIfFailed(hr);
+	HRESULT hr = D3D12SerializeRootSignature(&rootSign, D3D_ROOT_SIGNATURE_VERSION_1_0, serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+	if (errorBlob != nullptr)
+		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());//les deux point pour dire que c'est une fonction globale
+	ThrowIfFailed(hr);
 
     ThrowIfFailed(md3dDevice->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&mRootSignature))); /*erreur à traiter*/
 }
@@ -173,27 +174,26 @@ void MeshRenderer::CreateCubeGeometry()
     mCubeGeo = std::make_unique<MeshGeometry>();
     mCubeGeo->Name = "cubeGeo";
 
-    ThrowIfFailed(D3DCreateBlob(c_vertexBufferSize, &mCubeGeo->VertexBufferCPU));
-    CopyMemory(mCubeGeo->VertexBufferCPU->GetBufferPointer(), cubeMesh.cubeVertices.data(), c_vertexBufferSize);
+	ThrowIfFailed(D3DCreateBlob(c_vertexBufferSize, &mCubeGeo->VertexBufferCPU));
+	CopyMemory(mCubeGeo->VertexBufferCPU->GetBufferPointer(), cubeMesh.cubeVertices.data(), c_vertexBufferSize);
 
-    ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
-    CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
+	ThrowIfFailed(D3DCreateBlob(c_indicesBufferSize, &mCubeGeo->IndexBufferCPU));
+	CopyMemory(mCubeGeo->IndexBufferCPU->GetBufferPointer(), m_cubeIndices.data(), c_indicesBufferSize);
 
     mCubeGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(window.g_Device.Get(), window.g_CommandList.Get(), cubeMesh.cubeVertices.data(), c_vertexBufferSize, mCubeGeo->VertexBufferUploader);//vertex
     mCubeGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(), window.g_CommandList.Get(), m_cubeIndices.data(), c_indicesBufferSize, mCubeGeo->IndexBufferUploader);//index
 
-    mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
-    mCubeGeo->VertexBufferByteSize = c_vertexBufferSize;
-    mCubeGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-    mCubeGeo->IndexBufferByteSize = c_indicesBufferSize;
+	mCubeGeo->VertexByteStride = sizeof(VertexPositionColor);
+	mCubeGeo->VertexBufferByteSize = c_vertexBufferSize;
+	mCubeGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	mCubeGeo->IndexBufferByteSize = c_indicesBufferSize;
 
-    SubmeshGeometry submesh;
-    submesh.IndexCount = (UINT)sizeof(m_cubeIndices);
-    submesh.StartIndexLocation = 0;
-    submesh.BaseVertexLocation = 0;
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)sizeof(m_cubeIndices);
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
 
-    mCubeGeo->DrawArgs["box"] = submesh;
-
+	mCubeGeo->DrawArgs["box"] = submesh;
 }
 
 void MeshRenderer::BuildPSO()

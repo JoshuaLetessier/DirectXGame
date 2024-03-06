@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 using Microsoft::WRL::ComPtr;
 using namespace renderObject;
 
@@ -74,7 +73,3 @@ private:
 	
 
 };
-
-
-
-

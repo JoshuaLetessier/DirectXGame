@@ -373,8 +373,8 @@ uint64_t Window::Signal(ComPtr<ID3D12CommandQueue> commandQueue, ComPtr<ID3D12Fe
 void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName)
 {
 
-    // Register a window class for creating our render window with.
-    WNDCLASSEXW windowClass = {};
+	// Register a window class for creating our render window with.
+	WNDCLASSEXW windowClass = {};
 
     windowClass.cbSize = sizeof(WNDCLASSEX);                        // The size, in bytes, of this structure.
     windowClass.style = CS_HREDRAW | CS_VREDRAW;                    // Class style specifying that the entire window is redrawn if a move or size adjustment changes the width/height of the client area.
@@ -390,8 +390,8 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
     windowClass.lpszClassName = windowClassName;                    // Pointer to a null-terminated constant string used to uniquely identify this window class.
     windowClass.hIconSm = ::LoadIcon(hInst, NULL);
 
-    static ATOM atom = ::RegisterClassExW(&windowClass);
-    assert(atom > 0);
+	static ATOM atom = ::RegisterClassExW(&windowClass);
+	assert(atom > 0);
 }
 
 
@@ -401,29 +401,29 @@ void Window::RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName
 
 void Window::Update()
 {
-    static uint64_t frameCounter = 0;                       // The variable stores the elapsed time in seconds since the last time the frame rate was printed.
-    static double elapsedSeconds = 0.0;
-    static std::chrono::high_resolution_clock clock;        // The variable is a std::chrono::time_point used to sample high-resolution time points.
-    static auto t0 = clock.now();
+	static uint64_t frameCounter = 0;                       // The variable stores the elapsed time in seconds since the last time the frame rate was printed.
+	static double elapsedSeconds = 0.0;
+	static std::chrono::high_resolution_clock clock;        // The variable is a std::chrono::time_point used to sample high-resolution time points.
+	static auto t0 = clock.now();
 
-    frameCounter++;
-    auto t1 = clock.now();
-    auto deltaTime = t1 - t0;
-    t0 = t1;
+	frameCounter++;
+	auto t1 = clock.now();
+	auto deltaTime = t1 - t0;
+	t0 = t1;
 
-    elapsedSeconds += deltaTime.count() * 1e-9;
-    if (elapsedSeconds > 1.0)
-    {
-        char buffer[500];
-        auto fps = frameCounter / elapsedSeconds;
-        sprintf_s(buffer, 500, "FPS: %f\n", fps);
+	elapsedSeconds += deltaTime.count() * 1e-9;
+	if (elapsedSeconds > 1.0)
+	{
+		char buffer[500];
+		auto fps = frameCounter / elapsedSeconds;
+		sprintf_s(buffer, 500, "FPS: %f\n", fps);
 
-        //Converse Buffer to Char
-        size_t bufferSize = strlen(buffer) + 1;
-        WCHAR wBuffer[500];
-        MultiByteToWideChar(CP_ACP, 0, buffer, -1, wBuffer, static_cast<int>(bufferSize));
+		//Converse Buffer to Char
+		size_t bufferSize = strlen(buffer) + 1;
+		WCHAR wBuffer[500];
+		MultiByteToWideChar(CP_ACP, 0, buffer, -1, wBuffer, static_cast<int>(bufferSize));
 
-        OutputDebugString(wBuffer);
+		OutputDebugString(wBuffer);
 
         frameCounter = 0;
         elapsedSeconds = 0.0;
@@ -486,9 +486,9 @@ void Window::Render()
 
 void Window::SetFullscreen(bool fullscreen)
 {
-    if (g_Fullscreen != fullscreen)
-    {
-        g_Fullscreen = fullscreen;
+	if (g_Fullscreen != fullscreen)
+	{
+		g_Fullscreen = fullscreen;
 
         if (g_Fullscreen) // Switching to fullscreen.
         {
@@ -496,32 +496,32 @@ void Window::SetFullscreen(bool fullscreen)
             // when switching out of fullscreen state.
             ::GetWindowRect(g_hWnd, &g_WindowRect);
 
-            // Set the window style to a borderless window so the client area fills
-            // the entire screen.
-            UINT windowStyle = WS_OVERLAPPEDWINDOW & ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
-            ::SetWindowLongW(g_hWnd, GWL_STYLE, windowStyle);
+			// Set the window style to a borderless window so the client area fills
+			// the entire screen.
+			UINT windowStyle = WS_OVERLAPPEDWINDOW & ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+			::SetWindowLongW(g_hWnd, GWL_STYLE, windowStyle);
 
-            // Query the name of the nearest display device for the window.
-            // This is required to set the fullscreen dimensions of the window
-            // when using a multi-monitor setup.
-            HMONITOR hMonitor = ::MonitorFromWindow(g_hWnd, MONITOR_DEFAULTTONEAREST);
-            MONITORINFOEX monitorInfo = {};
-            monitorInfo.cbSize = sizeof(MONITORINFOEX);
-            ::GetMonitorInfo(hMonitor, &monitorInfo);
+			// Query the name of the nearest display device for the window.
+			// This is required to set the fullscreen dimensions of the window
+			// when using a multi-monitor setup.
+			HMONITOR hMonitor = ::MonitorFromWindow(g_hWnd, MONITOR_DEFAULTTONEAREST);
+			MONITORINFOEX monitorInfo = {};
+			monitorInfo.cbSize = sizeof(MONITORINFOEX);
+			::GetMonitorInfo(hMonitor, &monitorInfo);
 
-            ::SetWindowPos(g_hWnd, HWND_TOP,
-                monitorInfo.rcMonitor.left,
-                monitorInfo.rcMonitor.top,
-                monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
-                monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
-                SWP_FRAMECHANGED | SWP_NOACTIVATE);
+			::SetWindowPos(g_hWnd, HWND_TOP,
+				monitorInfo.rcMonitor.left,
+				monitorInfo.rcMonitor.top,
+				monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
+				monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
+				SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-            ::ShowWindow(g_hWnd, SW_MAXIMIZE);
-        }
-        else
-        {
-            // Restore all the window decorators.
-            ::SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+			::ShowWindow(g_hWnd, SW_MAXIMIZE);
+		}
+		else
+		{
+			// Restore all the window decorators.
+			::SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 
             ::SetWindowPos(g_hWnd, HWND_NOTOPMOST,
                 g_WindowRect.left,
@@ -530,9 +530,9 @@ void Window::SetFullscreen(bool fullscreen)
                 g_WindowRect.bottom - g_WindowRect.top,
                 SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-            ::ShowWindow(g_hWnd, SW_NORMAL);
-        }
-    }
+			::ShowWindow(g_hWnd, SW_NORMAL);
+		}
+	}
 }
 
 void Window::Init()
@@ -552,10 +552,10 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             win.Render();
             break;*/
 
-        case WM_SYSKEYDOWN:
-        case WM_KEYDOWN:
-        {
-            bool alt = (::GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+		case WM_SYSKEYDOWN:
+		case WM_KEYDOWN:
+		{
+			bool alt = (::GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
 
             switch (wParam)
             {
@@ -586,8 +586,8 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             RECT clientRect = {};
             ::GetClientRect(win.g_hWnd, &clientRect);
 
-            int width = clientRect.right - clientRect.left;
-            int height = clientRect.bottom - clientRect.top;
+			int width = clientRect.right - clientRect.left;
+			int height = clientRect.bottom - clientRect.top;
 
             win.Resize(width, height);
         }
@@ -604,16 +604,16 @@ LRESULT Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         return ::DefWindowProcW(hwnd, message, wParam, lParam);
     }
 
-    return 0;
+	return 0;
 }
 
 int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow)
 {
-    // Windows 10 Creators update adds Per Monitor V2 DPI awareness context.
-    // Using this awareness context allows the client area of the window 
-    // to achieve 100% scaling while still allowing non-client window content to 
-    // be rendered in a DPI sensitive fashion.
-    SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+	// Windows 10 Creators update adds Per Monitor V2 DPI awareness context.
+	// Using this awareness context allows the client area of the window
+	// to achieve 100% scaling while still allowing non-client window content to
+	// be rendered in a DPI sensitive fashion.
+	SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
     // Window class name. Used for registering / creating the window.
     const wchar_t* windowClassName = L"DX12WindowClass";
@@ -658,7 +658,9 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
 
                            // Window init
 
-    ::ShowWindow(g_hWnd, SW_SHOW);
+	timer.Start();
+
+	ShowWindow(g_hWnd, SW_SHOW);
 
     MSG msg = {};
     while (msg.message != WM_QUIT)
@@ -699,48 +701,48 @@ int Window::wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLi
         }
     }
 
-    // Flushes the command lists and ensures all resources in transit on the GPU are processed before application termination.
-    // All DirectX 12 objects held by ComPtr will be automatically cleaned up when the application closes, but this cleanup
-    // should not occur until the GPU has finished using them.
+	// Flushes the command lists and ensures all resources in transit on the GPU are processed before application termination.
+	// All DirectX 12 objects held by ComPtr will be automatically cleaned up when the application closes, but this cleanup
+	// should not occur until the GPU has finished using them.
 
     // Make sure the command queue has finished all commands before closing.
     
 
-    ::CloseHandle(g_FenceEvent);
+	::CloseHandle(g_FenceEvent);
 
-    return 0;
+	return 0;
 }
 
 HWND Window::CreateWindowE(const wchar_t* windowClassName, HINSTANCE hInst, const wchar_t* windowTitle, uint32_t width, uint32_t height)
 {
-    int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
+	int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
-    RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-    ::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+	RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
+	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-    int windowWidth = windowRect.right - windowRect.left;
-    int windowHeight = windowRect.bottom - windowRect.top;
+	int windowWidth = windowRect.right - windowRect.left;
+	int windowHeight = windowRect.bottom - windowRect.top;
 
-    // Center the window within the screen. Clamp to 0, 0 for the top-left corner.
-    int windowX = std::max<int>(0, (screenWidth - windowWidth) / 2);
-    int windowY = std::max<int>(0, (screenHeight - windowHeight) / 2);
-    HWND hWnd = ::CreateWindowExW(
-        NULL,
-        windowClassName,
-        windowTitle,
-        WS_OVERLAPPEDWINDOW,
-        windowX,
-        windowY,
-        windowWidth,
-        windowHeight,
-        NULL,
-        NULL,
-        hInst,
-        nullptr
-    );
+	// Center the window within the screen. Clamp to 0, 0 for the top-left corner.
+	int windowX = std::max<int>(0, (screenWidth - windowWidth) / 2);
+	int windowY = std::max<int>(0, (screenHeight - windowHeight) / 2);
+	HWND hWnd = ::CreateWindowExW(
+		NULL,
+		windowClassName,
+		windowTitle,
+		WS_OVERLAPPEDWINDOW,
+		windowX,
+		windowY,
+		windowWidth,
+		windowHeight,
+		NULL,
+		NULL,
+		hInst,
+		nullptr
+	);
 
-    assert(hWnd && "Failed to create window");
+	assert(hWnd && "Failed to create window");
 
     return hWnd;
 }

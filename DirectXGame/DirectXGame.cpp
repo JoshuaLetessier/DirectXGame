@@ -1,6 +1,6 @@
 #include <sal.h>
 #include <wtypes.h>
-// DirectXGame.cpp : Définit le point d'entrée de l'application.
+// DirectXGame.cpp : DÃ©finit le point d'entrÃ©e de l'application.
 
 #include "../DirectXMoteur/Window.h"
 #include "Resource.h"

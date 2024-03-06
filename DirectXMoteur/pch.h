@@ -1,6 +1,5 @@
 #pragma once
 
-
 // Windows Runtime Library. Needed for Microsoft::WRL::ComPtr<> template class.
 #include <wrl.h>
 using namespace Microsoft::WRL;
@@ -31,12 +30,12 @@ using namespace Microsoft::WRL;
 //#include <agile.h>
 //#include <concrt.h>
 
-
 #include "ShaderStructure.h"
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "MeshRenderer.h"
+#include "Timer.h"
 
 // Helper functions
 #include "Helpers.h"
@@ -61,9 +60,8 @@ using namespace std;
 #undef max
 #endif
 
-// In order to define a function called CreateWindow, the Windows macro needs to
-// be undefined.
+	// In order to define a function called CreateWindow, the Windows macro needs to
+	// be undefined.
 #if defined(CreateWindow)
 #undef CreateWindow
 #endif
-

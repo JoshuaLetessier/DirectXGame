@@ -1,11 +1,12 @@
 #pragma once
 #include "../DirectXMoteur/Window.h"
 #include "../DirectXMoteur/Entity.h"
+#include "../DirectXMoteur/pch.h"
 
 class Shooter
 {
 private:
-	std::vector<Entity> m_Entity;
+	vector<Entity> m_Entity;
 	MeshRenderer balle;
 public:
 
