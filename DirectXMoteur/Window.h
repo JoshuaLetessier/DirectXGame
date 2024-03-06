@@ -2,22 +2,29 @@
 #include "pch.h"
 #include "DXParam.h"
 
+
 class Window
 {
 private:
 
 	DXParam dxParam;
 	// Window callback function.
-	
+
 	uint64_t g_FrameFenceValues[DXParam::g_NumFrames] = {};				// For each rendered image that could be "in-flight" in the command queue,
-																// the fence value that was used to signal the command queue must be tracked
-																// to ensure that all resources still referenced by the command queue are not overwritten.
+	// the fence value that was used to signal the command queue must be tracked
+	// to ensure that all resources still referenced by the command queue are not overwritten.
 
 	ComPtr<ID3D12Device2> g_Device;				// g_Device stores the DirectX 12 device object.
 
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
+	Timer timer;
 
+public:
+	uint32_t g_ClientWidth = 1280;
+	uint32_t g_ClientHeight = 720;
+
+private:
 	// Set to true once the DX12 objects have been initialized.
 	bool g_IsInitialized = false;
 	// By default, enable V-Sync.
@@ -39,6 +46,8 @@ private:
 	UINT message;
 	WPARAM wParam;
 	LPARAM lParam;
+
+	MeshRenderer meshRenderer;
 public:
 	Window();
 	void RegisterWindowClass(HINSTANCE hInst, const wchar_t* windowClassName);
@@ -50,13 +59,10 @@ public:
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow);
 
-
 	HWND CreateWindow(const wchar_t* windowClassName, HINSTANCE hInst,
 		const wchar_t* windowTitle, uint32_t width, uint32_t height);
-
 
 	uint64_t g_FenceValue = 0;					// The next fence value to signal the next command queue is stored in the variable.
 	HANDLE g_FenceEvent;		// Variable used as a handle to a system event object for receiving notification
 	// when a fence reaches a specific value.
 };
-

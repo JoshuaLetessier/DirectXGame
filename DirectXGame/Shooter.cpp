@@ -2,7 +2,6 @@
 
 Shooter::Shooter()
 {
-
 }
 
 int Shooter::crossHair()

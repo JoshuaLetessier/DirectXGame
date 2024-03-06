@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 using Microsoft::WRL::ComPtr;
 using namespace renderObject;
 
@@ -34,8 +33,6 @@ private:
 	//Pyramide pyramideMesh;
 	//unsigned short* p_pyramideIndices = pyramideIndices;
 
-
-
 	UINT elementByteSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;
 
 	std::unique_ptr<MeshGeometry> mCubeGeo = nullptr;
@@ -56,13 +53,6 @@ private:
 	int mCurrBackBuffer = 0;
 	static const int SwapChainBufferCount = 2;
 
-
-
 	D3D12_VIEWPORT mScreenViewport;
 	D3D12_RECT mScissorRect;
-
 };
-
-
-
-

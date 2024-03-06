@@ -1,6 +1,5 @@
 #pragma once
 
-
 // Windows Runtime Library. Needed for Microsoft::WRL::ComPtr<> template class.
 #include <wrl.h>
 using namespace Microsoft::WRL;
@@ -17,7 +16,6 @@ using namespace Microsoft::WRL;
 #include "d3dx12.h"
 #include <d3d12.h>
 
-
 // STL Headers
 #include <algorithm>
 #include <cassert>
@@ -32,12 +30,12 @@ using namespace Microsoft::WRL;
 //#include <agile.h>
 //#include <concrt.h>
 
-
 #include "ShaderStructure.h"
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "MeshRenderer.h"
+#include "Timer.h"
 
 // Helper functions
 #include "Helpers.h"
@@ -51,7 +49,6 @@ using namespace shaderStruct;
 using namespace renderObject;
 using namespace std;
 
-
 /* The min / max macros conflict with like - named member functions.
 	Only use std::min and std::max defined in <algorithm>.*/
 #if defined(min)
@@ -62,9 +59,8 @@ using namespace std;
 #undef max
 #endif
 
-// In order to define a function called CreateWindow, the Windows macro needs to
-// be undefined.
+	// In order to define a function called CreateWindow, the Windows macro needs to
+	// be undefined.
 #if defined(CreateWindow)
 #undef CreateWindow
 #endif
-

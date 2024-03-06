@@ -138,12 +138,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame.h" />
+    <ClInclude Include="Ennemies.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Shooter.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame.cpp" />
+    <ClCompile Include="Ennemies.cpp" />
+    <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc" />

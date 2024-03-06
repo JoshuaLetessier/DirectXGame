@@ -1,21 +1,29 @@
 #pragma once
-
-#include <chrono>
-#include "pch.h"
+#include <windows.h>
 
 class Timer
 {
 public:
 	Timer();
-	~Timer();
+	virtual ~Timer();
 
 	void Start();
-	void Stop();
-	void Reset();
-	float GetMilisecondsElapsed();
-	float GetMilisecondsElapsedTotal();
+	bool Update();
+
+	float GetElapsedTime();
+	float GetTotalTime();
+	void UpdateFPS();
+	float GetFPS();
 
 private:
-	chrono::time_point<chrono::high_resolution_clock> m_Start;
-	chrono::time_point<chrono::high_resolution_clock> m_Stop;
+	float mDeltaTime;
+	float mTotalTime;
+	DWORD mStart;
+	DWORD mPrevious;
+	DWORD mCountTime;
+	DWORD mFPSPrevious;
+	int mFPS;
+	int mPrevFPS;
+
 };
+

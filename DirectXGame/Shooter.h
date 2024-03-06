@@ -15,4 +15,3 @@ public:
 	void shoot();
 	void deleteBall(int i);
 };
-

@@ -20,4 +20,3 @@ public:
 	Cords offsetCalcul(int x, int y, int z);
 	void deleteEnnemies(int i);
 };
-

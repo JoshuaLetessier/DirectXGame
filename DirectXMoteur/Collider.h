@@ -17,7 +17,4 @@ public:
 	const XMFLOAT3& GetSize() const;
 
 	bool IsColliding(const XMFLOAT3& point) const;
-
-
 };
-

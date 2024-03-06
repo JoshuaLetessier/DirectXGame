@@ -1,48 +1,74 @@
 #include "Timer.h"
 
-Timer::Timer()
-{
-	// Initialize the start time to zero
-	m_Start = std::chrono::high_resolution_clock::now();
-}
+Timer::Timer() {}
 
-Timer::~Timer()
-{
-}
+Timer::~Timer() {}
 
 void Timer::Start()
 {
-	// Set the start time to the current time
-	m_Start = std::chrono::high_resolution_clock::now();
+	mStart = timeGetTime();
+	mPrevious = 0;// mStart;
+	mTotalTime = 0.0f;
+	mDeltaTime = 0.0f;
+	mCountTime = 0;
+	mFPS = 0;
+	mPrevFPS = 0;
 }
 
-void Timer::Stop()
+bool Timer::Update()
 {
-	// Set the stop time to the current time
-	m_Stop = std::chrono::high_resolution_clock::now();
+	//Current time - Previous Time
+	DWORD totalTimeMs = timeGetTime() - mStart;
+	DWORD dt = totalTimeMs - mPrevious;
+	if (dt < 10)
+	{
+		return false;
+	}
+	mPrevious = totalTimeMs;
+
+	UpdateFPS();
+
+
+	if (dt > 40)
+	{
+		dt = 40;
+	}
+
+	mDeltaTime = dt / 1000.0f;
+	mTotalTime += mDeltaTime;
+
+	return true;
 }
 
-void Timer::Reset()
+float Timer::GetElapsedTime()
 {
-	// Reset the start time to the current time
-	m_Start = std::chrono::high_resolution_clock::now();
+	return mDeltaTime;
 }
 
-float Timer::GetMilisecondsElapsed()
+float Timer::GetTotalTime()
 {
-	// Get the current time and subtract the start time from it
-	std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - m_Start;
-
-	// Return the elapsed time in milliseconds
-	return elapsed.count() * 1000.0f;
+	return mTotalTime;
 }
 
-float Timer::GetMilisecondsElapsedTotal()
+void Timer::UpdateFPS()
 {
-	// Get the current time and subtract the start time from it
-	std::chrono::duration<float> elapsed = std::chrono::high_resolution_clock::now() - m_Start;
+	DWORD currentTime = timeGetTime();
+	DWORD elapsedTime = currentTime - mFPSPrevious;
+	mFPSPrevious = currentTime;
 
-	// Return the elapsed time in milliseconds
-	return elapsed.count() * 1000.0f;
+	mCountTime += elapsedTime;
+	mFPS++;
+
+	if (mCountTime >= 1000)
+	{
+		mPrevFPS = mFPS;
+		mFPS = 0;
+		mCountTime = 0;
+	}
 }
 
+
+float Timer::GetFPS()
+{
+	return mPrevFPS;
+}

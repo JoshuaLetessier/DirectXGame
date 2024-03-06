@@ -90,6 +90,12 @@
     <ClInclude Include="UploadBuffer.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXMoteur.cpp">
@@ -115,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>Fichiers de ressources\inc</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
