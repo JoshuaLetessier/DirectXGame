@@ -4,6 +4,8 @@
 
 #include "../DirectXMoteur/Window.h"
 #include "Resource.h"
+#include "../Chapter6/Box/BoxApp.cpp"
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

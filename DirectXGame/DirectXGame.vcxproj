@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../x64/Debug/DirectXMoteur.lib;Kernel32.lib;d3dcompiler.lib;dxgi.lib;D3D12.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>../x64/Debug/DirectXMoteur.lib;C:\Users\Faoll\source\repos\DirectXGame\x64\Debug\Box.lib;Kernel32.lib;d3dcompiler.lib;dxgi.lib;D3D12.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PreBuildEvent>
