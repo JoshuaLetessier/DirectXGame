@@ -3,7 +3,9 @@
 #include "../DirectXMoteur/d3d12.h"
 #include "../DirectXMoteur/MathHelper.h"
 #include "../DirectXMoteur/pch.h"
+#include "../DirectXMoteur/InputManager.h"
 #include "Ennemies.h"
+
 
 struct LunchGame
 {
@@ -30,9 +32,9 @@ private:
     float mPhi = XM_PIDIV4;
     float mRadius = 5.0f;
 
-    POINT mLastMousePos;
     GameTimer mTimer;
     MeshRenderer ennemy;
+    InputManager input;
 
 protected:
     wstring mMainWndCaption = L"d3d App";
@@ -43,6 +45,7 @@ public:
 	void update(const GameTimer& gt);
     int run();
     void CalculateFrameStats();
+    void rotateCamera();
 };
 
 struct ObjectConstants

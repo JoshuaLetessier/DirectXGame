@@ -94,3 +94,9 @@ void LunchGame::CalculateFrameStats()
         timeElapsed += 1.0f;
     }
 }
+
+void LunchGame::rotateCamera()
+{
+    POINT pointeur = input.mousePointeur();
+
+}
