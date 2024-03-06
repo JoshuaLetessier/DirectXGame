@@ -19,6 +19,7 @@ public:
 
 	void AddComponent(Component* component);
 	void GetComponent(Component* component);
+	XMFLOAT4X4 addMatrix();
 
 	Transform& GetTransform();
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "d3dUtil.h"
+#include "DXParam.h"
 
 template<typename T>
 class UploadBuffer
@@ -62,4 +63,5 @@ private:
 
     UINT mElementByteSize = 0;
     bool mIsConstantBuffer = false;
+    //DXParam dxParam;
 };

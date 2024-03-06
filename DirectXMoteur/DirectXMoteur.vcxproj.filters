@@ -87,6 +87,12 @@
     <ClInclude Include="UploadBuffer.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
     <ClInclude Include="WindowEngine.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -112,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>Fichiers de ressources\inc</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="DXmoteur.cpp">
       <Filter>Fichiers sources</Filter>

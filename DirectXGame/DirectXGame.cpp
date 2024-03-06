@@ -1,17 +1,26 @@
 #include <sal.h>
 #include <wtypes.h>
-// DirectXGame.cpp : DÃ©finit le point d'entrÃ©e de l'application.
+// DirectXGame.cpp : Définit le point d'entrée de l'application.
 
 #include "../DirectXMoteur/Window.h"
 #include "Resource.h"
-#include "../Chapter6/Box/BoxApp.cpp"
+#include "LunchGame.h"
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//MessageBox(NULL, L"Bonjour, c'est une application Windows !", L"Hello", MB_OK);
 	Window win;
+    LunchGame lunchGame;
 	win.Init();
 
-	return 0;
+    try
+    {
+        return lunchGame.run();
+    }
+    catch (DxException& e)
+    {
+        MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+        return 0;
+    }
 }

@@ -479,6 +479,8 @@ void Window::Render()
 
         WaitForFenceValue(g_Fence, g_FrameFenceValues[g_CurrentBackBufferIndex], g_FenceEvent); // The CPU thread is blocked until the next image overwrites 
         // the content of the current back buffer, using the WaitForFenceValue function.
+       
+        
     }
 }
 

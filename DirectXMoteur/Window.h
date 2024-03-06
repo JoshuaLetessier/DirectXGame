@@ -19,13 +19,18 @@ private:
 	// Window handle.
 	HWND g_hWnd;				// g_hWnd stores a handle to the operating system window, used for rendering.
 
-	// Window rectangle (used to toggle fullscreen state).
+public:
+	uint32_t g_ClientWidth = 1280;
+	uint32_t g_ClientHeight = 720;
 
-	RECT g_WindowRect;			// g_WindowRect stores the previous dimensions of the window before transitioning to fullscreen mode, 
-								// so that the window dimensions can be restored correctly when returning to windowed mode.
-
-	// Window callback function.
-	//LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+private:
+	// Set to true once the DX12 objects have been initialized.
+	bool g_IsInitialized = false;
+	// By default, enable V-Sync.
+	// Can be toggled with the V key.
+	bool g_VSync = true;					// Controls whether the current swap chain method waits for the next vertical refresh before presenting the rendered image.
+	bool g_TearingSupported = false;		// By default, it blocks until the next vertical refresh, limiting the frame rate to the screen's refresh rate.
+	// Setting it to false presents the image as quickly as possible, allowing an unlimited frame rate, but may cause screen tearing.
 
 	HINSTANCE hInstance;
 	HINSTANCE hPrevInstance;
@@ -36,6 +41,8 @@ private:
 	UINT message;
 	WPARAM wParam;
 	LPARAM lParam;
+
+	MeshRenderer meshRenderer;
 public:
 	Window();
 	~Window();

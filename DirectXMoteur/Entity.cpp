@@ -28,6 +28,11 @@ void Entity::GetComponent(Component* component)
 	}
 }
 
+XMFLOAT4X4 Entity::addMatrix()
+{
+	return m_transform.matrix;
+}
+
 Transform& Entity::GetTransform()
 {
 	return m_transform;
