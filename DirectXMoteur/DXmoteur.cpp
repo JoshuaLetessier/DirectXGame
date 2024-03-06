@@ -3,7 +3,6 @@
 #include <iostream>
 #include "framework.h"
 #include "DXMoteur.h"
-#include "Window.h"
 #include "RenderEngine.h"
 
 #define MAX_LOADSTRING 100

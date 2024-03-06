@@ -23,18 +23,13 @@ using namespace Microsoft::WRL;
 #include <vector>
 #include <pix.h>
 #include <DirectXCollision.h>
-
-#include <pix.h>
 #include <memory>
-#include <vector>
-//#include <agile.h>
-//#include <concrt.h>
+
 
 #include "ShaderStructure.h"
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
-#include "MeshRenderer.h"
 #include "Timer.h"
 
 // Helper functions

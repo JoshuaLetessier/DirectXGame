@@ -9,15 +9,15 @@ struct Cords
 
 class Ennemies
 {
-private:
-	MeshRenderer ennemy;
-	vector<Entity> m_Entity;
-
-public:
-	Ennemies();
-	void spawnEnnemies();
-	Cords spawnAleatoire();
-	Cords offsetCalcul(int x, int y, int z);
-	void deleteEnnemies(int i);
+//private:
+//	MeshRenderer ennemy;
+//	vector<Entity> m_Entity;
+//
+//public:
+//	Ennemies();
+//	void spawnEnnemies();
+//	Cords spawnAleatoire();
+//	Cords offsetCalcul(int x, int y, int z);
+//	void deleteEnnemies(int i);
 };
 

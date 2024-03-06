@@ -141,7 +141,6 @@
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Resource.h" />
@@ -151,13 +150,11 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UploadBuffer.h" />
-    <ClInclude Include="Window.h" />
     <ClInclude Include="WindowEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
-    <ClCompile Include="DirectXMoteur.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
@@ -166,8 +163,6 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MathHelper.cpp" />
-    <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
