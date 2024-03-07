@@ -1,7 +1,3 @@
-//***************************************************************************************
-// WindowEngine.h by Frank Luna (C) 2015 All Rights Reserved.
-//***************************************************************************************
-
 #pragma once
 
 #if defined(DEBUG) || defined(_DEBUG)
@@ -20,6 +16,7 @@ class WindowEngine
 {
 protected:
 
+    
     WindowEngine(HINSTANCE hInstance);
     WindowEngine(const WindowEngine& rhs) = delete;
     WindowEngine& operator=(const WindowEngine& rhs) = delete;
@@ -27,6 +24,7 @@ protected:
 
 public:
 
+    WindowEngine();
     static WindowEngine* GetApp();
 
     HINSTANCE AppInst()const;
@@ -40,6 +38,9 @@ public:
 
     virtual bool Initialize();
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+    int mClientWidth = 800;
+    int mClientHeight = 600;
 
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
@@ -121,7 +122,6 @@ protected:
     D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
     DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    int mClientWidth = 800;
-    int mClientHeight = 600;
+
 };
 

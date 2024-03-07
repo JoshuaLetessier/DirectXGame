@@ -7,6 +7,10 @@
 
 #define MAX_LOADSTRING 100
 
+#ifdef _DEBUG
+#include <crtdbg.h>
+#endif
+
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
@@ -25,6 +29,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+#ifdef _DEBUG
+	_CrtMemState memStateInit;
+	_CrtMemCheckpoint(&memStateInit);
+#endif
+
 
 	try
 	{
@@ -39,4 +48,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
 		return 0;
 	}
+#ifdef _DEBUG
+	_CrtMemState memStateEnd, memStateDiff;
+	_CrtMemCheckpoint(&memStateEnd);
+	if (_CrtMemDifference(&memStateDiff, &memStateInit, &memStateEnd))
+	{
+		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
+	}
+#endif 
 }

@@ -1,14 +1,8 @@
 #include "WindowEngine.h"
-
-//***************************************************************************************
-// WindowEngine.cpp by Frank Luna (C) 2015 All Rights Reserved.
-//***************************************************************************************
-
-
 #include <WindowsX.h>
-#include "InputManager.h"
+//#include "InputManager.h"
 
-InputManager inp;
+//InputManager inp;
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
@@ -28,8 +22,11 @@ WindowEngine* WindowEngine::GetApp()
 	return mApp;
 }
 
+WindowEngine::WindowEngine()
+{
+}
+
 WindowEngine::WindowEngine(HINSTANCE hInstance)
-	: mhAppInst(hInstance)
 {
 	// Only one WindowEngine can be constructed.
 	assert(mApp == nullptr);
@@ -95,7 +92,6 @@ int WindowEngine::Run()
 
 			if (!mAppPaused)
 			{
-				CalculateFrameStats();
 				Update();
 				Draw();
 			}
@@ -353,15 +349,15 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		inp.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//inp.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		inp.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//inp.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
-		inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)

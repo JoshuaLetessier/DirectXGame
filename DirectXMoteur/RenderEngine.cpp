@@ -9,6 +9,12 @@ RenderEngine::RenderEngine(HINSTANCE hInstance):WindowEngine(hInstance)
 {
 }
 
+RenderEngine::RenderEngine() :Component()
+{
+
+}
+
+
 RenderEngine::~RenderEngine()
 {
 }
@@ -113,9 +119,7 @@ void RenderEngine::Draw()
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	mCommandList->DrawIndexedInstanced(
-		mBoxGeo->DrawArgs["box"].IndexCount,
-		1, 0, 0, 0);
+	mCommandList->DrawIndexedInstanced(mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 	// Indicate a state transition on the resource usage.
 	mCommandList->ResourceBarrier(1, &transition);
@@ -210,9 +214,9 @@ void RenderEngine::BuildRootSignature()
 void RenderEngine::BuildShadersAndInputLayout()
 {
 	HRESULT hr = S_OK;
-
-	mvsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "VS", "vs_5_0");
-	mpsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "PS", "ps_5_0");
+	//mettre if debug enlever ../DirectXMoteur/ sinon le laisser
+	mvsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "VS", "vs_5_0");
+	mpsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "PS", "ps_5_0");
 
 	mInputLayout =
 	{

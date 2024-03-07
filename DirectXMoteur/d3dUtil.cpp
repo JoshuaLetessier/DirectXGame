@@ -108,7 +108,11 @@ ComPtr<ID3DBlob> d3dUtil::CompileShader(
 	if (errors != nullptr)
 		OutputDebugStringA((char*)errors->GetBufferPointer());
 
-	ThrowIfFailed(hr);
+	{
+		HRESULT hr__ = (hr); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\d3dUtil.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"hr", wfn, 111);
+		}
+	};
 
 	return byteCode;
 }

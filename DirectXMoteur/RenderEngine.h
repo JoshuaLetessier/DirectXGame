@@ -1,21 +1,23 @@
 #pragma once
 #include "WindowEngine.h"
+#include "Component.h"
 #include "pch.h"
 
-class RenderEngine : public WindowEngine
+class RenderEngine : public WindowEngine, public Component
 {
 public:
     RenderEngine(HINSTANCE hInstance);
-    RenderEngine(const RenderEngine& rhs) = delete;
-    RenderEngine& operator=(const RenderEngine& rhs) = delete;
+    RenderEngine();
+   /* RenderEngine(const RenderEngine& rhs) = delete;
+    RenderEngine& operator=(const RenderEngine& rhs) = delete;*/
     ~RenderEngine();
 
     virtual bool Initialize()override;
-
+    virtual void Draw()override;
 private:
     virtual void OnResize()override;
     virtual void Update()override;
-    virtual void Draw()override;
+    
 
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
