@@ -32,6 +32,7 @@ using namespace Microsoft::WRL;
 #include "UploadBuffer.h"
 #include "Timer.h"
 
+
 // Helper functions
 #include "Helpers.h"
 
@@ -41,7 +42,6 @@ using namespace Microsoft::WRL;
 
 using namespace DirectX;
 using namespace shaderStruct;
-using namespace renderObject;
 using namespace std;
 
 

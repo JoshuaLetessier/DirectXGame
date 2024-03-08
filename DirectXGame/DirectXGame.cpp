@@ -10,6 +10,8 @@
 #include <crtdbg.h>
 #endif
 
+LunchGame lunch;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -30,6 +32,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			return 0;
 
 		return renderEngine.Run();
+		lunch.run();
+
 	}
 	catch (DxException& e)
 	{

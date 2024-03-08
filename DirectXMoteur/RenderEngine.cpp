@@ -2,18 +2,16 @@
 #include "iostream"
 
 using Microsoft::WRL::ComPtr;
-using namespace renderObject;
 using namespace shaderStruct;
 
 RenderEngine::RenderEngine(HINSTANCE hInstance):WindowEngine(hInstance)
 {
 }
 
-RenderEngine::RenderEngine() :Component()
+RenderEngine::RenderEngine():Component()
 {
 
 }
-
 
 RenderEngine::~RenderEngine()
 {
@@ -31,7 +29,7 @@ bool RenderEngine::Initialize()
 	BuildConstantBuffers();
 	BuildRootSignature();
 	BuildShadersAndInputLayout();
-	BuildBoxGeometry();
+	mesh.BuildBoxGeometry(md3dDevice, mCommandList);
 	BuildPSO();
 
 	// Execute the initialization commands.
@@ -110,19 +108,20 @@ void RenderEngine::Draw()
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mBoxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
 	mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 
-	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mBoxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mesh.mBoxGeo->IndexBufferView();
 	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	mCommandList->DrawIndexedInstanced(mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 	// Indicate a state transition on the resource usage.
-	mCommandList->ResourceBarrier(1, &transition);
+	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	mCommandList->ResourceBarrier(1, &transition2);
 
 	// Done recording commands.
 	ThrowIfFailed(mCommandList->Close());
@@ -223,43 +222,6 @@ void RenderEngine::BuildShadersAndInputLayout()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
-}
-
-void RenderEngine::BuildBoxGeometry()
-{
-	Cube cube;
-	cubeIndices;
-	VertexPositionColor vertex;
-
-	const UINT vbByteSize = (UINT)cube.cubeVertices.size() * sizeof(vertex);
-	const UINT ibByteSize = (UINT)cubeIndices.size() * sizeof(std::uint16_t);
-
-	mBoxGeo = std::make_unique<MeshGeometry>();
-	mBoxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
-	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), cube.cubeVertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
-	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), cubeIndices.data(), ibByteSize);
-
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cube.cubeVertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
-
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cubeIndices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
-
-	mBoxGeo->VertexByteStride = sizeof(vertex);
-	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	mBoxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)cubeIndices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	mBoxGeo->DrawArgs["box"] = submesh;
 }
 
 void RenderEngine::BuildPSO()

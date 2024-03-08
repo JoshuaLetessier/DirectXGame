@@ -2,14 +2,14 @@
 #include "WindowEngine.h"
 #include "Component.h"
 #include "pch.h"
+#include "Mesh.h"
+
 
 class RenderEngine : public WindowEngine, public Component
 {
 public:
     RenderEngine(HINSTANCE hInstance);
     RenderEngine();
-   /* RenderEngine(const RenderEngine& rhs) = delete;
-    RenderEngine& operator=(const RenderEngine& rhs) = delete;*/
     ~RenderEngine();
 
     virtual bool Initialize()override;
@@ -23,17 +23,18 @@ private:
     void BuildConstantBuffers();
     void BuildRootSignature();
     void BuildShadersAndInputLayout();
-    void BuildBoxGeometry();
     void BuildPSO();
 
 private:
+
+    Mesh mesh;
 
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
     std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
 
-    std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
+   
 
     ComPtr<ID3DBlob> mvsByteCode = nullptr;
     ComPtr<ID3DBlob> mpsByteCode = nullptr;
