@@ -21,5 +21,5 @@ public:
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
-	void UpdateCamera(float deltaTime);
+	//void UpdateCamera(float deltaTime);
 };

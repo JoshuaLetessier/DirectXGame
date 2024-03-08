@@ -1,8 +1,5 @@
 #include "RenderEngine.h"
 #include "iostream"
-#include "InputManager.h"
-
-static InputManager inp;
 
 using Microsoft::WRL::ComPtr;
 using namespace renderObject;
@@ -59,7 +56,6 @@ void RenderEngine::OnResize()
 
 void RenderEngine::Update()
 {
-	inp.UpdateCamera(1);
 	// Convert Spherical to Cartesian coordinates.
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
