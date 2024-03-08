@@ -12,9 +12,10 @@ public:
 	float mPhi = XM_PIDIV4;
 	float mRadius = 5.0f;
 
+
 public:
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
-	POINT mousePointeur();
 };
+

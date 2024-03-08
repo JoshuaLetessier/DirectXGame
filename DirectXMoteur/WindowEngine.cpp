@@ -1,15 +1,12 @@
 #include "WindowEngine.h"
 
 #include <WindowsX.h>
-#include "Score.h"
 //#include "InputManager.h"
 //
 //InputManager inp;
 
-
 Timer timer;
 Score score;
-
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

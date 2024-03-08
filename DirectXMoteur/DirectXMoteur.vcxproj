@@ -157,6 +157,7 @@
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="ShaderStructure.cpp" />

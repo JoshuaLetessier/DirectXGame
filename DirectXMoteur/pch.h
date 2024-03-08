@@ -25,12 +25,14 @@ using namespace Microsoft::WRL;
 #include <DirectXCollision.h>
 #include <memory>
 
+
 #include "ShaderStructure.h"
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "Timer.h"
-//#include "Score.h"
+#include "Score.h"
+
 
 // Helper functions
 #include "Helpers.h"
@@ -41,6 +43,7 @@ using namespace Microsoft::WRL;
 
 using namespace DirectX;
 using namespace std;
+
 
 /* The min / max macros conflict with like - named member functions.
 	Only use std::min and std::max defined in <algorithm>.*/
@@ -54,6 +57,6 @@ using namespace std;
 
 	// In order to define a function called CreateWindow, the Windows macro needs to
 	// be undefined.
-//#if defined(CreateWindow)
-//#undef CreateWindow
-//#endif
+#if defined(CreateWindow)
+#undef CreateWindow
+#endif

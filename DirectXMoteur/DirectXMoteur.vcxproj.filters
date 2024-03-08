@@ -137,6 +137,9 @@
     <ClCompile Include="ShaderStructure.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXMoteur.rc">

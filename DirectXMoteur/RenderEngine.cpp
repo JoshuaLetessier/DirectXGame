@@ -7,6 +7,11 @@ RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
 {
 }
 
+RenderEngine::RenderEngine() :Component()
+{
+
+}
+
 RenderEngine::~RenderEngine()
 {
 }
@@ -23,7 +28,7 @@ bool RenderEngine::Initialize()
 	BuildConstantBuffers();
 	BuildRootSignature();
 	BuildShadersAndInputLayout();
-	BuildBoxGeometry();
+	mesh.BuildBoxGeometry(md3dDevice, mCommandList);
 	BuildPSO();
 
 	// Execute the initialization commands.
@@ -102,21 +107,20 @@ void RenderEngine::Draw()
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mBoxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
 	mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 
-	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mBoxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mesh.mBoxGeo->IndexBufferView();
 	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	mCommandList->DrawIndexedInstanced(
-		mBoxGeo->DrawArgs["box"].IndexCount,
-		1, 0, 0, 0);
+	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 	// Indicate a state transition on the resource usage.
-	mCommandList->ResourceBarrier(1, &transition);
+	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	mCommandList->ResourceBarrier(1, &transition2);
 
 	// Done recording commands.
 	ThrowIfFailed(mCommandList->Close());
@@ -172,7 +176,7 @@ void RenderEngine::BuildRootSignature()
 	// textures, samplers).  The root signature defines the resources the shader
 	// programs expect.  If we think of the shader programs as a function, and
 	// the input resources as function parameters, then the root signature can be
-	// thought of as defining the function signature.
+	// thought of as defining the function signature.  
 
 	// Root parameter can be a table, root descriptor or root constants.
 	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
@@ -208,9 +212,9 @@ void RenderEngine::BuildRootSignature()
 void RenderEngine::BuildShadersAndInputLayout()
 {
 	HRESULT hr = S_OK;
-
-	mvsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "VS", "vs_5_0");
-	mpsByteCode = d3dUtil::CompileShader(L"Shader.hlsl", nullptr, "PS", "ps_5_0");
+	//mettre if debug enlever ../DirectXMoteur/ sinon le laisser
+	mvsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "VS", "vs_5_0");
+	mpsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "PS", "ps_5_0");
 
 	mInputLayout =
 	{
@@ -218,8 +222,6 @@ void RenderEngine::BuildShadersAndInputLayout()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
-
-
 
 void RenderEngine::BuildPSO()
 {
