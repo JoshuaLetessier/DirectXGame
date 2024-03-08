@@ -1,16 +1,16 @@
 #pragma once
 #include "pch.h"
 
-struct Transform {
+/*static*/ struct Transform {
 	XMFLOAT3 vPos;
 	XMFLOAT4X4 mPos;
 
 	XMFLOAT3 vScaling;
 	XMFLOAT4X4 mScaling;
 
-	XMFLOAT3 vDir;
-	XMFLOAT3 vRight;
-	XMFLOAT3 vUp;
+	XMFLOAT3 vDir = { 0.0f, 0.0f, 1.0f };
+	XMFLOAT3 vRight = { 1.0f, 0.0f, 0.0f };
+	XMFLOAT3 vUp = { 0.0f, 1.0f, 0.0f };
 	XMFLOAT4X4 mRotate;
 	XMFLOAT4 qRotate;
 
@@ -20,4 +20,12 @@ struct Transform {
 	void rotate(float roll, float pitch, float yaw);
 	void update();
 	void translate(float offsetX, float offsetY, float offsetZ);
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mRadius = 5.0f;
+
+	void rotateCamera(float mPhi, float mTheta);
 };

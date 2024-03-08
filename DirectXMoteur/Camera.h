@@ -5,13 +5,16 @@
 #include "Transform.h"
 #include "MathHelper.h"
 
-Transform trans;
+static Transform trans;
 
 class Camera : public Component
 {
 public:
     Camera();
     ~Camera();
+
+    bool Initialize() override;
+    void Update() override;
 
     void SetLens(float fovY, float aspect, float zn, float zf);
 
@@ -29,6 +32,11 @@ public:
 
     DirectX::XMFLOAT4X4 GetView4x4f()const;
     DirectX::XMFLOAT4X4 GetProj4x4f()const;
+
+    //void UpdateViewMatrix();
+
+    Transform& GetTransform() { return trans; }
+
 private:
     int Id = 1;
     float mNearZ = 0.0f;

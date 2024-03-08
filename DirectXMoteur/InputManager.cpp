@@ -1,4 +1,15 @@
 #include "InputManager.h"
+#include "WindowEngine.h"
+
+InputManager::InputManager()
+{
+    cam = new Camera();
+}
+
+InputManager::~InputManager()
+{
+    delete cam;
+}
 
 void InputManager::OnMouseDown(WPARAM btnState, int x, int y)
 {
@@ -15,32 +26,37 @@ void InputManager::OnMouseUp(WPARAM btnState, int x, int y)
 
 void InputManager::OnMouseMove(WPARAM btnState, int x, int y)
 {
-    if ((btnState & MK_RBUTTON) != 0)
+    if ((btnState & MK_LBUTTON) != 0)
     {
         // Make each pixel correspond to a quarter of a degree.
         float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
         float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-
-        // Update angles based on input to orbit camera around box.
-        mTheta += dx;
-        mPhi += dy;
-
-        // Restrict the angle mPhi.
-        mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+        Transform& camtrans = cam->GetTransform();
+        camtrans.rotateCamera(dy, dx);
     }
-    //else if ((btnState & MK_LBUTTON) != 0)
-    //{
-       
-    //}
 
     mLastMousePos.x = x;
     mLastMousePos.y = y;
+
 }
 
-POINT InputManager::mousePointeur() 
-{
-    POINT mousePoint;
-    if (GetCursorPos(&mousePoint)) {
-        return mousePoint;
-    }
-}
+
+
+//void InputManager::UpdateCamera(float deltaTime) 
+//{
+//    const float dt = deltaTime;
+//
+//    if (GetAsyncKeyState('W') & 0x8000)
+//        cam->Walk(10.0f * dt);
+//
+//    if (GetAsyncKeyState('S') & 0x8000)
+//        cam->Walk(-10.0f * dt);
+//
+//    if (GetAsyncKeyState('A') & 0x8000)
+//        cam->Strafe(-10.0f * dt);
+//
+//    if (GetAsyncKeyState('D') & 0x8000)
+//        cam->Strafe(10.0f * dt);
+//
+//    cam->UpdateViewMatrix();
+//}    if (GetCursorPos(&mousePoint)) {

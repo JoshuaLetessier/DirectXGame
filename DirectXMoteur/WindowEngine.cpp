@@ -1,8 +1,8 @@
 #include "WindowEngine.h"
 #include <WindowsX.h>
-//#include "InputManager.h"
+#include "InputManager.h"
 
-//InputManager inp;
+InputManager inp;
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
@@ -346,18 +346,15 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		//inp.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		inp.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
+
 	case WM_RBUTTONUP:
-		//inp.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		inp.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
-		//inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)

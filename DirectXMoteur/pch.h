@@ -54,9 +54,3 @@ using namespace std;
 #if defined(max)
 #undef max
 #endif
-
-	// In order to define a function called CreateWindow, the Windows macro needs to
-	// be undefined.
-#if defined(CreateWindow)
-#undef CreateWindow
-#endif

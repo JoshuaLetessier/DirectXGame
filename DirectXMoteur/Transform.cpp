@@ -1,4 +1,4 @@
-#include "Transform.h"
+ï»¿#include "Transform.h"
 
 void Transform::identity()
 {
@@ -47,24 +47,24 @@ void Transform::rotate(float roll, float pitch, float yaw)
 	XMVECTOR tempRight = XMLoadFloat3(&vRight);
 	XMVECTOR tempUp = XMLoadFloat3(&vUp);
 
-	//Création de quaternion pour chaque rotation
-	XMVECTOR quat = XMQuaternionRotationAxis(tempDir, roll);
+	//Crï¿½ation de quaternion pour chaque rotation
+	XMVECTOR quat = DirectX::XMQuaternionRotationAxis(tempDir, roll);
 	XMVECTOR tempQuat = quat;
-	quat = XMQuaternionRotationAxis(tempRight, pitch);
-	tempQuat = XMQuaternionMultiply(tempQuat, quat);
-	quat = XMQuaternionRotationAxis(tempUp, yaw);
-	tempQuat = XMQuaternionMultiply(tempQuat, quat);
+	quat = DirectX::XMQuaternionRotationAxis(tempRight, pitch);
+	tempQuat = DirectX::XMQuaternionMultiply(tempQuat, quat);
+	quat = DirectX::XMQuaternionRotationAxis(tempUp, yaw);
+	tempQuat = DirectX::XMQuaternionMultiply(tempQuat, quat);
 
-	//Ajout rotation delta à l'objet
+	//Ajout rotation delta ï¿½ l'objet
 	XMVECTOR tempRotate = XMLoadFloat4(&qRotate);
-	XMVECTOR tempRotateDelta = XMQuaternionMultiply(tempRotate, tempQuat);
+	XMVECTOR tempRotateDelta = DirectX::XMQuaternionMultiply(tempRotate, tempQuat);
 	XMStoreFloat4(&qRotate, tempRotateDelta);
 
 	//Convertir le quaternion en une matrice
 	XMMATRIX matrixRot = XMMatrixRotationQuaternion(tempRotate);
 	XMStoreFloat4x4(&mRotate, matrixRot);
 
-	//Mise à jour des axes
+	//Mise ï¿½ jour des axes
 	vRight.x = mRotate._11;
 	vRight.y = mRotate._12;
 	vRight.z = mRotate._13;
@@ -97,4 +97,26 @@ void Transform::translate(float offsetX, float offsetY, float offsetZ)
 	mPos._41 += offsetX;
 	mPos._42 += offsetY;
 	mPos._43 += offsetZ;
+}
+
+void Transform::rotateCamera(float mPhi, float mTheta)
+{
+
+	// Convert Spherical to Cartesian coordinates.
+	float x = mRadius * sinf(mPhi) * cosf(mTheta);
+	float z = mRadius * sinf(mPhi) * sinf(mTheta);
+	float y = mRadius * cosf(mPhi);
+
+	// Build the view matrix.
+	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+	matrix = mView;
+
+	XMMATRIX world = XMLoadFloat4x4(&matrix);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj = world * view * proj;
 }
