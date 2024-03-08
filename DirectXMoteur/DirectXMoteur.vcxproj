@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxgi.lib;d3d12.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d12.lib;d3dcompiler.lib;Winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,34 +134,36 @@
     <ClInclude Include="d3d12.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DirectXMoteur.h" />
+    <ClInclude Include="DXmoteur.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="DXParam.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UploadBuffer.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
-    <ClCompile Include="DirectXMoteur.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="DXmoteur.cpp" />
+    <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MathHelper.cpp" />
-    <ClCompile Include="DXParam.cpp" />
-    <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXMoteur.rc" />

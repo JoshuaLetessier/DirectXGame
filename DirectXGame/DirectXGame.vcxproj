@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../x64/Debug/DirectXMoteur.lib;d3dcompiler.lib;dxgi.lib;D3D12.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../x64/Debug/DirectXMoteur.lib;Kernel32.lib;d3dcompiler.lib;dxgi.lib;D3D12.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PreBuildEvent>
@@ -133,6 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>../x64/Debug/DirectXMoteur.lib;Kernel32.lib;d3dcompiler.lib;dxgi.lib;D3D12.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

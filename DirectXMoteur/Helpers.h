@@ -1,5 +1,5 @@
-//#pragma once
-//// DirectX 12 specific headers.
+#pragma once
+// DirectX 12 specific headers.
 //#include "pch.h"
 //#include "d3dUtil.h"
 //#include "DXParam.h"

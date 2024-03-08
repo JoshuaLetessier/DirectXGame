@@ -14,9 +14,7 @@ struct Transform {
 	XMFLOAT4X4 mRotate;
 	XMFLOAT4 qRotate;
 
-
 	XMFLOAT4X4 matrix;
-
 
 	void identity();
 	void rotate(float roll, float pitch, float yaw);

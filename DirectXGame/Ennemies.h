@@ -1,18 +1,24 @@
-#pragma once
-#include "../DirectXMoteur/Entity.h"
-
-class Ennemies
-{
-private:
-	MeshRenderer ennemy;
-	std::vector<Entity> m_Entity;
-public:
-	XMFLOAT4X4 m_matrixEnnemy;
-public:
-	Ennemies();
-	void spawnEnnemies();
-	std::vector<int> spawnAleatoire();
-	std::vector<float> offsetCalcul(int x, int y, int z);
-	void deleteEnnemies(int i);
-};
-
+//#pragma once
+//#include "../DirectXMoteur/Entity.h"
+//#include "../DirectXMoteur/pch.h"
+//#include "../DirectXMoteur/RenderEngine.h"
+//
+//struct Cords
+//{
+//	float x, y, z;
+//};
+//
+//class Ennemies
+//{
+//private:
+//	RenderEngine ennemy;
+//	vector<Entity> m_Entity;
+//
+//public:
+//	Ennemies();
+//	void spawnEnnemies();
+//	Cords spawnAleatoire();
+//	Cords offsetCalcul(int x, int y, int z);
+//	void deleteEnnemies(int i);
+//};
+//

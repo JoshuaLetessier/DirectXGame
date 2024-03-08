@@ -1,13 +1,17 @@
 #pragma once
-#include "../DirectXMoteur/Window.h"
+#include "../DirectXMoteur/WindowEngine.h"
+#include "../DirectXMoteur/RenderEngine.h"
 #include "../DirectXMoteur/Entity.h"
+
 
 class Shooter
 {
 private:
-	std::vector<Entity> m_Entity;
-	MeshRenderer balle;
+	vector<Entity> m_Entity;
+	RenderEngine balle;
 public:
+	WindowEngine* window;
+	
 
 	Shooter();
 	int crossHair();
