@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include "WindowEngine.h"
+WindowEngine* wine;
 
 InputManager::InputManager()
 {
@@ -39,24 +40,3 @@ void InputManager::OnMouseMove(WPARAM btnState, int x, int y)
     mLastMousePos.y = y;
 
 }
-
-
-
-//void InputManager::UpdateCamera(float deltaTime) 
-//{
-//    const float dt = deltaTime;
-//
-//    if (GetAsyncKeyState('W') & 0x8000)
-//        cam->Walk(10.0f * dt);
-//
-//    if (GetAsyncKeyState('S') & 0x8000)
-//        cam->Walk(-10.0f * dt);
-//
-//    if (GetAsyncKeyState('A') & 0x8000)
-//        cam->Strafe(-10.0f * dt);
-//
-//    if (GetAsyncKeyState('D') & 0x8000)
-//        cam->Strafe(10.0f * dt);
-//
-//    cam->UpdateViewMatrix();
-//}    if (GetCursorPos(&mousePoint)) {

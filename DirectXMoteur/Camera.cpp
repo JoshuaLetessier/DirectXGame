@@ -89,10 +89,7 @@ void Camera::RotateY(float angle)
 
 DirectX::XMMATRIX Camera::GetView()const
 {
-	trans.update();
-
-	// Renvoyer la matrice de vue calcul?e ? partir de la transformation de la cam?ra
-	return DirectX::XMLoadFloat4x4(&trans.matrix);
+	return DirectX::XMLoadFloat4x4(&trans.mView);
 }
 
 DirectX::XMMATRIX Camera::GetProj()const
@@ -112,51 +109,51 @@ DirectX::XMFLOAT4X4 Camera::GetProj4x4f()const
 	return mProj;
 }
 
-//void Camera::UpdateViewMatrix()
-//{
-//	if (mViewDirty)
-//	{
-//		XMVECTOR R = XMLoadFloat3(&trans.vRight);
-//		XMVECTOR U = XMLoadFloat3(&trans.vUp);
-//		XMVECTOR L = XMLoadFloat3(&trans.vDir);
-//		XMVECTOR P = XMLoadFloat3(&trans.vPos);
-//
-//		// Keep camera's axes orthogonal to each other and of unit length.
-//		L = XMVector3Normalize(L);
-//		U = XMVector3Normalize(XMVector3Cross(L, R));
-//
-//		// U, L already ortho-normal, so no need to normalize cross product.
-//		R = XMVector3Cross(U, L);
-//
-//		// Fill in the view matrix entries.
-//		float x = -XMVectorGetX(XMVector3Dot(P, R));
-//		float y = -XMVectorGetX(XMVector3Dot(P, U));
-//		float z = -XMVectorGetX(XMVector3Dot(P, L));
-//
-//		XMStoreFloat3(&trans.vRight, R);
-//		XMStoreFloat3(&trans.vUp, U);
-//		XMStoreFloat3(&trans.vDir, L);
-//
-//		trans.mView(0, 0) = trans.vRight.x;
-//		trans.mView(1, 0) = trans.vRight.y;
-//		trans.mView(2, 0) = trans.vRight.z;
-//		trans.mView(3, 0) = x;
-//
-//		trans.mView(0, 1) = trans.vUp.x;
-//		trans.mView(1, 1) = trans.vUp.y;
-//		trans.mView(2, 1) = trans.vUp.z;
-//		trans.mView(3, 1) = y;
-//
-//		trans.mView(0, 2) = trans.vDir.x;
-//		trans.mView(1, 2) = trans.vDir.y;
-//		trans.mView(2, 2) = trans.vDir.z;
-//		trans.mView(3, 2) = z;
-//
-//		trans.mView(0, 3) = 0.0f;
-//		trans.mView(1, 3) = 0.0f;
-//		trans.mView(2, 3) = 0.0f;
-//		trans.mView(3, 3) = 1.0f;
-//
-//		mViewDirty = false;
-//	}
-//}
+void Camera::UpdateViewMatrix()
+{
+	if (mViewDirty)
+	{
+		XMVECTOR R = XMLoadFloat3(&trans.vRight);
+		XMVECTOR U = XMLoadFloat3(&trans.vUp);
+		XMVECTOR L = XMLoadFloat3(&trans.vDir);
+		XMVECTOR P = XMLoadFloat3(&trans.vPos);
+
+		// Keep camera's axes orthogonal to each other and of unit length.
+		L = XMVector3Normalize(L);
+		U = XMVector3Normalize(XMVector3Cross(L, R));
+
+		// U, L already ortho-normal, so no need to normalize cross product.
+		R = XMVector3Cross(U, L);
+
+		// Fill in the view matrix entries.
+		float x = -XMVectorGetX(XMVector3Dot(P, R));
+		float y = -XMVectorGetX(XMVector3Dot(P, U));
+		float z = -XMVectorGetX(XMVector3Dot(P, L));
+
+		XMStoreFloat3(&trans.vRight, R);
+		XMStoreFloat3(&trans.vUp, U);
+		XMStoreFloat3(&trans.vDir, L);
+
+		trans.mView(0, 0) = trans.vRight.x;
+		trans.mView(1, 0) = trans.vRight.y;
+		trans.mView(2, 0) = trans.vRight.z;
+		trans.mView(3, 0) = x;
+
+		trans.mView(0, 1) = trans.vUp.x;
+		trans.mView(1, 1) = trans.vUp.y;
+		trans.mView(2, 1) = trans.vUp.z;
+		trans.mView(3, 1) = y;
+
+		trans.mView(0, 2) = trans.vDir.x;
+		trans.mView(1, 2) = trans.vDir.y;
+		trans.mView(2, 2) = trans.vDir.z;
+		trans.mView(3, 2) = z;
+
+		trans.mView(0, 3) = 0.0f;
+		trans.mView(1, 3) = 0.0f;
+		trans.mView(2, 3) = 0.0f;
+		trans.mView(3, 3) = 1.0f;
+
+		mViewDirty = false;
+	}
+}

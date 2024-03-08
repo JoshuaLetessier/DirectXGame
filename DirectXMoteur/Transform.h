@@ -8,9 +8,9 @@
 	XMFLOAT3 vScaling;
 	XMFLOAT4X4 mScaling;
 
-	XMFLOAT3 vDir = { 0.0f, 0.0f, 1.0f };
-	XMFLOAT3 vRight = { 1.0f, 0.0f, 0.0f };
-	XMFLOAT3 vUp = { 0.0f, 1.0f, 0.0f };
+	XMFLOAT3 vDir /*= { 0.0f, 0.0f, 1.0f }*/;
+	XMFLOAT3 vRight /*= { 1.0f, 0.0f, 0.0f }*/;
+	XMFLOAT3 vUp /*= { 0.0f, 1.0f, 0.0f }*/;
 	XMFLOAT4X4 mRotate;
 	XMFLOAT4 qRotate;
 

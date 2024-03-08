@@ -33,7 +33,7 @@ public:
     DirectX::XMFLOAT4X4 GetView4x4f()const;
     DirectX::XMFLOAT4X4 GetProj4x4f()const;
 
-    //void UpdateViewMatrix();
+    void UpdateViewMatrix();
 
     Transform& GetTransform() { return trans; }
 
