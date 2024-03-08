@@ -28,7 +28,6 @@ bool Timer::Update()
 
 	UpdateFPS();
 
-
 	if (dt > 40)
 	{
 		dt = 40;
@@ -66,7 +65,6 @@ void Timer::UpdateFPS()
 		mCountTime = 0;
 	}
 }
-
 
 float Timer::GetFPS()
 {

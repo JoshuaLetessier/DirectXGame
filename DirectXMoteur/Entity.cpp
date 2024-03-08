@@ -50,19 +50,3 @@ void Entity::Update()
 		//m_components[i]->Update();
 	}
 }
-
-int value = 10;
-
-int* GetValue()
-{
-	int value = 10;
-	return &value;
-}
-
-int main()
-{
-	int value = 0;
-	value = *GetValue();
-	printf("%d", value);
-	return 0;
-}

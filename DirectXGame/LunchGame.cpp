@@ -65,8 +65,8 @@
 //
 //void LunchGame::CalculateFrameStats()
 //{
-//    // Code computes the average frames per second, and also the 
-//    // average time it takes to render one frame.  These stats 
+//    // Code computes the average frames per second, and also the
+//    // average time it takes to render one frame.  These stats
 //    // are appended to the window caption bar.
 //
 //    static int frameCnt = 0;

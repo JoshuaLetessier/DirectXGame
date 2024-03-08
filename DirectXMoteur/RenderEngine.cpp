@@ -2,10 +2,8 @@
 #include "iostream"
 
 using Microsoft::WRL::ComPtr;
-using namespace renderObject;
-using namespace shaderStruct;
 
-RenderEngine::RenderEngine(HINSTANCE hInstance):WindowEngine(hInstance)
+RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
 {
 }
 
@@ -174,7 +172,7 @@ void RenderEngine::BuildRootSignature()
 	// textures, samplers).  The root signature defines the resources the shader
 	// programs expect.  If we think of the shader programs as a function, and
 	// the input resources as function parameters, then the root signature can be
-	// thought of as defining the function signature.  
+	// thought of as defining the function signature.
 
 	// Root parameter can be a table, root descriptor or root constants.
 	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
@@ -221,42 +219,7 @@ void RenderEngine::BuildShadersAndInputLayout()
 	};
 }
 
-void RenderEngine::BuildBoxGeometry()
-{
-	Cube cube;
-	cubeIndices;
-	VertexPositionColor vertex;
 
-	const UINT vbByteSize = (UINT)cube.cubeVertices.size() * sizeof(vertex);
-	const UINT ibByteSize = (UINT)cubeIndices.size() * sizeof(std::uint16_t);
-
-	mBoxGeo = std::make_unique<MeshGeometry>();
-	mBoxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
-	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), cube.cubeVertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
-	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), cubeIndices.data(), ibByteSize);
-
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cube.cubeVertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
-
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cubeIndices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
-
-	mBoxGeo->VertexByteStride = sizeof(vertex);
-	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	mBoxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)cubeIndices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	mBoxGeo->DrawArgs["box"] = submesh;
-}
 
 void RenderEngine::BuildPSO()
 {

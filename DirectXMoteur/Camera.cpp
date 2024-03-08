@@ -2,32 +2,31 @@
 
 Camera::Camera()
 {
-    SetLens(0.25f * MathHelper::Pi, 1.0f, 1.0f, 1000.0f);
+	SetLens(0.25f * MathHelper::Pi, 1.0f, 1.0f, 1000.0f);
 }
 
 Camera::~Camera()
 {
-
 }
 
 int Camera::getIdType() const
 {
-    return Id;
+	return Id;
 };
 
 void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 {
-    // cache properties
-    mFovY = fovY;
-    mAspect = aspect;
-    mNearZ = zn;
-    mFarZ = zf;
+	// cache properties
+	mFovY = fovY;
+	mAspect = aspect;
+	mNearZ = zn;
+	mFarZ = zf;
 
-    mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f * mFovY);
-    mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f * mFovY);
+	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f * mFovY);
+	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f * mFovY);
 
-    DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
-    XMStoreFloat4x4(&mProj, P);
+	DirectX::XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
+	XMStoreFloat4x4(&mProj, P);
 }
 
 void Camera::Strafe(float d)
@@ -79,23 +78,22 @@ void Camera::RotateY(float angle)
 
 DirectX::XMMATRIX Camera::GetView()const
 {
-    assert(!mViewDirty);
-    return DirectX::XMLoadFloat4x4(&mProj);
+	assert(!mViewDirty);
+	return DirectX::XMLoadFloat4x4(&mProj);
 }
 
 DirectX::XMMATRIX Camera::GetProj()const
 {
-    return DirectX::XMLoadFloat4x4(&mProj);
+	return DirectX::XMLoadFloat4x4(&mProj);
 }
-
 
 DirectX::XMFLOAT4X4 Camera::GetView4x4f()const
 {
-    assert(!mViewDirty);
-    return mProj;
+	assert(!mViewDirty);
+	return mProj;
 }
 
 DirectX::XMFLOAT4X4 Camera::GetProj4x4f()const
 {
-    return mProj;
+	return mProj;
 }

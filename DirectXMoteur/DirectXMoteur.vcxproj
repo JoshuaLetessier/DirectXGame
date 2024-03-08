@@ -159,6 +159,7 @@
     <ClCompile Include="DXmoteur.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="ShaderStructure.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Entity.cpp" />

@@ -6,7 +6,6 @@
 #include "Resource.h"
 #include "LunchGame.h"
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	// Enable run-time memory check for debug builds.
