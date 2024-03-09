@@ -26,11 +26,12 @@ private:
 private:
 
     Mesh mesh;
+    
 
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
-    std::unique_ptr<UploadBuffer<ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
+    std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
 
 
 

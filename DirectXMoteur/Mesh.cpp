@@ -9,7 +9,12 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::BuildBoxGeometry(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList)
+bool Mesh::Initialize()
+{
+	return false;
+}
+
+bool Mesh::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList)
 {
 	VertexPositionColor vertex;
 
@@ -45,20 +50,27 @@ void Mesh::BuildBoxGeometry(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Mic
 	submesh.BaseVertexLocation = 0;
 
 	mBoxGeo->DrawArgs["box"] = submesh;
+
+	return false;
 }
 
-std::vector<VertexPositionColor> Mesh::CubeVertices()
+void Mesh::Update()
+{
+	return;
+}
+
+std::vector<Mesh::VertexPositionColor> Mesh::CubeVertices()
 {
 	std::vector<VertexPositionColor> cubeVertices =
 	{
-		VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(.0f, 0.0f, 0.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT4(0.0f, 1.0f, 1.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT4(1.0f, 0.0f, 1.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT4(1.0f, 1.0f, 0.0f,1.0f) }),
-		VertexPositionColor({ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT4(1.0f, 1.0f, 1.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(.0f, 0.0f, 0.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT4(0.0f, 1.0f, 1.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT4(1.0f, 0.0f, 1.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT4(1.0f, 1.0f, 0.0f,1.0f) }),
+		 VertexPositionColor({ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT4(1.0f, 1.0f, 1.0f,1.0f) }),
 	};
 	return cubeVertices;
 }
@@ -87,3 +99,5 @@ std::vector<std::uint16_t> Mesh::CubeIndices()
 	};
 	return cubeIndices;
 }
+
+

@@ -1,12 +1,13 @@
 #include "WindowEngine.h"
-
 #include <WindowsX.h>
+#include <Windows.h>
 //#include "InputManager.h"
-//
+
 //InputManager inp;
 
-Timer timer;
-Score score;
+using Microsoft::WRL::ComPtr;
+using namespace std;
+using namespace DirectX;
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -22,14 +23,15 @@ WindowEngine* WindowEngine::GetApp()
 	return mApp;
 }
 
+WindowEngine::WindowEngine()
+{
+}
+
 WindowEngine::WindowEngine(HINSTANCE hInstance)
-	: mhAppInst(hInstance)
 {
 	// Only one WindowEngine can be constructed.
 	assert(mApp == nullptr);
 	mApp = this;
-
-	timer.Start();
 }
 
 WindowEngine::~WindowEngine()
@@ -89,11 +91,6 @@ int WindowEngine::Run()
 		{
 			//mTimer.Tick();
 
-			if (timer.Update())
-			{
-				SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
-			}
-
 			if (!mAppPaused)
 			{
 				Update();
@@ -132,6 +129,7 @@ void WindowEngine::CreateRtvAndDsvDescriptorHeaps()
 	rtvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf())));
+
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
 	dsvHeapDesc.NumDescriptors = 1;
@@ -184,11 +182,11 @@ void WindowEngine::OnResize()
 	depthStencilDesc.DepthOrArraySize = 1;
 	depthStencilDesc.MipLevels = 1;
 
-	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from
+	// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from 
 	// the depth buffer.  Therefore, because we need to create two views to the same resource:
 	//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
 	//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
-	// we need to create the depth buffer resource with a typeless format.
+	// we need to create the depth buffer resource with a typeless format.  
 	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
 	depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
@@ -203,7 +201,7 @@ void WindowEngine::OnResize()
 	{
 		Microsoft::WRL::ComPtr<ID3D12Device> g_md3dDevice = md3dDevice;
 		CD3DX12_HEAP_PROPERTIES value = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-		HRESULT hr__ = (g_md3dDevice->CreateCommittedResource(&value, D3D12_HEAP_FLAG_NONE, &depthStencilDesc, D3D12_RESOURCE_STATE_COMMON, &optClear, __uuidof(**(mDepthStencilBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(mDepthStencilBuffer.GetAddressOf()))); wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\WindowEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+		HRESULT hr__ = (g_md3dDevice->CreateCommittedResource(&value, D3D12_HEAP_FLAG_NONE, &depthStencilDesc, D3D12_RESOURCE_STATE_COMMON, &optClear, __uuidof(**(mDepthStencilBuffer.GetAddressOf())), IID_PPV_ARGS_Helper(mDepthStencilBuffer.GetAddressOf()))); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\WindowEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
 			throw DxException(hr__, L"md3dDevice->CreateCommittedResource( &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &depthStencilDesc, D3D12_RESOURCE_STATE_COMMON, &optClear, IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf()))", wfn, 207);
 		}
 	};
@@ -243,9 +241,9 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-		// WM_ACTIVATE is sent when the window is activated or deactivated.
-		// We pause the game when the window is deactivated and unpause it
-		// when it becomes active.
+		// WM_ACTIVATE is sent when the window is activated or deactivated.  
+		// We pause the game when the window is deactivated and unpause it 
+		// when it becomes active.  
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
@@ -259,7 +257,7 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		return 0;
 
-		// WM_SIZE is sent when the user resizes the window.
+		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
 		// Save the new client area dimensions.
 		mClientWidth = LOWORD(lParam);
@@ -281,6 +279,7 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			else if (wParam == SIZE_RESTORED)
 			{
+
 				// Restoring from minimized state?
 				if (mMinimized)
 				{
@@ -298,13 +297,13 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 				else if (mResizing)
 				{
-					// If user is dragging the resize bars, we do not resize
-					// the buffers here because as the user continuously
+					// If user is dragging the resize bars, we do not resize 
+					// the buffers here because as the user continuously 
 					// drags the resize bars, a stream of WM_SIZE messages are
 					// sent to the window, and it would be pointless (and slow)
 					// to resize for each WM_SIZE message received from dragging
-					// the resize bars.  So instead, we reset after the user is
-					// done resizing the window and releases the resize bars, which
+					// the resize bars.  So instead, we reset after the user is 
+					// done resizing the window and releases the resize bars, which 
 					// sends a WM_EXITSIZEMOVE message.
 				}
 				else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
@@ -336,8 +335,8 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 
-		// The WM_MENUCHAR message is sent when a menu is active and the user presses
-		// a key that does not correspond to any mnemonic or accelerator key.
+		// The WM_MENUCHAR message is sent when a menu is active and the user presses 
+		// a key that does not correspond to any mnemonic or accelerator key. 
 	case WM_MENUCHAR:
 		// Don't beep when we alt-enter.
 		return MAKELRESULT(0, MNC_CLOSE);
@@ -375,6 +374,7 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+
 bool WindowEngine::InitMainWindow()
 {
 	WNDCLASS wc;
@@ -401,6 +401,7 @@ bool WindowEngine::InitMainWindow()
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
+	 
 	mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mhAppInst, 0);
 	if (!mhMainWnd)
@@ -408,10 +409,6 @@ bool WindowEngine::InitMainWindow()
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
-
-	timer.Start();
-
-
 
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
@@ -421,7 +418,7 @@ bool WindowEngine::InitMainWindow()
 
 bool WindowEngine::InitDirect3D()
 {
-#if defined(DEBUG) || defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG) 
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
@@ -458,7 +455,7 @@ mDsvDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPT
 mCbvSrvUavDescriptorSize = md3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 // Check 4X MSAA quality support for our back buffer format.
-// All Direct3D 11 capable devices support 4X MSAA for all render
+// All Direct3D 11 capable devices support 4X MSAA for all render 
 // target formats, so we only need to check quality support.
 
 D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
@@ -503,7 +500,7 @@ void WindowEngine::CreateCommandObjects()
 		nullptr,                   // Initial PipelineStateObject
 		IID_PPV_ARGS(mCommandList.GetAddressOf())));
 
-	// Start off in a closed state.  This is because the first time we refer
+	// Start off in a closed state.  This is because the first time we refer 
 	// to the command list we will Reset it, and it needs to be closed before
 	// calling Reset.
 	mCommandList->Close();
@@ -543,7 +540,7 @@ void WindowEngine::FlushCommandQueue()
 	// Advance the fence value to mark commands up to this fence point.
 	mCurrentFence++;
 
-	// Add an instruction to the command queue to set a new fence point.  Because we
+	// Add an instruction to the command queue to set a new fence point.  Because we 
 	// are on the GPU timeline, the new fence point won't be set until the GPU finishes
 	// processing all the commands prior to this Signal().
 	ThrowIfFailed(mCommandQueue->Signal(mFence.Get(), mCurrentFence));
@@ -555,7 +552,7 @@ void WindowEngine::FlushCommandQueue()
 		DWORD flag = 0;
 		HANDLE eventHandle = CreateEventEx(nullptr, name, flag, EVENT_ALL_ACCESS);
 
-		// Fire event when GPU hits current fence.
+		// Fire event when GPU hits current fence.  
 		ThrowIfFailed(mFence->SetEventOnCompletion(mCurrentFence, eventHandle));
 
 		// Wait until the GPU hits current fence event is fired.
@@ -582,17 +579,49 @@ D3D12_CPU_DESCRIPTOR_HANDLE WindowEngine::DepthStencilView()const
 	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
+void WindowEngine::CalculateFrameStats()
+{
+	// Code computes the average frames per second, and also the 
+	// average time it takes to render one frame.  These stats 
+	// are appended to the window caption bar.
+
+	static int frameCnt = 0;
+	static float timeElapsed = 0.0f;
+
+	frameCnt++;
+
+	// Compute averages over one second period.
+	//if ((mTimer.TotalTime() - timeElapsed) >= 1.0f)
+	//{
+	//	float fps = (float)frameCnt; // fps = frameCnt / 1
+	//	float mspf = 1000.0f / fps;
+
+	//	wstring fpsStr = to_wstring(fps);
+	//	wstring mspfStr = to_wstring(mspf);
+
+	//	wstring windowText = mMainWndCaption +
+	//		L"    fps: " + fpsStr +
+	//		L"   mspf: " + mspfStr;
+
+	//	SetWindowText(mhMainWnd, windowText.c_str());
+
+	//	// Reset for next average.
+	//	frameCnt = 0;
+	//	timeElapsed += 1.0f;
+	//}
+}
+
 void WindowEngine::LogAdapters()
 {
 	UINT i = 0;
 	IDXGIAdapter* adapter = nullptr;
-	vector<IDXGIAdapter*> adapterList;
+	std::vector<IDXGIAdapter*> adapterList;
 	while (mdxgiFactory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
 	{
 		DXGI_ADAPTER_DESC desc;
 		adapter->GetDesc(&desc);
 
-		wstring text = L"***Adapter: ";
+		std::wstring text = L"***Adapter: ";
 		text += desc.Description;
 		text += L"\n";
 
@@ -619,7 +648,7 @@ void WindowEngine::LogAdapterOutputs(IDXGIAdapter* adapter)
 		DXGI_OUTPUT_DESC desc;
 		output->GetDesc(&desc);
 
-		wstring text = L"***Output: ";
+		std::wstring text = L"***Output: ";
 		text += desc.DeviceName;
 		text += L"\n";
 		OutputDebugString(text.c_str());
@@ -640,17 +669,17 @@ void WindowEngine::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format
 	// Call with nullptr to get list count.
 	output->GetDisplayModeList(format, flags, &count, nullptr);
 
-	vector<DXGI_MODE_DESC> modeList(count);
+	std::vector<DXGI_MODE_DESC> modeList(count);
 	output->GetDisplayModeList(format, flags, &count, &modeList[0]);
 
 	for (auto& x : modeList)
 	{
 		UINT n = x.RefreshRate.Numerator;
 		UINT d = x.RefreshRate.Denominator;
-		wstring text =
-			L"Width = " + to_wstring(x.Width) + L" " +
-			L"Height = " + to_wstring(x.Height) + L" " +
-			L"Refresh = " + to_wstring(n) + L"/" + to_wstring(d) +
+		std::wstring text =
+			L"Width = " + std::to_wstring(x.Width) + L" " +
+			L"Height = " + std::to_wstring(x.Height) + L" " +
+			L"Refresh = " + std::to_wstring(n) + L"/" + std::to_wstring(d) +
 			L"\n";
 
 		::OutputDebugString(text.c_str());

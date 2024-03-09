@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include "WindowEngine.h"
-
+#include "ShaderStructure.h"
 
 /*
 	//struct Shape
@@ -68,19 +68,35 @@
 	//};
 */
 
-class Mesh: public Shader
+class Mesh: public Component
 {
 public:
 
+	
 	Mesh();
-	~Mesh();
+	virtual ~Mesh();
 
-	void BuildBoxGeometry(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList);
+	//void BuildBoxGeometry();
+	bool Initialize()override;
+	bool Initialize(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList);
+	void Update();
+
+public:
+
+	struct ModelViewProjectionConstantBuffer
+	{
+		DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+	};
+
+	struct VertexPositionColor
+	{
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT4 color;
+	};
 
 	std::vector<VertexPositionColor> CubeVertices();
 	std::vector<std::uint16_t> CubeIndices();
 
-
 public:
-	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
+	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;	
 };

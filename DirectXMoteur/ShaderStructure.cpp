@@ -8,6 +8,11 @@ Shader::~Shader()
 {
 }
 
+bool Shader::Initialize()
+{
+	return false;
+}
+
 bool Shader::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
 {
 	// Create the root signature
@@ -47,3 +52,5 @@ bool Shader::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 void Shader::Update()
 {
 }
+
+

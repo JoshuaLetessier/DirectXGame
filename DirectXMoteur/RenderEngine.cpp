@@ -28,7 +28,7 @@ bool RenderEngine::Initialize()
 	BuildConstantBuffers();
 	BuildRootSignature();
 	BuildShadersAndInputLayout();
-	mesh.BuildBoxGeometry(md3dDevice, mCommandList);
+	mesh.Initialize(md3dDevice, mCommandList);
 	BuildPSO();
 
 	// Execute the initialization commands.
@@ -71,7 +71,7 @@ void RenderEngine::Update()
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	ModelViewProjectionConstantBuffer objConstants;
+	Mesh::ModelViewProjectionConstantBuffer objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	mObjectCB->CopyData(0, objConstants);
 }
@@ -152,9 +152,9 @@ void RenderEngine::BuildDescriptorHeaps()
 
 void RenderEngine::BuildConstantBuffers()
 {
-	mObjectCB = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 	// Offset to the ith object constant buffer in the buffer.
@@ -163,7 +163,7 @@ void RenderEngine::BuildConstantBuffers()
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
 	md3dDevice->CreateConstantBufferView(
 		&cbvDesc,

@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 
+
 class Score
 {
 public:
@@ -25,8 +26,5 @@ public:
 
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
-	vector<ScoreSprite> m_scoreSprites;
-
-private:
-	
+	std::vector<ScoreSprite> m_scoreSprites;
 };
