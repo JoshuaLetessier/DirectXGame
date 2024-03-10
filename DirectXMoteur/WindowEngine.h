@@ -6,9 +6,13 @@
 #endif
 
 #include "d3dUtil.h"
+#include "Camera.h"
 
 class WindowEngine
 {
+private:
+    Camera m_Camera;
+    POINT mLastMousePos;
 protected:
 
     

@@ -1,8 +1,5 @@
 #include "WindowEngine.h"
 #include <WindowsX.h>
-#include "InputManager.h"
-
-InputManager inp;
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
@@ -347,15 +344,30 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONDOWN:
-		inp.OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
-
 	case WM_RBUTTONUP:
-		inp.OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
-		inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	{
+		// Implementation de la camera ici -> Rotate seulement
+		// Récupérer les coordonnées du curseur de la souris
+		int xPos = GET_X_LPARAM(lParam);
+		int yPos = GET_Y_LPARAM(lParam);
+
+		// Rotation de la caméra basée sur la différence des positions de la souris
+		// Par exemple, vous pouvez ajuster les valeurs en fonction de la sensibilité souhaitée
+		float dx = 0.01f * static_cast<float>(xPos - mLastMousePos.x);
+		float dy = 0.01f * static_cast<float>(yPos - mLastMousePos.y);
+
+		// Appel de la fonction de rotation de la caméra avec les valeurs dx et dy
+		m_Camera.Rotate(dy, dx);
+
+		// Mettre à jour les dernières positions de la souris
+		mLastMousePos.x = xPos;
+		mLastMousePos.y = yPos;
+
 		return 0;
+	}
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{

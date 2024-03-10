@@ -1,4 +1,6 @@
 ﻿#include "Transform.h"
+#include "Camera.h"
+Camera* m_Camera;
 
 void Transform::identity()
 {
@@ -101,22 +103,24 @@ void Transform::translate(float offsetX, float offsetY, float offsetZ)
 
 void Transform::rotateCamera(float mPhi, float mTheta)
 {
-
-	// Convert Spherical to Cartesian coordinates.
+	// Convertir les coordonnées sphériques en coordonnées cartésiennes
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
 	float y = mRadius * cosf(mPhi);
 
-	// Build the view matrix.
+	// Construire la matrice de vue
 	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
-	matrix = mView;
 
-	XMMATRIX world = XMLoadFloat4x4(&matrix);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj = world * view * proj;
+	// Convertir la matrice XMMATRIX en XMFLOAT4X4
+	XMFLOAT4X4 viewMatrix;
+	XMStoreFloat4x4(&viewMatrix, view);
+
+	// Mettre à jour la matrice de vue de la caméra associée
+	if (m_Camera != nullptr) {
+		m_Camera->SetViewMatrix(viewMatrix);
+	}
 }

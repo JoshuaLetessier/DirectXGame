@@ -1,7 +1,8 @@
 #pragma once
 #include "pch.h"
 
-/*static*/ struct Transform {
+struct Transform {
+
 	XMFLOAT3 vPos;
 	XMFLOAT4X4 mPos;
 
