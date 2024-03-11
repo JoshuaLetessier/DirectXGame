@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "DXMoteur.h"
 #include "RenderEngine.h"
+#include "Timer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -34,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	_CrtMemCheckpoint(&memStateInit);
 #endif
 
+	Timer time;
 
 	try
 	{

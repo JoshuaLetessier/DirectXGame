@@ -5,14 +5,6 @@ using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
 
-LRESULT CALLBACK
-MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
-	// before CreateWindow returns, and thus before mhMainWnd is valid.
-	return WindowEngine::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
-}
-
 WindowEngine* WindowEngine::mApp = nullptr;
 WindowEngine* WindowEngine::GetApp()
 {
@@ -71,7 +63,7 @@ void WindowEngine::Set4xMsaaState(bool value)
 int WindowEngine::Run()
 {
 	MSG msg = { 0 };
-
+	Timer gt;
 	//mTimer.Reset();
 
 	while (msg.message != WM_QUIT)
@@ -90,6 +82,7 @@ int WindowEngine::Run()
 			if (!mAppPaused)
 			{
 				Update();
+				OnKeyboardInput(gt);
 				Draw();
 			}
 			else
@@ -233,6 +226,12 @@ void WindowEngine::OnResize()
 	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 }
 
+
+LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	return WindowEngine::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
+}
+
 LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -344,30 +343,14 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONDOWN:
+		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_RBUTTONUP:
+		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
-	{
-		// Implementation de la camera ici -> Rotate seulement
-		// Récupérer les coordonnées du curseur de la souris
-		int xPos = GET_X_LPARAM(lParam);
-		int yPos = GET_Y_LPARAM(lParam);
-
-		// Rotation de la caméra basée sur la différence des positions de la souris
-		// Par exemple, vous pouvez ajuster les valeurs en fonction de la sensibilité souhaitée
-		float dx = 0.01f * static_cast<float>(xPos - mLastMousePos.x);
-		float dy = 0.01f * static_cast<float>(yPos - mLastMousePos.y);
-
-		// Appel de la fonction de rotation de la caméra avec les valeurs dx et dy
-		m_Camera.Rotate(dy, dx);
-
-		// Mettre à jour les dernières positions de la souris
-		mLastMousePos.x = xPos;
-		mLastMousePos.y = yPos;
-
+		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
-	}
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
@@ -387,7 +370,7 @@ bool WindowEngine::InitMainWindow()
 {
 	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = MainWndProc;
+	wc.lpfnWndProc = &MainWndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = mhAppInst;
@@ -586,38 +569,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE WindowEngine::DepthStencilView()const
 	return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
-void WindowEngine::CalculateFrameStats()
-{
-	// Code computes the average frames per second, and also the 
-	// average time it takes to render one frame.  These stats 
-	// are appended to the window caption bar.
-
-	static int frameCnt = 0;
-	static float timeElapsed = 0.0f;
-
-	frameCnt++;
-
-	// Compute averages over one second period.
-	//if ((mTimer.TotalTime() - timeElapsed) >= 1.0f)
-	//{
-	//	float fps = (float)frameCnt; // fps = frameCnt / 1
-	//	float mspf = 1000.0f / fps;
-
-	//	wstring fpsStr = to_wstring(fps);
-	//	wstring mspfStr = to_wstring(mspf);
-
-	//	wstring windowText = mMainWndCaption +
-	//		L"    fps: " + fpsStr +
-	//		L"   mspf: " + mspfStr;
-
-	//	SetWindowText(mhMainWnd, windowText.c_str());
-
-	//	// Reset for next average.
-	//	frameCnt = 0;
-	//	timeElapsed += 1.0f;
-	//}
-}
-
 void WindowEngine::LogAdapters()
 {
 	UINT i = 0;
@@ -691,4 +642,52 @@ void WindowEngine::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format
 
 		::OutputDebugString(text.c_str());
 	}
+}
+
+void WindowEngine::OnMouseDown(WPARAM btnState, int x, int y)
+{
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+
+	SetCapture(mhMainWnd);
+}
+
+void WindowEngine::OnMouseUp(WPARAM btnState, int x, int y)
+{
+	ReleaseCapture();
+}
+
+void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
+{
+	if ((btnState & MK_LBUTTON) != 0)
+	{
+		// Make each pixel correspond to a quarter of a degree.
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
+
+		m_Camera.Pitch(dy);
+		m_Camera.RotateY(dx);
+	}
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+}
+
+void WindowEngine::OnKeyboardInput(Timer& gt)
+{
+	const float dt = gt.GetElapsedTime();
+
+	if (GetAsyncKeyState('W') & 0x8000)
+		m_Camera.Walk(10.0f * dt);
+
+	if (GetAsyncKeyState('S') & 0x8000)
+		m_Camera.Walk(-10.0f * dt);
+
+	if (GetAsyncKeyState('A') & 0x8000)
+		m_Camera.Strafe(-10.0f * dt);
+
+	if (GetAsyncKeyState('D') & 0x8000)
+		m_Camera.Strafe(10.0f * dt);
+
+	m_Camera.UpdateViewMatrix();
 }

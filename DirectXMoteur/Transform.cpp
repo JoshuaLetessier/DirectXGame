@@ -118,9 +118,4 @@ void Transform::rotateCamera(float mPhi, float mTheta)
 	// Convertir la matrice XMMATRIX en XMFLOAT4X4
 	XMFLOAT4X4 viewMatrix;
 	XMStoreFloat4x4(&viewMatrix, view);
-
-	// Mettre à jour la matrice de vue de la caméra associée
-	if (m_Camera != nullptr) {
-		m_Camera->SetViewMatrix(viewMatrix);
-	}
 }
