@@ -34,6 +34,7 @@ using namespace Microsoft::WRL;
 #include "Score.h"
 
 
+
 // Helper functions
 #include "Helpers.h"
 

@@ -7,6 +7,7 @@
 
 #include <WindowsX.h>
 #include "InputManager.h"
+#include <iostream>
 
 InputManager inp;
 
@@ -103,8 +104,18 @@ int WindowEngine::Run()
 			}
 			if (!mAppPaused)
 			{
-				Update();
+				//Left click pressed
+				if ((GetKeyState(VK_LBUTTON))) 
+				{
+					
+				}
+				//Echap for menu
+				if (GetAsyncKeyState(VK_ESCAPE)) 
+				{
+					
+				}
 				Draw();
+				Update();
 			}
 			else
 			{
@@ -372,7 +383,7 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		//inp.OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_KEYUP:
-		if (wParam == VK_ESCAPE)
+		if (wParam == NULL)
 		{
 			PostQuitMessage(0);
 		}
