@@ -58,6 +58,7 @@ float WindowEngine::AspectRatio()const
 
 bool WindowEngine::Get4xMsaaState()const
 {
+
 	return m4xMsaaState;
 }
 
