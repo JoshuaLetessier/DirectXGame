@@ -13,7 +13,7 @@ bool Shader::Initialize()
 	return false;
 }
 
-bool Shader::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
+bool Shader::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device)
 {
 	// Create the root signature
 	{
@@ -51,6 +51,20 @@ bool Shader::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* command
 
 void Shader::Update()
 {
+}
+
+void Shader::BuildShadersAndInputLayout()
+{
+	HRESULT hr = S_OK;
+	//mettre if debug enlever ../DirectXMoteur/ sinon le laisser
+	mvsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "VS", "vs_5_0");
+	mpsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "PS", "ps_5_0");
+
+	mInputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
 }
 
 

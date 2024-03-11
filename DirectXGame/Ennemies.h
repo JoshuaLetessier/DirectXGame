@@ -1,6 +1,7 @@
 #pragma once
 #include "../DirectXMoteur/Entity.h"
 #include "../DirectXMoteur/pch.h"
+#include "../DirectXMoteur/RenderEngine.h"
 
 struct Cords
 {
@@ -9,14 +10,16 @@ struct Cords
 
 class Ennemies
 {
-	//private:
-	//	MeshRenderer ennemy;
-	//	vector<Entity> m_Entity;
-	//
-	//public:
-	//	Ennemies();
-	//	void spawnEnnemies();
-	//	Cords spawnAleatoire();
-	//	Cords offsetCalcul(int x, int y, int z);
-	//	void deleteEnnemies(int i);
+private:
+	RenderEngine ennemy;
+
+
+public:
+	Ennemies();
+	void spawnEnnemies();
+	Cords spawnAleatoire();
+	Cords offsetCalcul(float x, float y, float z);
+	void deleteEnnemies(int i);
+
+	vector<Entity> m_Entity;
 };

@@ -1,6 +1,7 @@
 #include "RenderEngine.h"
 #include "iostream"
 
+
 using Microsoft::WRL::ComPtr;
 
 RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
@@ -27,7 +28,8 @@ bool RenderEngine::Initialize()
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
 	BuildRootSignature();
-	BuildShadersAndInputLayout();
+	shader.Initialize(md3dDevice);
+	shader.BuildShadersAndInputLayout();
 	mesh.Initialize(md3dDevice, mCommandList);
 	BuildPSO();
 
@@ -139,6 +141,9 @@ void RenderEngine::Draw()
 	FlushCommandQueue();
 }
 
+
+
+
 void RenderEngine::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
@@ -209,35 +214,21 @@ void RenderEngine::BuildRootSignature()
 		IID_PPV_ARGS(&mRootSignature)));
 }
 
-void RenderEngine::BuildShadersAndInputLayout()
-{
-	HRESULT hr = S_OK;
-	//mettre if debug enlever ../DirectXMoteur/ sinon le laisser
-	mvsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "VS", "vs_5_0");
-	mpsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "PS", "ps_5_0");
-
-	mInputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-}
-
 void RenderEngine::BuildPSO()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
+	psoDesc.InputLayout = { shader.mInputLayout.data(), (UINT)shader.mInputLayout.size() };
 	psoDesc.pRootSignature = mRootSignature.Get();
 	psoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
-		mvsByteCode->GetBufferSize()
+		reinterpret_cast<BYTE*>(shader.mvsByteCode->GetBufferPointer()),
+		shader.mvsByteCode->GetBufferSize()
 	};
 	psoDesc.PS =
 	{
-		reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
-		mpsByteCode->GetBufferSize()
+		reinterpret_cast<BYTE*>(shader.mpsByteCode->GetBufferPointer()),
+		shader.mpsByteCode->GetBufferSize()
 	};
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);

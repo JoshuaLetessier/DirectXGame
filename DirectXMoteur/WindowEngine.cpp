@@ -1,5 +1,4 @@
 #include "WindowEngine.h"
-#include <WindowsX.h>
 #include <Windows.h>
 //#include "InputManager.h"
 
@@ -8,6 +7,8 @@
 using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
+
+Timer timer;
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -90,7 +91,10 @@ int WindowEngine::Run()
 		else
 		{
 			//mTimer.Tick();
-
+			if (timer.Update())
+			{
+				SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
+			}
 			if (!mAppPaused)
 			{
 				Update();
@@ -115,6 +119,7 @@ bool WindowEngine::Initialize()
 		return false;
 
 	// Do the initial resize code.
+	timer.Start();
 	OnResize();
 
 	return true;
@@ -402,7 +407,7 @@ bool WindowEngine::InitMainWindow()
 	int height = R.bottom - R.top;
 
 	 
-	mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
+	mhMainWnd = CreateWindowEx(WS_EX_CLIENTEDGE,L"MainWnd", mMainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mhAppInst, 0);
 	if (!mhMainWnd)
 	{

@@ -37,7 +37,6 @@ public:
 
     int mClientWidth = 800;
     int mClientHeight = 600;
-
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
