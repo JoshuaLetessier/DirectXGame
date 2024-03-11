@@ -344,30 +344,36 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONDOWN:
+		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 		return 0;
 	case WM_RBUTTONUP:
+		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 		return 0;
 	case WM_MOUSEMOVE:
-	{
-		// Implementation de la camera ici -> Rotate seulement
-		// Récupérer les coordonnées du curseur de la souris
-		int xPos = GET_X_LPARAM(lParam);
-		int yPos = GET_Y_LPARAM(lParam);
+	//{
+	//	// Implementation de la camera ici -> Rotate seulement
+	//	// Récupérer les coordonnées du curseur de la souris
+	//	int xPos = GET_X_LPARAM(lParam);
+	//	int yPos = GET_Y_LPARAM(lParam);
 
-		// Rotation de la caméra basée sur la différence des positions de la souris
-		// Par exemple, vous pouvez ajuster les valeurs en fonction de la sensibilité souhaitée
-		float dx = 0.01f * static_cast<float>(xPos - mLastMousePos.x);
-		float dy = 0.01f * static_cast<float>(yPos - mLastMousePos.y);
+	//	// Rotation de la caméra basée sur la différence des positions de la souris
+	//	// Par exemple, vous pouvez ajuster les valeurs en fonction de la sensibilité souhaitée
+	//	float dx = 0.01f * static_cast<float>(xPos - mLastMousePos.x);
+	//	float dy = 0.01f * static_cast<float>(yPos - mLastMousePos.y);
 
-		// Appel de la fonction de rotation de la caméra avec les valeurs dx et dy
-		m_Camera.Rotate(dy, dx);
+	//	// Appel de la fonction de rotation de la caméra avec les valeurs dx et dy
+	//	m_Camera.Rotate(dy, dx);
 
-		// Mettre à jour les dernières positions de la souris
-		mLastMousePos.x = xPos;
-		mLastMousePos.y = yPos;
+	//	// Mettre à jour les dernières positions de la souris
+	//	mLastMousePos.x = xPos;
+	//	mLastMousePos.y = yPos;
 
-		return 0;
-	}
+	//	return 0;
+	//}
+		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
@@ -691,4 +697,35 @@ void WindowEngine::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format
 
 		::OutputDebugString(text.c_str());
 	}
+}
+
+void WindowEngine::OnMouseDown(WPARAM btnState, int x, int y)
+{
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+
+	SetCapture(mhMainWnd);
+}
+
+void WindowEngine::OnMouseUp(WPARAM btnState, int x, int y)
+{
+	ReleaseCapture();
+}
+
+void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
+{
+	if ((btnState & MK_LBUTTON) != 0)
+	{
+		// Make each pixel correspond to a quarter of a degree.
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
+
+		//m_Camera.Pitch(dy);
+		//m_Camera.RotateY(dx);
+		m_Camera.Rotate(dx, dy);
+
+	}
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 }
