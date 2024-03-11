@@ -136,6 +136,7 @@
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DXmoteur.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="entityManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathHelper.h" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
+    <ClCompile Include="entityManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
     <ClCompile Include="Mesh.cpp" />
