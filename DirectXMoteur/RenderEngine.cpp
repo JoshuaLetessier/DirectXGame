@@ -1,5 +1,8 @@
 #include "RenderEngine.h"
 #include "iostream"
+#include "Camera.h"
+#include "Transform.h"
+
 
 using Microsoft::WRL::ComPtr;
 using namespace renderObject;
@@ -66,16 +69,25 @@ void RenderEngine::Update()
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	Camera cam;
+	Transform trans;
+	//XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMMATRIX view = cam.GetView();
 	XMStoreFloat4x4(&mView, view);
 
-	XMMATRIX world = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
+	XMMATRIX proj = cam.GetProj();
+
+	world = XMMatrixTranspose(world);
+	view = XMMatrixTranspose(view);
+	proj = XMMatrixTranspose(proj);
+
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
 	ModelViewProjectionConstantBuffer objConstants;
-	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+
+	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
 	mObjectCB->CopyData(0, objConstants);
 }
 

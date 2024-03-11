@@ -65,7 +65,7 @@ int WindowEngine::Run()
 	MSG msg = { 0 };
 	Timer gt;
 	//mTimer.Reset();
-
+	float rotate = 0.0f;
 	while (msg.message != WM_QUIT)
 	{
 		// If there are Window messages then process them.
@@ -82,6 +82,10 @@ int WindowEngine::Run()
 
 			if (!mAppPaused)
 			{
+				
+				rotate += 5.0f;
+				//m_Camera.RotateY(XMConvertToRadians(rotate));
+				//m_Camera.Pitch(XMConvertToRadians(rotate));
 				Update();
 				Draw();
 			}
@@ -661,12 +665,17 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
+		
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 
 		m_Camera.Pitch(dy);
 		m_Camera.RotateY(dx);
+
+		wchar_t buffer[256];
+		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
+		OutputDebugString(buffer);
 	}
 
 	mLastMousePos.x = x;

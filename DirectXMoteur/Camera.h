@@ -55,11 +55,11 @@ public:
 	void LookAt(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& target, const DirectX::XMFLOAT3& up);
 
 	// Get View/Proj matrices.
-	DirectX::XMMATRIX GetView()const;
+	DirectX::XMMATRIX GetView();
 	DirectX::XMMATRIX GetProj()const;
 
 	DirectX::XMFLOAT4X4 GetView4x4f()const;
-	DirectX::XMFLOAT4X4 GetProj4x4f()const;
+	DirectX::XMFLOAT4X4 GetProj4x4f() const;
 
 	// Strafe/Walk the camera a distance d.
 	void Strafe(float d);
