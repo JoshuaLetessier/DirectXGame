@@ -6,17 +6,13 @@
 #endif
 
 #include "d3dUtil.h"
-
-// Link necessary d3d12 libraries.
-#pragma comment(lib,"d3dcompiler.lib")
-#pragma comment(lib, "D3D12.lib")
-#pragma comment(lib, "dxgi.lib")
+#include "pch.h"
 
 class WindowEngine
 {
 protected:
 
-    
+
     WindowEngine(HINSTANCE hInstance);
     WindowEngine(const WindowEngine& rhs) = delete;
     WindowEngine& operator=(const WindowEngine& rhs) = delete;
@@ -41,7 +37,6 @@ public:
 
     int mClientWidth = 800;
     int mClientHeight = 600;
-
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
@@ -72,7 +67,7 @@ protected:
     void LogAdapterOutputs(IDXGIAdapter* adapter);
     void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
-protected:
+public:
 
     static WindowEngine* mApp;
 
@@ -89,7 +84,7 @@ protected:
     UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA
 
     // Used to keep track of the “delta-time” and game time (§4.4).
-   
+
 
     Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
     Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;

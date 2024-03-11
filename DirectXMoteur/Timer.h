@@ -24,6 +24,4 @@ private:
 	DWORD mFPSPrevious;
 	int mFPS;
 	int mPrevFPS;
-
 };
-

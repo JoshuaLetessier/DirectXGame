@@ -131,8 +131,11 @@
     <ClCompile Include="DXmoteur.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="ShaderStructure.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

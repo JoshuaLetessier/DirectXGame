@@ -1,5 +1,10 @@
 #pragma once
 
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib,"Winmm.lib")
+
 // Windows Runtime Library. Needed for Microsoft::WRL::ComPtr<> template class.
 #include <wrl.h>
 using namespace Microsoft::WRL;
@@ -31,6 +36,8 @@ using namespace Microsoft::WRL;
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "Timer.h"
+#include "Score.h"
+
 
 // Helper functions
 #include "Helpers.h"
@@ -40,8 +47,6 @@ using namespace Microsoft::WRL;
 #endif
 
 using namespace DirectX;
-using namespace shaderStruct;
-using namespace renderObject;
 using namespace std;
 
 

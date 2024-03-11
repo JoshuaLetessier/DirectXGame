@@ -30,17 +30,9 @@ void InputManager::OnMouseMove(WPARAM btnState, int x, int y)
     }
     //else if ((btnState & MK_LBUTTON) != 0)
     //{
-       
+
     //}
 
     mLastMousePos.x = x;
     mLastMousePos.y = y;
-}
-
-POINT InputManager::mousePointeur() 
-{
-    POINT mousePoint;
-    if (GetCursorPos(&mousePoint)) {
-        return mousePoint;
-    }
 }
