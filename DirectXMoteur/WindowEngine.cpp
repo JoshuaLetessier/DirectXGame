@@ -1,13 +1,6 @@
 #include "WindowEngine.h"
-
-//***************************************************************************************
-// WindowEngine.cpp by Frank Luna (C) 2015 All Rights Reserved.
-//***************************************************************************************
-
-
-#include <WindowsX.h>
-#include "InputManager.h"
-#include <iostream>
+#include <Windows.h>
+//#include "InputManager.h"
 
 InputManager inp;
 
@@ -65,6 +58,7 @@ float WindowEngine::AspectRatio()const
 
 bool WindowEngine::Get4xMsaaState()const
 {
+
 	return m4xMsaaState;
 }
 

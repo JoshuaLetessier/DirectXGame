@@ -16,14 +16,17 @@ public:
 	void Update();
 
 	void BuildShadersAndInputLayout();
+	void BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaState, UINT m4xMsaaQuality);
 
 
 	ComPtr<ID3DBlob> mvsByteCode = nullptr;
 	ComPtr<ID3DBlob> mpsByteCode = nullptr;
 
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
-private:
 	ComPtr<ID3D12RootSignature> m_rootSignature = nullptr;
+	ComPtr<ID3D12PipelineState> mPSO = nullptr;
+private:
+	
 };
 
 

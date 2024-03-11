@@ -1,5 +1,10 @@
 #pragma once
 
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib,"Winmm.lib")
+
 // Windows Runtime Library. Needed for Microsoft::WRL::ComPtr<> template class.
 #include <wrl.h>
 using namespace Microsoft::WRL;

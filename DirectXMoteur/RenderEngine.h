@@ -20,9 +20,6 @@ private:
     virtual void Update()override;
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
-    void BuildRootSignature();
-    void BuildPSO();
-
    
 
 private:
@@ -36,7 +33,7 @@ private:
 
     std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
 
-    ComPtr<ID3D12PipelineState> mPSO = nullptr;
+   
 
     XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
     XMFLOAT4X4 mView = MathHelper::Identity4x4();
