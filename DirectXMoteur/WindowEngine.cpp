@@ -73,6 +73,7 @@ int WindowEngine::Run()
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			OnKeyboardInput(gt);
 		}
 		// Otherwise, do animation/game stuff.
 		else
@@ -82,7 +83,6 @@ int WindowEngine::Run()
 			if (!mAppPaused)
 			{
 				Update();
-				OnKeyboardInput(gt);
 				Draw();
 			}
 			else
