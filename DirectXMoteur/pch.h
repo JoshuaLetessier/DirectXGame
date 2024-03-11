@@ -31,6 +31,8 @@ using namespace Microsoft::WRL;
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "Timer.h"
+#include "Score.h"
+
 
 // Helper functions
 #include "Helpers.h"
@@ -40,8 +42,6 @@ using namespace Microsoft::WRL;
 #endif
 
 using namespace DirectX;
-using namespace shaderStruct;
-using namespace renderObject;
 using namespace std;
 
 

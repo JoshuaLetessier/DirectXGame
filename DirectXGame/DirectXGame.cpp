@@ -6,11 +6,6 @@
 #include "Resource.h"
 #include "LunchGame.h"
 
-#ifdef _DEBUG
-#include <crtdbg.h>
-#endif
-
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 #ifdef _DEBUG
@@ -36,13 +31,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
 		return 0;
 	}
-
-#ifdef _DEBUG
-	_CrtMemState memStateEnd, memStateDiff;
-	_CrtMemCheckpoint(&memStateEnd);
-	if (_CrtMemDifference(&memStateDiff, &memStateInit, &memStateEnd))
-	{
-		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
-	}
-#endif 
 }

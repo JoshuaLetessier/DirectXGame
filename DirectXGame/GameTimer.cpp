@@ -19,9 +19,9 @@ GameTimer::GameTimer()
 float GameTimer::TotalTime()const
 {
 	// If we are stopped, do not count the time that has passed since we stopped.
-	// Moreover, if we previously already had a pause, the distance 
+	// Moreover, if we previously already had a pause, the distance
 	// mStopTime - mBaseTime includes paused time, which we do not want to count.
-	// To correct this, we can subtract the paused time from mStopTime:  
+	// To correct this, we can subtract the paused time from mStopTime:
 	//
 	//                     |<--paused time-->|
 	// ----*---------------*-----------------*------------*------------*------> time
@@ -33,10 +33,10 @@ float GameTimer::TotalTime()const
 	}
 
 	// The distance mCurrTime - mBaseTime includes paused time,
-	// which we do not want to count.  To correct this, we can subtract 
-	// the paused time from mCurrTime:  
+	// which we do not want to count.  To correct this, we can subtract
+	// the paused time from mCurrTime:
 	//
-	//  (mCurrTime - mPausedTime) - mBaseTime 
+	//  (mCurrTime - mPausedTime) - mBaseTime
 	//
 	//                     |<--paused time-->|
 	// ----*---------------*-----------------*------------*------> time
@@ -69,12 +69,11 @@ void GameTimer::Start()
 	__int64 startTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 
-
 	// Accumulate the time elapsed between stop and start pairs.
 	//
 	//                     |<-------d------->|
 	// ----*---------------*-----------------*------------> time
-	//  mBaseTime       mStopTime        startTime     
+	//  mBaseTime       mStopTime        startTime
 
 	if (mStopped)
 	{
@@ -116,7 +115,7 @@ void GameTimer::Tick()
 	// Prepare for next frame.
 	mPrevTime = mCurrTime;
 
-	// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
+	// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the
 	// processor goes into a power save mode or we get shuffled to another
 	// processor, then mDeltaTime can be negative.
 	if (mDeltaTime < 0.0)
@@ -124,4 +123,3 @@ void GameTimer::Tick()
 		mDeltaTime = 0.0;
 	}
 }
-

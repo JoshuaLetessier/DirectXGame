@@ -1,11 +1,10 @@
 #include "RenderEngine.h"
 #include "iostream"
 
-using Microsoft::WRL::ComPtr;
-using namespace renderObject;
-using namespace shaderStruct;
 
-RenderEngine::RenderEngine(HINSTANCE hInstance):WindowEngine(hInstance)
+using Microsoft::WRL::ComPtr;
+
+RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
 {
 }
 
@@ -13,7 +12,6 @@ RenderEngine::RenderEngine() :Component()
 {
 
 }
-
 
 RenderEngine::~RenderEngine()
 {
@@ -30,8 +28,9 @@ bool RenderEngine::Initialize()
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
 	BuildRootSignature();
-	BuildShadersAndInputLayout();
-	BuildBoxGeometry();
+	shader.Initialize(md3dDevice);
+	shader.BuildShadersAndInputLayout();
+	mesh.Initialize(md3dDevice, mCommandList);
 	BuildPSO();
 
 	// Execute the initialization commands.
@@ -74,7 +73,7 @@ void RenderEngine::Update()
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	ModelViewProjectionConstantBuffer objConstants;
+	Mesh::ModelViewProjectionConstantBuffer objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	mObjectCB->CopyData(0, objConstants);
 }
@@ -110,19 +109,20 @@ void RenderEngine::Draw()
 
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mBoxGeo->VertexBufferView();
+	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
 	mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 
-	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mBoxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mesh.mBoxGeo->IndexBufferView();
 	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	mCommandList->DrawIndexedInstanced(mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
 	// Indicate a state transition on the resource usage.
-	mCommandList->ResourceBarrier(1, &transition);
+	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	mCommandList->ResourceBarrier(1, &transition2);
 
 	// Done recording commands.
 	ThrowIfFailed(mCommandList->Close());
@@ -141,6 +141,9 @@ void RenderEngine::Draw()
 	FlushCommandQueue();
 }
 
+
+
+
 void RenderEngine::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
@@ -154,9 +157,9 @@ void RenderEngine::BuildDescriptorHeaps()
 
 void RenderEngine::BuildConstantBuffers()
 {
-	mObjectCB = std::make_unique<UploadBuffer<ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
+	mObjectCB = std::make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 	// Offset to the ith object constant buffer in the buffer.
@@ -165,7 +168,7 @@ void RenderEngine::BuildConstantBuffers()
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
 	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(ModelViewProjectionConstantBuffer));
+	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
 	md3dDevice->CreateConstantBufferView(
 		&cbvDesc,
@@ -211,72 +214,21 @@ void RenderEngine::BuildRootSignature()
 		IID_PPV_ARGS(&mRootSignature)));
 }
 
-void RenderEngine::BuildShadersAndInputLayout()
-{
-	HRESULT hr = S_OK;
-	//mettre if debug enlever ../DirectXMoteur/ sinon le laisser
-	mvsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "VS", "vs_5_0");
-	mpsByteCode = d3dUtil::CompileShader(L"../DirectXMoteur/Shader.hlsl", nullptr, "PS", "ps_5_0");
-
-	mInputLayout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
-}
-
-void RenderEngine::BuildBoxGeometry()
-{
-	Cube cube;
-	cubeIndices;
-	VertexPositionColor vertex;
-
-	const UINT vbByteSize = (UINT)cube.cubeVertices.size() * sizeof(vertex);
-	const UINT ibByteSize = (UINT)cubeIndices.size() * sizeof(std::uint16_t);
-
-	mBoxGeo = std::make_unique<MeshGeometry>();
-	mBoxGeo->Name = "boxGeo";
-
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));
-	CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), cube.cubeVertices.data(), vbByteSize);
-
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU));
-	CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), cubeIndices.data(), ibByteSize);
-
-	mBoxGeo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cube.cubeVertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
-
-	mBoxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), cubeIndices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
-
-	mBoxGeo->VertexByteStride = sizeof(vertex);
-	mBoxGeo->VertexBufferByteSize = vbByteSize;
-	mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	mBoxGeo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)cubeIndices.size();
-	submesh.StartIndexLocation = 0;
-	submesh.BaseVertexLocation = 0;
-
-	mBoxGeo->DrawArgs["box"] = submesh;
-}
-
 void RenderEngine::BuildPSO()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
+	psoDesc.InputLayout = { shader.mInputLayout.data(), (UINT)shader.mInputLayout.size() };
 	psoDesc.pRootSignature = mRootSignature.Get();
 	psoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
-		mvsByteCode->GetBufferSize()
+		reinterpret_cast<BYTE*>(shader.mvsByteCode->GetBufferPointer()),
+		shader.mvsByteCode->GetBufferSize()
 	};
 	psoDesc.PS =
 	{
-		reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
-		mpsByteCode->GetBufferSize()
+		reinterpret_cast<BYTE*>(shader.mpsByteCode->GetBufferPointer()),
+		shader.mpsByteCode->GetBufferSize()
 	};
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
