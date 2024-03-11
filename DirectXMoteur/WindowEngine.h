@@ -79,6 +79,10 @@ public:
     bool      mResizing = false;   // are the resize bars being dragged?
     bool      mFullscreenState = false;// fullscreen enabled
 
+    bool StartGame = false; //Press button start game
+    bool QuitGame = false; //Press button quit in game
+    bool CloseWindow = false; //Press button close window
+
     // Set true to use 4X MSAA (§4.1.8).  The default is false.
     bool      m4xMsaaState = false;    // 4X MSAA enabled
     UINT      m4xMsaaQuality = 0;      // quality level of 4X MSAA

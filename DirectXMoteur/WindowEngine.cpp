@@ -2,7 +2,7 @@
 #include <Windows.h>
 //#include "InputManager.h"
 
-InputManager inp;
+//InputManager inp;
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
@@ -91,29 +91,42 @@ int WindowEngine::Run()
 		// Otherwise, do animation/game stuff.
 		else
 		{
-			//mTimer.Tick();
-			if (timer.Update())
+			//Button start game
+			if (StartGame == true)
 			{
-				SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
-			}
-			if (!mAppPaused)
-			{
-				//Left click pressed
-				if ((GetKeyState(VK_LBUTTON))) 
+				//mTimer.Tick();
+				if (timer.Update())
 				{
-					
+					SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
 				}
-				//Echap for menu
-				if (GetAsyncKeyState(VK_ESCAPE)) 
+				if (!mAppPaused)
 				{
+					//Left click pressed
+					if ((GetKeyState(VK_LBUTTON))) 
+					{
 					
+					}
+					//Echap for menu
+					if (GetAsyncKeyState(VK_ESCAPE)) 
+					{
+						//Button quit game and return on the menu starts
+						if (QuitGame == true)
+						{
+							//to do
+						}
+					}
+					Draw();
+					Update();
 				}
-				Draw();
-				Update();
+				else
+				{
+					Sleep(100);
+				}
 			}
 			else
 			{
-				Sleep(100);
+				//Close window
+				//to do
 			}
 		}
 	}
