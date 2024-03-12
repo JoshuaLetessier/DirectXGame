@@ -2,17 +2,31 @@
 #include "pch.h"
 #include <unordered_map>
 #include "MathHelper.h"
+#include "Component.h"
 
-namespace shaderStruct
+class Shader: public Component
 {
-	struct ModelViewProjectionConstantBuffer
-	{
-		DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
-	};
 
-	struct VertexPositionColor
-	{
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT4 color;
-	};
-}
+public:
+	Shader();
+	virtual ~Shader();
+
+	bool Initialize() override;
+	bool Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device);
+	void Update();
+
+	void BuildShadersAndInputLayout();
+	void BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaState, UINT m4xMsaaQuality);
+
+
+	ComPtr<ID3DBlob> mvsByteCode = nullptr;
+	ComPtr<ID3DBlob> mpsByteCode = nullptr;
+
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+	ComPtr<ID3D12RootSignature> m_rootSignature = nullptr;
+	ComPtr<ID3D12PipelineState> mPSO = nullptr;
+private:
+	
+};
+
+

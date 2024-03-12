@@ -1,9 +1,21 @@
 #include "WindowEngine.h"
 #include <WindowsX.h>
+#include <Windows.h>
+//#include "InputManager.h"
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
 using namespace DirectX;
+
+Timer timer;
+
+LRESULT CALLBACK
+MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
+	// before CreateWindow returns, and thus before mhMainWnd is valid.
+	return WindowEngine::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
+}
 
 WindowEngine* WindowEngine::mApp = nullptr;
 WindowEngine* WindowEngine::GetApp()
@@ -45,6 +57,7 @@ float WindowEngine::AspectRatio()const
 
 bool WindowEngine::Get4xMsaaState()const
 {
+
 	return m4xMsaaState;
 }
 
@@ -79,7 +92,10 @@ int WindowEngine::Run()
 		else
 		{
 			//mTimer.Tick();
-
+			if (timer.Update())
+			{
+				SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
+			}
 			if (!mAppPaused)
 			{
 				
@@ -108,6 +124,7 @@ bool WindowEngine::Initialize()
 		return false;
 
 	// Do the initial resize code.
+	timer.Start();
 	OnResize();
 
 	return true;
@@ -396,7 +413,8 @@ bool WindowEngine::InitMainWindow()
 	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	mhMainWnd = CreateWindow(L"MainWnd", mMainWndCaption.c_str(),
+	 
+	mhMainWnd = CreateWindowEx(WS_EX_CLIENTEDGE,L"MainWnd", mMainWndCaption.c_str(),
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, mhAppInst, 0);
 	if (!mhMainWnd)
 	{
