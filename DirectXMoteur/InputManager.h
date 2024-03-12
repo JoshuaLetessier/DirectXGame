@@ -3,15 +3,14 @@
 
 class InputManager
 {
-private:
-
-
 public:
 
 	POINT mLastMousePos;
 	HWND  mhMainWnd = nullptr; // main window handle
 
-protected:
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = XM_PIDIV4;
+	float mRadius = 5.0f;
 
 
 public:

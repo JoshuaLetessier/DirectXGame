@@ -9,8 +9,7 @@ using namespace DirectX;
 
 Timer timer;
 
-LRESULT CALLBACK
-MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Forward hwnd on because we can get messages (e.g., WM_CREATE)
 	// before CreateWindow returns, and thus before mhMainWnd is valid.
@@ -125,6 +124,7 @@ bool WindowEngine::Initialize()
 
 	// Do the initial resize code.
 	timer.Start();
+	m_Camera.SetPosition(0, 0, -25);
 	OnResize();
 
 	return true;
@@ -245,12 +245,6 @@ void WindowEngine::OnResize()
 	mScreenViewport.MaxDepth = 1.0f;
 
 	mScissorRect = { 0, 0, mClientWidth, mClientHeight };
-}
-
-
-LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	return WindowEngine::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
 LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -385,7 +379,6 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
-
 
 bool WindowEngine::InitMainWindow()
 {
@@ -687,9 +680,9 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-
 		m_Camera.Pitch(dy);
 		m_Camera.RotateY(dx);
+		
 
 		wchar_t buffer[256];
 		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);

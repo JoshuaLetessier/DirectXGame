@@ -22,10 +22,8 @@ struct Transform {
 	void update();
 	void translate(float offsetX, float offsetY, float offsetZ);
 
-	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
 	XMFLOAT4X4 mView = MathHelper::Identity4x4();
-	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
-
+	
 	float mRadius = 5.0f;
 
 	void rotateCamera(float mPhi, float mTheta);

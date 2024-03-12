@@ -66,11 +66,14 @@ void RenderEngine::Update()
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+
 	Camera cam;
 	Transform trans;
 	//XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMMATRIX view = cam.GetView();
-	XMStoreFloat4x4(&mView, view);
+	/*XMMATRIX view = cam.GetView();
+	XMStoreFloat4x4(&mView, view);*/
 
 	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
 	XMMATRIX proj = cam.GetProj();
@@ -79,10 +82,38 @@ void RenderEngine::Update()
 	view = XMMatrixTranspose(view);
 	proj = XMMatrixTranspose(proj);
 
+	//wchar_t buffer[512];
+
+	//swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+	//	world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3],
+	//	world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3],
+	//	world.r[2].m128_f32[0], world.r[2].m128_f32[1], world.r[2].m128_f32[2], world.r[2].m128_f32[3],
+	//	world.r[3].m128_f32[0], world.r[3].m128_f32[1], world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
+	//OutputDebugString(buffer);
+	//
+	//wchar_t buffer1[512];
+	//swprintf_s(buffer1, L"%s\nview:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+	//	buffer,
+	//	view.r[0].m128_f32[0], view.r[0].m128_f32[1], view.r[0].m128_f32[2], view.r[0].m128_f32[3],
+	//	view.r[1].m128_f32[0], view.r[1].m128_f32[1], view.r[1].m128_f32[2], view.r[1].m128_f32[3],
+	//	view.r[2].m128_f32[0], view.r[2].m128_f32[1], view.r[2].m128_f32[2], view.r[2].m128_f32[3],
+	//	view.r[3].m128_f32[0], view.r[3].m128_f32[1], view.r[3].m128_f32[2], view.r[3].m128_f32[3]);
+	//OutputDebugString(buffer1);
+
+	//wchar_t buffer2[512];
+	//swprintf_s(buffer2, L"%s\nproj:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+	//	buffer,
+	//	proj.r[0].m128_f32[0], proj.r[0].m128_f32[1], proj.r[0].m128_f32[2], proj.r[0].m128_f32[3],
+	//	proj.r[1].m128_f32[0], proj.r[1].m128_f32[1], proj.r[1].m128_f32[2], proj.r[1].m128_f32[3],
+	//	proj.r[2].m128_f32[0], proj.r[2].m128_f32[1], proj.r[2].m128_f32[2], proj.r[2].m128_f32[3],
+	//	proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
+	//OutputDebugString(buffer2);
+
 	XMMATRIX worldViewProj = world * view * proj;
 
+
 	// Update the constant buffer with the latest worldViewProj matrix.
-	ModelViewProjectionConstantBuffer objConstants;
+	Mesh::ModelViewProjectionConstantBuffer objConstants;
 
 	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
 	mObjectCB->CopyData(0, objConstants);
@@ -150,7 +181,6 @@ void RenderEngine::Draw()
 	// so we do not have to wait per frame.
 	FlushCommandQueue();
 }
-
 
 void RenderEngine::BuildDescriptorHeaps()
 {

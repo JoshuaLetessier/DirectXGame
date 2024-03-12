@@ -3,6 +3,9 @@
 //***************************************************************************************
 
 #include "Camera.h"
+#include "Transform.h"
+
+Transform trans;
 
 using namespace DirectX;
 
@@ -160,7 +163,7 @@ XMMATRIX Camera::GetView()
 		UpdateViewMatrix();
 	}
 	//assert(!mViewDirty);
-	return XMLoadFloat4x4(&mView);
+	return XMLoadFloat4x4(&trans.mView);
 }
 
 XMMATRIX Camera::GetProj()const
@@ -171,7 +174,7 @@ XMMATRIX Camera::GetProj()const
 XMFLOAT4X4 Camera::GetView4x4f()const
 {
 	assert(!mViewDirty);
-	return mView;
+	return trans.mView;
 }
 
 XMFLOAT4X4 Camera::GetProj4x4f() const
@@ -251,25 +254,25 @@ void Camera::UpdateViewMatrix()
 		XMStoreFloat3(&mUp, U);
 		XMStoreFloat3(&mLook, L);
 
-		mView(0, 0) = mRight.x;
-		mView(1, 0) = mRight.y;
-		mView(2, 0) = mRight.z;
-		mView(3, 0) = x;
+		trans.mView(0, 0) = mRight.x;
+		trans.mView(1, 0) = mRight.y;
+		trans.mView(2, 0) = mRight.z;
+		trans.mView(3, 0) = x;
 
-		mView(0, 1) = mUp.x;
-		mView(1, 1) = mUp.y;
-		mView(2, 1) = mUp.z;
-		mView(3, 1) = y;
+		trans.mView(0, 1) = mUp.x;
+		trans.mView(1, 1) = mUp.y;
+		trans.mView(2, 1) = mUp.z;
+		trans.mView(3, 1) = y;
 
-		mView(0, 2) = mLook.x;
-		mView(1, 2) = mLook.y;
-		mView(2, 2) = mLook.z;
-		mView(3, 2) = z;
+		trans.mView(0, 2) = mLook.x;
+		trans.mView(1, 2) = mLook.y;
+		trans.mView(2, 2) = mLook.z;
+		trans.mView(3, 2) = z;
 
-		mView(0, 3) = 0.0f;
-		mView(1, 3) = 0.0f;
-		mView(2, 3) = 0.0f;
-		mView(3, 3) = 1.0f;
+		trans.mView(0, 3) = 0.0f;
+		trans.mView(1, 3) = 0.0f;
+		trans.mView(2, 3) = 0.0f;
+		trans.mView(3, 3) = 1.0f;
 
 		mViewDirty = false;
 	}
