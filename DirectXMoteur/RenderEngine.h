@@ -3,6 +3,8 @@
 #include "Component.h"
 #include "pch.h"
 #include "Entity.h"
+#include "Camera.h"
+#include "Transform.h"
 
 class Component;
 
@@ -18,6 +20,9 @@ public:
 private:
     virtual void OnResize()override;
     virtual void Update()override;
+
+
+    void UpdateCamera();
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
    
@@ -28,6 +33,7 @@ private:
     Shader shader;
     Entity entity;
     Transform trans;
+    Camera cam;
    
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;

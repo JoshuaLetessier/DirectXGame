@@ -13,7 +13,7 @@
 class WindowEngine
 {
 private:
-    Camera m_Camera;
+    Camera* m_Camera;
     POINT mLastMousePos;
 protected:
 

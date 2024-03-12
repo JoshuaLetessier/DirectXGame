@@ -85,7 +85,7 @@ int WindowEngine::Run()
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			OnKeyboardInput(gt);
+			//OnKeyboardInput(gt);
 		}
 		// Otherwise, do animation/game stuff.
 		else
@@ -124,7 +124,7 @@ bool WindowEngine::Initialize()
 
 	// Do the initial resize code.
 	timer.Start();
-	m_Camera.SetPosition(0, 0, -25);
+	m_Camera = new Camera();
 	OnResize();
 
 	return true;
@@ -680,8 +680,8 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-		m_Camera.Pitch(dy);
-		m_Camera.RotateY(dx);
+		m_Camera->Pitch(dy);
+		m_Camera->RotateY(dx);
 		
 
 		wchar_t buffer[256];
@@ -698,16 +698,17 @@ void WindowEngine::OnKeyboardInput(Timer& gt)
 	const float dt = gt.GetElapsedTime();
 
 	if (GetAsyncKeyState('W') & 0x8000)
-		m_Camera.Walk(10.0f * dt);
+		m_Camera->Walk(10.0f * dt);
+		
 
 	if (GetAsyncKeyState('S') & 0x8000)
-		m_Camera.Walk(-10.0f * dt);
+		m_Camera->Walk(-10.0f * dt);
 
 	if (GetAsyncKeyState('A') & 0x8000)
-		m_Camera.Strafe(-10.0f * dt);
+		m_Camera->Strafe(-10.0f * dt);
 
 	if (GetAsyncKeyState('D') & 0x8000)
-		m_Camera.Strafe(10.0f * dt);
+		m_Camera->Strafe(10.0f * dt);
 
-	m_Camera.UpdateViewMatrix();
+	m_Camera->UpdateViewMatrix();
 }

@@ -12,13 +12,17 @@
 #define CAMERA_H
 
 #include "d3dUtil.h"
+#include "Component.h"
 
-class Camera
+class Camera : public Component
 {
 public:
 
 	Camera();
 	~Camera();
+
+	bool Initialize() ;
+	void Update();
 
 	// Get/Set world camera position.
 	DirectX::XMVECTOR GetPosition()const;

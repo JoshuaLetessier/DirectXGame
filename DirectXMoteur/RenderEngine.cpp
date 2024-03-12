@@ -1,7 +1,6 @@
 #include "RenderEngine.h"
 #include "iostream"
-#include "Camera.h"
-#include "Transform.h"
+
 
 
 using Microsoft::WRL::ComPtr;
@@ -57,7 +56,31 @@ void RenderEngine::OnResize()
 
 void RenderEngine::Update()
 {
+	// Convert Spherical to Cartesian coordinates.
+	float x1 = mRadius * sinf(mPhi) * cosf(mTheta);
+	float z1 = mRadius * sinf(mPhi) * sinf(mTheta);
+	float y1 = mRadius * cosf(mPhi);
 
+	// Build the view matrix.
+	XMVECTOR pos1 = XMVectorSet(x1, y1, z1, 1.0f);
+	XMVECTOR target1 = XMVectorZero();
+	XMVECTOR up1 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view1 = XMMatrixLookAtLH(pos1, target1, up1);
+	XMStoreFloat4x4(&mView, view1);
+
+	XMMATRIX world1 = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj1 = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj1 = world1 * view1 * proj1;
+
+	// Update the constant buffer with the latest worldViewProj matrix.
+	Mesh::ModelViewProjectionConstantBuffer objConstants1;
+	XMStoreFloat4x4(&objConstants1.WorldViewProj, XMMatrixTranspose(worldViewProj1));
+	mObjectCB->CopyData(0, objConstants1);
+}
+
+void RenderEngine::UpdateCamera()
+{
 	// Convert Spherical to Cartesian coordinates.
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
@@ -70,9 +93,6 @@ void RenderEngine::Update()
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&trans.mView, view);
-
-	Camera cam;
-	
 	//XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
 	/*XMMATRIX view = cam.GetView();
 	XMStoreFloat4x4(&mView, view);*/
@@ -119,28 +139,6 @@ void RenderEngine::Update()
 
 	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
 	mObjectCB->CopyData(0, objConstants);
-
-	// Convert Spherical to Cartesian coordinates.
-	float x1 = mRadius * sinf(mPhi) * cosf(mTheta);
-	float z1 = mRadius * sinf(mPhi) * sinf(mTheta);
-	float y1 = mRadius * cosf(mPhi);
-
-	// Build the view matrix.
-	XMVECTOR pos1 = XMVectorSet(x1, y1, z1, 1.0f);
-	XMVECTOR target1 = XMVectorZero();
-	XMVECTOR up1 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX view1 = XMMatrixLookAtLH(pos1, target1, up1);
-	XMStoreFloat4x4(&mView, view1);
-
-	XMMATRIX world1 = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj1 = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj1 = world1 * view1 * proj1;
-
-	// Update the constant buffer with the latest worldViewProj matrix.
-	Mesh::ModelViewProjectionConstantBuffer objConstants1;
-	XMStoreFloat4x4(&objConstants1.WorldViewProj, XMMatrixTranspose(worldViewProj1));
-	mObjectCB->CopyData(0, objConstants1);
 }
 
 void RenderEngine::Draw()
