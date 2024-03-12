@@ -1,4 +1,5 @@
 #include "WindowEngine.h"
+#include "RenderEngine.h"
 #include <WindowsX.h>
 #include <Windows.h>
 //#include "InputManager.h"
@@ -8,6 +9,7 @@ using namespace std;
 using namespace DirectX;
 
 Timer timer;
+RenderEngine render;
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -687,6 +689,8 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		wchar_t buffer[256];
 		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
 		OutputDebugString(buffer);
+
+		render.UpdateCamera();
 	}
 
 	mLastMousePos.x = x;

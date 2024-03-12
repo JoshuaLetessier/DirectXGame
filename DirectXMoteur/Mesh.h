@@ -3,6 +3,8 @@
 #include "pch.h"
 #include "WindowEngine.h"
 #include "ShaderStructure.h"
+#include "UploadBuffer.h"
+#include <DirectXMath.h>
 
 /*
 	//struct Shape
@@ -80,7 +82,7 @@ public:
 	bool Initialize()override;
 	bool Initialize(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList);
 	void Update();
-
+	
 public:
 
 	struct ModelViewProjectionConstantBuffer
@@ -96,6 +98,8 @@ public:
 
 	std::vector<VertexPositionColor> CubeVertices();
 	std::vector<std::uint16_t> CubeIndices();
+	std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> UpdateBuffer(DirectX::XMMATRIX& world, DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj);
+
 
 public:
 	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;	

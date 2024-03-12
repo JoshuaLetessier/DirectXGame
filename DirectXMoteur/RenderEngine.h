@@ -17,12 +17,13 @@ public:
 
     virtual bool Initialize()override;
     virtual void Draw()override;
+    void UpdateCamera();
 private:
     virtual void OnResize()override;
     virtual void Update()override;
 
 
-    void UpdateCamera();
+    
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
    

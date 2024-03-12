@@ -100,4 +100,23 @@ std::vector<std::uint16_t> Mesh::CubeIndices()
 	return cubeIndices;
 }
 
+std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> Mesh::UpdateBuffer(XMMATRIX &world, XMMATRIX &view, XMMATRIX &proj)
+{
+	world = XMMatrixTranspose(world);
+	view = XMMatrixTranspose(view);
+	proj = XMMatrixTranspose(proj);
+
+	XMMATRIX worldViewProj = world * view * proj;
+
+
+	// Update the constant buffer with the latest worldViewProj matrix.
+	Mesh::ModelViewProjectionConstantBuffer objConstants;
+
+	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
+	std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
+	mObjectCB->CopyData(0, objConstants);
+
+	return mObjectCB;
+}
+
 

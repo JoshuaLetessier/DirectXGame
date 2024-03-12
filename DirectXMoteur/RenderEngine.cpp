@@ -57,26 +57,35 @@ void RenderEngine::OnResize()
 void RenderEngine::Update()
 {
 	// Convert Spherical to Cartesian coordinates.
-	float x1 = mRadius * sinf(mPhi) * cosf(mTheta);
-	float z1 = mRadius * sinf(mPhi) * sinf(mTheta);
-	float y1 = mRadius * cosf(mPhi);
+	float x = mRadius * sinf(mPhi) * cosf(mTheta);
+	float z = mRadius * sinf(mPhi) * sinf(mTheta);
+	float y = mRadius * cosf(mPhi);
 
 	// Build the view matrix.
-	XMVECTOR pos1 = XMVectorSet(x1, y1, z1, 1.0f);
-	XMVECTOR target1 = XMVectorZero();
-	XMVECTOR up1 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX view1 = XMMatrixLookAtLH(pos1, target1, up1);
-	XMStoreFloat4x4(&mView, view1);
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
 
-	XMMATRIX world1 = XMLoadFloat4x4(&mWorld);
-	XMMATRIX proj1 = XMLoadFloat4x4(&mProj);
-	XMMATRIX worldViewProj1 = world1 * view1 * proj1;
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+
+	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
+	world = XMMatrixTranspose(world);
+	view = XMMatrixTranspose(view);
+	proj = XMMatrixTranspose(proj);
+
+	XMMATRIX worldViewProj = world * view * proj;
+
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	Mesh::ModelViewProjectionConstantBuffer objConstants1;
-	XMStoreFloat4x4(&objConstants1.WorldViewProj, XMMatrixTranspose(worldViewProj1));
-	mObjectCB->CopyData(0, objConstants1);
+	Mesh::ModelViewProjectionConstantBuffer objConstants;
+
+	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
+	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
+	mObjectCB->CopyData(0, objConstants);
 }
 
 void RenderEngine::UpdateCamera()
@@ -100,12 +109,7 @@ void RenderEngine::UpdateCamera()
 	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
 	XMMATRIX proj = cam.GetProj();
 
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	proj = XMMatrixTranspose(proj);
-
 	//wchar_t buffer[512];
-
 	//swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
 	//	world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3],
 	//	world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3],
@@ -131,6 +135,13 @@ void RenderEngine::UpdateCamera()
 	//	proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
 	//OutputDebugString(buffer2);
 
+	// Update the constant buffer with the latest worldViewProj matrix.
+	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
+
+	world = XMMatrixTranspose(world);
+	view = XMMatrixTranspose(view);
+	proj = XMMatrixTranspose(proj);
+
 	XMMATRIX worldViewProj = world * view * proj;
 
 
@@ -138,6 +149,7 @@ void RenderEngine::UpdateCamera()
 	Mesh::ModelViewProjectionConstantBuffer objConstants;
 
 	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
+	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
 	mObjectCB->CopyData(0, objConstants);
 }
 
