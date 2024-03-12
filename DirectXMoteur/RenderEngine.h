@@ -27,6 +27,7 @@ private:
     Mesh mesh;
     Shader shader;
     Entity entity;
+    Transform trans;
    
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
