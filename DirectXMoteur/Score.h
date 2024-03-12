@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 class Score
 {
 public:
@@ -12,12 +11,6 @@ public:
 	void SetScore(int score);
 	void Render();
 
-	struct ScoreSprite {
-		ComPtr<ID3D12Resource> texture;
-		D3D12_GPU_DESCRIPTOR_HANDLE textureDescriptor;
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	};
-
 	ID3D12Device* m_device;
 	ID3D12GraphicsCommandList* m_commandList;
 	int m_screenWidth;
@@ -25,6 +18,6 @@ public:
 	int m_score;
 
 	ComPtr<ID3D12RootSignature> m_rootSignature;
-	ComPtr<ID3D12PipelineState> m_pipelineState;
-	std::vector<ScoreSprite> m_scoreSprites;
+
+
 };

@@ -75,12 +75,12 @@ void Shader::BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaS
 	psoDesc.pRootSignature = m_rootSignature.Get();
 	psoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>( mvsByteCode->GetBufferPointer()),
+		reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()),
 		 mvsByteCode->GetBufferSize()
 	};
 	psoDesc.PS =
 	{
-		reinterpret_cast<BYTE*>( mpsByteCode->GetBufferPointer()),
+		reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()),
 		 mpsByteCode->GetBufferSize()
 	};
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
@@ -95,5 +95,3 @@ void Shader::BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaS
 	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	ThrowIfFailed(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO)));
 }
-
-

@@ -27,7 +27,7 @@ void Score::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 		ComPtr<ID3DBlob> signature;
 		ComPtr<ID3DBlob> error;
 		ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-		//ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+		ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 	}
 
 	// Create the pipeline state
@@ -35,7 +35,7 @@ void Score::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandL
 		ComPtr<ID3DBlob> vertexShader;
 		ComPtr<ID3DBlob> pixelShader;
 
-		UINT compileFlags = 0;
+		/*UINT compileFlags = 0;*/
 	}
 }
 
@@ -44,27 +44,7 @@ void Score::SetScore(int score)
 	m_score = score;
 }
 
-void Score::Render() {
-	// Check if initialized
-	if (!m_device || !m_commandList) {
-		return;
-	}
+void Score::Render()
+{
 
-	// Set render target
-	m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-	m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_commandList->SetPipelineState(m_pipelineState.Get());
-
-	// Set viewport and scissor rect
-	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(m_screenWidth), static_cast<float>(m_screenHeight), 0.0f, 1.0f };
-	D3D12_RECT scissorRect = { 0, 0, m_screenWidth, m_screenHeight };
-	m_commandList->RSSetViewports(1, &viewport);
-	m_commandList->RSSetScissorRects(1, &scissorRect);
-
-	// Draw score sprites
-	for (auto& sprite : m_scoreSprites) {
-		m_commandList->SetGraphicsRootDescriptorTable(0, sprite.textureDescriptor);
-		m_commandList->IASetVertexBuffers(0, 1, &sprite.vertexBufferView);
-		m_commandList->DrawInstanced(6, 1, 0, 0);
-	}
 }

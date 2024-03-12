@@ -1,7 +1,6 @@
 #include "RenderEngine.h"
 #include "iostream"
 
-
 using Microsoft::WRL::ComPtr;
 
 RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
@@ -10,7 +9,6 @@ RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
 
 RenderEngine::RenderEngine() :Component()
 {
-
 }
 
 RenderEngine::~RenderEngine()
@@ -140,7 +138,6 @@ void RenderEngine::Draw()
 	FlushCommandQueue();
 }
 
-
 void RenderEngine::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
@@ -171,4 +168,3 @@ void RenderEngine::BuildConstantBuffers()
 		&cbvDesc,
 		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }
-

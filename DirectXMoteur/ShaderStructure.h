@@ -4,9 +4,8 @@
 #include "MathHelper.h"
 #include "Component.h"
 
-class Shader: public Component
+class Shader : public Component
 {
-
 public:
 	Shader();
 	virtual ~Shader();
@@ -18,7 +17,6 @@ public:
 	void BuildShadersAndInputLayout();
 	void BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaState, UINT m4xMsaaQuality);
 
-
 	ComPtr<ID3DBlob> mvsByteCode = nullptr;
 	ComPtr<ID3DBlob> mpsByteCode = nullptr;
 
@@ -26,7 +24,4 @@ public:
 	ComPtr<ID3D12RootSignature> m_rootSignature = nullptr;
 	ComPtr<ID3D12PipelineState> mPSO = nullptr;
 private:
-	
 };
-
-

@@ -68,11 +68,10 @@
 	//};
 */
 
-class Mesh: public Component
+class Mesh : public Component
 {
 public:
 
-	
 	Mesh();
 	virtual ~Mesh();
 
@@ -98,5 +97,5 @@ public:
 	std::vector<std::uint16_t> CubeIndices();
 
 public:
-	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;	
+	std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
 };

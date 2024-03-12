@@ -13,7 +13,6 @@ class Ennemies
 private:
 	RenderEngine ennemy;
 
-
 public:
 	Ennemies();
 	void spawnEnnemies();

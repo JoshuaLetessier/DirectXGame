@@ -2,7 +2,6 @@
 
 Mesh::Mesh()
 {
-
 }
 
 Mesh::~Mesh()
@@ -99,5 +98,3 @@ std::vector<std::uint16_t> Mesh::CubeIndices()
 	};
 	return cubeIndices;
 }
-
-
