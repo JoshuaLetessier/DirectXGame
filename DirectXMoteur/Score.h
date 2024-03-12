@@ -18,6 +18,4 @@ public:
 	int m_score;
 
 	ComPtr<ID3D12RootSignature> m_rootSignature;
-
-
 };

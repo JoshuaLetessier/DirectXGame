@@ -36,6 +36,7 @@ using namespace Microsoft::WRL;
 #include "UploadBuffer.h"
 #include "Timer.h"
 #include "Score.h"
+#include "DDSTextureLoader.h"
 
 // Helper functions
 #include "Helpers.h"

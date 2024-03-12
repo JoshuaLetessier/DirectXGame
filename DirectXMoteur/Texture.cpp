@@ -20,7 +20,6 @@ void Texture2D::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueu
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 	rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-	
 	ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, signature.GetAddressOf(), error.GetAddressOf()));
 	ThrowIfFailed(m_pDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature)));
 
@@ -38,7 +37,7 @@ void Texture2D::CreateTexture(const wchar_t* fileName)
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureUpload;
 
 	// on load la texture ddsdepuis son emplacment de fichier
-	//ThrowIfFailed(CreateDDSTextureFromFile12(m_pDevice, m_pCommandList, fileName, texture, textureUpload));
+	ThrowIfFailed(CreateDDSTextureFromFile12(m_pDevice, m_pCommandList, fileName, texture, textureUpload));
 
 	// créer un SRV Descriptors
 	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
@@ -92,13 +91,16 @@ void Texture2D::FlushCommandQueue()
 	// Wait until the GPU has completed commands up to this fence point.
 	if (m_pFence->GetCompletedValue() < m_CurrentFence)
 	{
-		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 
-		// Fire event when GPU hits current fence.  
+		// Fire event when GPU hits current fence.
 		ThrowIfFailed(m_pFence->SetEventOnCompletion(m_CurrentFence, eventHandle));
 
 		// Wait until the GPU hits current fence event is fired.
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
+		if (eventHandle != 0)
+		{
+			WaitForSingleObject(eventHandle, INFINITE);
+			CloseHandle(eventHandle);
+		}
 	}
 }

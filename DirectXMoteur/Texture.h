@@ -10,7 +10,7 @@ public:
 	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap);
 	void CreateTexture(const wchar_t* fileName);
 
-private:
+			private:
 
 	ComPtr<ID3D12RootSignature> m_pRootSignature = nullptr;
 

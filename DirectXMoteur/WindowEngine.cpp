@@ -562,8 +562,11 @@ void WindowEngine::FlushCommandQueue()
 		ThrowIfFailed(mFence->SetEventOnCompletion(mCurrentFence, eventHandle));
 
 		// Wait until the GPU hits current fence event is fired.
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
+		if (eventHandle != nullptr)
+		{
+			WaitForSingleObject(eventHandle, INFINITE);
+			CloseHandle(eventHandle);
+		}
 	}
 }
 

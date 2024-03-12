@@ -99,11 +99,11 @@
     <ClInclude Include="Entity.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
-    <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,11 +146,11 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

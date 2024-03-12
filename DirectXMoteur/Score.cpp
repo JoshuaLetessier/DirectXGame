@@ -46,5 +46,4 @@ void Score::SetScore(int score)
 
 void Score::Render()
 {
-
 }
