@@ -3,8 +3,8 @@
 #include <iostream>
 #include "framework.h"
 #include "DXMoteur.h"
-#include "RenderEngine.h"
-#include "Timer.h"
+
+#include "WindowEngine.h"
 
 #define MAX_LOADSTRING 100
 
@@ -23,6 +23,8 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+WindowEngine* WindowEngine::mApp;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
 {
@@ -34,17 +36,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	_CrtMemState memStateInit;
 	_CrtMemCheckpoint(&memStateInit);
 #endif
-
-	Timer time;
-
 	try
 	{
-		RenderEngine renderEngine(hInstance);
+		WindowEngine::mApp = nullptr;
 		WindowEngine window;
-		if (!renderEngine.Initialize())
-			return 0;
-
-		return window.Run();
+		window.Run(&window);
 	}
 	catch (DxException& e)
 	{

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "InputManager.h"
 
 void InputManager::OnMouseDown(WPARAM btnState, int x, int y)

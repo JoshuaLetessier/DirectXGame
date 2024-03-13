@@ -1,7 +1,10 @@
+#include "pch.h"
 #include "WindowEngine.h"
 #include "RenderEngine.h"
 #include <WindowsX.h>
 #include <Windows.h>
+
+
 //#include "InputManager.h"
 
 using Microsoft::WRL::ComPtr;
@@ -18,7 +21,6 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return WindowEngine::GetApp()->MsgProc(hwnd, msg, wParam, lParam);
 }
 
-WindowEngine* WindowEngine::mApp = nullptr;
 WindowEngine* WindowEngine::GetApp()
 {
 	return mApp;
@@ -26,6 +28,9 @@ WindowEngine* WindowEngine::GetApp()
 
 WindowEngine::WindowEngine()
 {
+	// Only one WindowEngine can be constructed.
+	assert(mApp == nullptr);
+	mApp = this;
 }
 
 WindowEngine::WindowEngine(HINSTANCE hInstance)
@@ -77,7 +82,7 @@ void WindowEngine::Set4xMsaaState(bool value)
 	}
 }
 
-int WindowEngine::Run()
+int WindowEngine::Run(WindowEngine* window)
 {
 	MSG msg = { 0 };
 	Timer gt;
@@ -98,7 +103,6 @@ int WindowEngine::Run()
 			//Button start game
 			if (StartGame == true)
 			{
-				//mTimer.Tick();
 				if (timer.Update())
 				{
 					SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
@@ -118,16 +122,11 @@ int WindowEngine::Run()
 						{
 							//to do
 						}
-					}/*
-					newEntity = entity->createNewEntity();
-
-					newEntity->AddComponent();
-					newEntity->addMatrix();
-
-					box.SetEntity(newEntity);
-
-					box.Draw();
-					box.Update();*/
+					}
+					if(renderEngine->Initialize(window))
+					{
+						break;
+					}
 				}
 				else
 				{
@@ -692,18 +691,18 @@ void WindowEngine::LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format
 	}
 }
 
-void WindowEngine::OnMouseDown(WPARAM btnState, int x, int y)
-{
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-
-	SetCapture(mhMainWnd);
-}
-
-void WindowEngine::OnMouseUp(WPARAM btnState, int x, int y)
-{
-	ReleaseCapture();
-}
+//void WindowEngine::OnMouseDown(WPARAM btnState, int x, int y)
+//{
+//	mLastMousePos.x = x;
+//	mLastMousePos.y = y;
+//
+//	SetCapture(mhMainWnd);
+//}
+//
+//void WindowEngine::OnMouseUp(WPARAM btnState, int x, int y)
+//{
+//	ReleaseCapture();
+//}
 
 void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 {
@@ -711,8 +710,8 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 	{
 		
 		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - inputManager->mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - inputManager->mLastMousePos.y));
 		m_Camera->Pitch(dy);
 		m_Camera->RotateY(dx);
 		
@@ -721,29 +720,32 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
 		OutputDebugString(buffer);
 
-		UpdateCamera();
+		//UpdateCamera();
 	}
 
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
+	inputManager->mLastMousePos.x = x;
+	inputManager->mLastMousePos.y = y;
 }
 
-void WindowEngine::OnKeyboardInput(Timer& gt)
-{
-	const float dt = gt.GetElapsedTime();
 
-	if (GetAsyncKeyState('W') & 0x8000)
-		m_Camera->Walk(10.0f * dt);
-		
 
-	if (GetAsyncKeyState('S') & 0x8000)
-		m_Camera->Walk(-10.0f * dt);
 
-	if (GetAsyncKeyState('A') & 0x8000)
-		m_Camera->Strafe(-10.0f * dt);
-
-	if (GetAsyncKeyState('D') & 0x8000)
-		m_Camera->Strafe(10.0f * dt);
-
-	m_Camera->UpdateViewMatrix();
-}
+//void WindowEngine::OnKeyboardInput(Timer& gt)
+//{
+//	const float dt = gt.GetElapsedTime();
+//
+//	if (GetAsyncKeyState('W') & 0x8000)
+//		m_Camera->Walk(10.0f * dt);
+//		
+//
+//	if (GetAsyncKeyState('S') & 0x8000)
+//		m_Camera->Walk(-10.0f * dt);
+//
+//	if (GetAsyncKeyState('A') & 0x8000)
+//		m_Camera->Strafe(-10.0f * dt);
+//
+//	if (GetAsyncKeyState('D') & 0x8000)
+//		m_Camera->Strafe(10.0f * dt);
+//
+//	m_Camera->UpdateViewMatrix();
+//}

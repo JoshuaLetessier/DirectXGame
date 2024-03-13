@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.h"
 #include "WindowEngine.h"
 #include "ShaderStructure.h"
 #include "UploadBuffer.h"

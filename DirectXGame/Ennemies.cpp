@@ -10,7 +10,7 @@ void Ennemies::spawnEnnemies()
 	Cords offsetres = offsetCalcul(spawn.x, spawn.y, spawn.z);
 	for (int i = 0; i < sizeof(m_Entity); i++) {
 		m_Entity[i].AddComponent(&ennemy);
-		m_Entity[i].GetTransform().translate(offsetres.x, offsetres.y, offsetres.z);
+		//m_Entity[i].GetTransform().translate(offsetres.x, offsetres.y, offsetres.z);
 	}
 	ennemy.Draw();
 }

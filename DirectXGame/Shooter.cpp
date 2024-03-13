@@ -24,8 +24,8 @@ void Shooter::shoot()
 	if (!m_Entity.empty())
 	{
 		Entity* entity = new Entity();
-		entity->AddComponent(&balle);
-		entity->GetTransform().translate(0.0f, 0.0f, 0.02f);
+		//entity->AddComponent(&balle);
+		//entity->GetTransform().translate(0.0f, 0.0f, 0.02f);
 	}
 	balle.Draw();
 }

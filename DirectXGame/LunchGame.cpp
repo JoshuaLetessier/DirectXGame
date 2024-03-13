@@ -20,14 +20,14 @@ void LunchGame::update(const GameTimer& gt)
 
     for (int i = 0; i < sizeof(ennemy.m_Entity); i++)
     {
-        XMMATRIX world = XMLoadFloat4x4(&ennemy.m_Entity[i].GetTransform().matrix);
-        XMMATRIX proj = XMLoadFloat4x4(&mProj);
-        XMMATRIX worldViewProj = world * view * proj;
+        //XMMATRIX world = XMLoadFloat4x4(&ennemy.m_Entity[i].GetTransform().matrix);
+        //XMMATRIX proj = XMLoadFloat4x4(&mProj);
+        //XMMATRIX worldViewProj = world * view * proj;
 
-        // Update the constant buffer with the latest worldViewProj matrix.
-        Mesh::ModelViewProjectionConstantBuffer objConstants;
-        XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-        mObjectCB->CopyData(0, objConstants);
+        //// Update the constant buffer with the latest worldViewProj matrix.
+        //Mesh::ModelViewProjectionConstantBuffer objConstants;
+        //XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+        //mObjectCB->CopyData(0, objConstants);
     }
 }
 

@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="entityManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXmoteur.cpp" />
@@ -15,82 +14,87 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="WindowEngine.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>header</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Helpers.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="d3d12.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderStructure.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="MathHelper.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
-    <ClInclude Include="UploadBuffer.h">
-      <Filter>Fichiers de ressources\inc</Filter>
-    </ClInclude>
+    <ClInclude Include="d3dx12.h" />
     <ClInclude Include="Camera.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowEngine.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderEngine.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Score.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+      <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="DXmoteur.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    <ClInclude Include="Component.h">
+      <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    <ClInclude Include="d3d12.h">
+      <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="d3dUtil.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="DXmoteur.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="entityManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngine.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderStructure.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="UploadBuffer.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowEngine.h">
+      <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -159,13 +163,20 @@
     <ClInclude Include="WindowEngine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DirectXMoteur.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="DirectXMoteur.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="header">
+      <UniqueIdentifier>{ca801d7a-59dd-4497-9cb8-5baa4efa83e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXMoteur.rc">
+      <Filter>header</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

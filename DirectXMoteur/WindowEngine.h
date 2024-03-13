@@ -8,10 +8,9 @@
 #include "d3dUtil.h"
 #include "Camera.h"
 #include "Timer.h"
-#include "pch.h"
-#include "Entity.h"
+#include "InputManager.h"
+//#include "RenderEngine.h"
 
-class entityManager;
 class RenderEngine;
 
 class WindowEngine
@@ -36,7 +35,7 @@ public:
     bool Get4xMsaaState()const;
     void Set4xMsaaState(bool value);
 
-    int Run();
+    int Run(WindowEngine* window);
 
     virtual bool Initialize();
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -44,8 +43,9 @@ public:
     void OnMouseDown(WPARAM btnState, int x, int y);
     void OnMouseUp(WPARAM btnState, int x, int y);
     void OnMouseMove(WPARAM btnState, int x, int y);
+    
 
-    void OnKeyboardInput(Timer& gt);
+    //void OnKeyboardInput(Timer& gt);
 
     int mClientWidth = 800;
     int mClientHeight = 600;
@@ -53,12 +53,7 @@ public:
     Camera* m_Camera;
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
-    virtual void OnResize();
-
-    // Convenience overrides for handling mouse input.
-    virtual void OnMouseDown(WPARAM btnState, int x, int y) { }
-    virtual void OnMouseUp(WPARAM btnState, int x, int y) { }
-    virtual void OnMouseMove(WPARAM btnState, int x, int y) { }
+   
 
 public:
 
@@ -66,6 +61,7 @@ public:
     bool InitDirect3D();
     void CreateCommandObjects();
     void CreateSwapChain();
+    void OnResize();
 
     void FlushCommandQueue();
 
@@ -73,7 +69,7 @@ public:
     D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
     D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
 
-    void CalculateFrameStats();
+    //void CalculateFrameStats();
 
     void LogAdapters();
     void LogAdapterOutputs(IDXGIAdapter* adapter);
@@ -136,9 +132,8 @@ public:
 
     //Shooter shoot;
 
-    RenderEngine* render;
-    entityManager* entity;
-    Entity* newEntity;
+    InputManager* inputManager;
+    RenderEngine* renderEngine;
 };
 
 
