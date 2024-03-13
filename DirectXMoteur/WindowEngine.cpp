@@ -95,19 +95,49 @@ int WindowEngine::Run()
 		// Otherwise, do animation/game stuff.
 		else
 		{
-			//mTimer.Tick();
-			if (timer.Update())
+			//Button start game
+			if (StartGame == true)
 			{
-				SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
-			}
-			if (!mAppPaused)
-			{
-				Update();
-				Draw();
+				//mTimer.Tick();
+				if (timer.Update())
+				{
+					SetWindowTextA(mhMainWnd, to_string(timer.GetFPS()).c_str());
+				}
+				if (!mAppPaused)
+				{
+					//Left click pressed
+					if ((GetKeyState(VK_LBUTTON))) 
+					{
+						//shoot.shoot();
+					}
+					//Echap for menu
+					if (GetAsyncKeyState(VK_ESCAPE)) 
+					{
+						//Button quit game and return on the menu starts
+						if (QuitGame == true)
+						{
+							//to do
+						}
+					}/*
+					newEntity = entity->createNewEntity();
+
+					newEntity->AddComponent();
+					newEntity->addMatrix();
+
+					box.SetEntity(newEntity);
+
+					box.Draw();
+					box.Update();*/
+				}
+				else
+				{
+					Sleep(100);
+				}
 			}
 			else
 			{
-				Sleep(100);
+				//Close window
+				//to do
 			}
 		}
 	}
@@ -370,7 +400,7 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_KEYUP:
-		if (wParam == VK_ESCAPE)
+		if (wParam == NULL)
 		{
 			PostQuitMessage(0);
 		}

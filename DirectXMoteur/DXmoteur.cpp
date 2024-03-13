@@ -40,8 +40,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	try
 	{
 		RenderEngine renderEngine(hInstance);
-		if (renderEngine.Initialize())
-			renderEngine.Run();
+		WindowEngine window;
+		if (!renderEngine.Initialize())
+			return 0;
+
+		return window.Run();
 	}
 	catch (DxException& e)
 	{

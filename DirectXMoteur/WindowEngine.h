@@ -11,12 +11,12 @@
 #include "pch.h"
 #include "Entity.h"
 
+class entityManager;
+class RenderEngine;
+
 class WindowEngine
 {
-private:
-    
-    POINT mLastMousePos;
-protected:
+public:
 
 
     WindowEngine(HINSTANCE hInstance);
@@ -54,11 +54,13 @@ public:
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
-    virtual void Update() = 0;
-    virtual void UpdateCamera() = 0;
-    virtual void Draw() = 0;
 
-protected:
+    // Convenience overrides for handling mouse input.
+    virtual void OnMouseDown(WPARAM btnState, int x, int y) { }
+    virtual void OnMouseUp(WPARAM btnState, int x, int y) { }
+    virtual void OnMouseMove(WPARAM btnState, int x, int y) { }
+
+public:
 
     bool InitMainWindow();
     bool InitDirect3D();
@@ -88,6 +90,10 @@ public:
     bool      mMaximized = false;  // is the application maximized?
     bool      mResizing = false;   // are the resize bars being dragged?
     bool      mFullscreenState = false;// fullscreen enabled
+
+    bool StartGame = true; //Press button start game
+    bool QuitGame = false; //Press button quit in game
+    bool CloseWindow = false; //Press button close window
 
     // Set true to use 4X MSAA (§4.1.8).  The default is false.
     bool      m4xMsaaState = false;    // 4X MSAA enabled
@@ -128,5 +134,11 @@ public:
     DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+    //Shooter shoot;
+
+    RenderEngine* render;
+    entityManager* entity;
+    Entity* newEntity;
 };
+
 

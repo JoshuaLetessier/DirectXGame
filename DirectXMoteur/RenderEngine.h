@@ -1,29 +1,28 @@
 #pragma once
+#include "d3dUtil.h"
 #include "WindowEngine.h"
 #include "Component.h"
-#include "pch.h"
 #include "Entity.h"
 #include "Camera.h"
 #include "Transform.h"
 
-class Component;
+//class Component;
 
-class RenderEngine : public WindowEngine, public Component
+class RenderEngine : public Component
 {
 public:
     RenderEngine(HINSTANCE hInstance);
     RenderEngine();
     ~RenderEngine();
 
+    virtual bool Initialize();
+    void Draw();
     virtual bool Initialize()override;
     virtual void Draw()override;
     void UpdateCamera();
 private:
-    virtual void OnResize()override;
-    virtual void Update()override;
-
-
-    
+    virtual void OnResize();
+    void Update();
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
     void BuildConstantBuffersCamera();
@@ -34,6 +33,8 @@ private:
     Mesh mesh;
     Shader shader;
     Entity entity;
+    WindowEngine window;
+    Component* box;
     Transform trans;
    // Camera cam;
    
