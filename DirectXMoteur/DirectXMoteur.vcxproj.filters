@@ -96,7 +96,7 @@
     <ClInclude Include="Entity.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
-    <ClInclude Include="d3dUtil.h">
+    <ClInclude Include="entityManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -135,6 +135,9 @@
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>Fichiers sources\DX_src</Filter>
+    </ClCompile>
+    <ClCompile Include="entityManager.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
   </ItemGroup>
