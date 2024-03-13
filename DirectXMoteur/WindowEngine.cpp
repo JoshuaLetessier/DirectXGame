@@ -9,7 +9,7 @@ using namespace std;
 using namespace DirectX;
 
 Timer timer;
-RenderEngine render;
+
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -38,7 +38,10 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 WindowEngine::~WindowEngine()
 {
 	if (md3dDevice != nullptr)
+	{
 		FlushCommandQueue();
+		delete m_Camera;
+	}
 }
 
 HINSTANCE WindowEngine::AppInst()const
@@ -79,7 +82,7 @@ int WindowEngine::Run()
 	MSG msg = { 0 };
 	Timer gt;
 	//mTimer.Reset();
-	float rotate = 0.0f;
+
 	while (msg.message != WM_QUIT)
 	{
 		// If there are Window messages then process them.
@@ -99,10 +102,6 @@ int WindowEngine::Run()
 			}
 			if (!mAppPaused)
 			{
-				
-				rotate += 5.0f;
-				//m_Camera.RotateY(XMConvertToRadians(rotate));
-				//m_Camera.Pitch(XMConvertToRadians(rotate));
 				Update();
 				Draw();
 			}
@@ -126,7 +125,9 @@ bool WindowEngine::Initialize()
 
 	// Do the initial resize code.
 	timer.Start();
+
 	m_Camera = new Camera();
+	
 	OnResize();
 
 	return true;
@@ -360,10 +361,10 @@ LRESULT WindowEngine::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_RBUTTONDOWN:
-		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_RBUTTONUP:
-		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		//OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_MOUSEMOVE:
 		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -690,7 +691,7 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
 		OutputDebugString(buffer);
 
-		render.UpdateCamera();
+		UpdateCamera();
 	}
 
 	mLastMousePos.x = x;

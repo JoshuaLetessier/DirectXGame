@@ -8,15 +8,18 @@ using Microsoft::WRL::ComPtr;
 
 RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
 {
+	
 }
 
 RenderEngine::RenderEngine() :Component()
 {
-
+	
 }
 
 RenderEngine::~RenderEngine()
 {
+	delete mObjectCBCamera;
+	delete mObjectCB;
 }
 
 bool RenderEngine::Initialize()
@@ -29,6 +32,7 @@ bool RenderEngine::Initialize()
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
+	BuildConstantBuffersCamera();
 	shader.Initialize(md3dDevice);
 	shader.BuildShadersAndInputLayout();
 	mesh.Initialize(md3dDevice, mCommandList);
@@ -71,20 +75,11 @@ void RenderEngine::Update()
 
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-
-	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	proj = XMMatrixTranspose(proj);
-
 	XMMATRIX worldViewProj = world * view * proj;
-
 
 	// Update the constant buffer with the latest worldViewProj matrix.
 	Mesh::ModelViewProjectionConstantBuffer objConstants;
-
-	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
-	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
+	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	mObjectCB->CopyData(0, objConstants);
 }
 
@@ -107,7 +102,7 @@ void RenderEngine::UpdateCamera()
 	XMStoreFloat4x4(&mView, view);*/
 
 	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
-	XMMATRIX proj = cam.GetProj();
+	XMMATRIX proj = m_Camera->GetProj();
 
 	//wchar_t buffer[512];
 	//swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
@@ -138,19 +133,19 @@ void RenderEngine::UpdateCamera()
 	// Update the constant buffer with the latest worldViewProj matrix.
 	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
 
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	proj = XMMatrixTranspose(proj);
+	//world = XMMatrixTranspose(world);
+	//view = XMMatrixTranspose(view);
+	//proj = XMMatrixTranspose(proj);
 
 	XMMATRIX worldViewProj = world * view * proj;
 
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	Mesh::ModelViewProjectionConstantBuffer objConstants;
+	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
 
-	XMStoreFloat4x4(&objConstants.WorldViewProj, worldViewProj);
+	XMStoreFloat4x4(&mobjConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
-	mObjectCB->CopyData(0, objConstants);
+	mObjectCB->CopyData(0, mobjConstants);
 }
 
 void RenderEngine::Draw()
@@ -191,7 +186,8 @@ void RenderEngine::Draw()
 	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	//mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
 
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 
@@ -219,7 +215,7 @@ void RenderEngine::Draw()
 void RenderEngine::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 1;
+	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
@@ -229,21 +225,40 @@ void RenderEngine::BuildDescriptorHeaps()
 
 void RenderEngine::BuildConstantBuffers()
 {
-	mObjectCB = std::make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
+	mObjectCB = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	//UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
-	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
-	// Offset to the ith object constant buffer in the buffer.
-	int boxCBufIndex = 0;
-	cbAddress += boxCBufIndex * objCBByteSize;
+	//D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
+	//// Offset to the ith object constant buffer in the buffer.
+	//int boxCBufIndex = 0;
+	//cbAddress += boxCBufIndex * objCBByteSize;
 
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	//cbvDesc.BufferLocation = cbAddress;
+	//cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
-	md3dDevice->CreateConstantBufferView(
-		&cbvDesc,
-		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	//md3dDevice->CreateConstantBufferView(
+	//	&cbvDesc,
+	//	mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
+void RenderEngine::BuildConstantBuffersCamera()
+{
+	mObjectCBCamera = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(md3dDevice.Get(), 1, true);
+
+	//UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+
+	//D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCBCamera->Resource()->GetGPUVirtualAddress();
+	//// Offset to the ith object constant buffer in the buffer.
+	//int boxCBufIndex = 0;
+	//cbAddress += boxCBufIndex * objCBByteSize;
+
+	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	//cbvDesc.BufferLocation = cbAddress;
+	//cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+
+	//md3dDevice->CreateConstantBufferView(
+	//	&cbvDesc,
+	//	mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+}

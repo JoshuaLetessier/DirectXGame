@@ -9,11 +9,12 @@
 #include "Camera.h"
 #include "Timer.h"
 #include "pch.h"
+#include "Entity.h"
 
 class WindowEngine
 {
 private:
-    Camera* m_Camera;
+    
     POINT mLastMousePos;
 protected:
 
@@ -48,10 +49,13 @@ public:
 
     int mClientWidth = 800;
     int mClientHeight = 600;
+    
+    Camera* m_Camera;
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
     virtual void Update() = 0;
+    virtual void UpdateCamera() = 0;
     virtual void Draw() = 0;
 
 protected:

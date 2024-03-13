@@ -40,15 +40,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	try
 	{
 		RenderEngine renderEngine(hInstance);
-		if (!renderEngine.Initialize())
-			return 0;
-
-		return renderEngine.Run();
+		if (renderEngine.Initialize())
+			renderEngine.Run();
 	}
 	catch (DxException& e)
 	{
 		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
-		return 0;
+		//return 0;
 	}
 #ifdef _DEBUG
 	_CrtMemState memStateEnd, memStateDiff;

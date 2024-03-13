@@ -26,6 +26,7 @@ private:
     
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
+    void BuildConstantBuffersCamera();
    
 
 private:
@@ -34,13 +35,13 @@ private:
     Shader shader;
     Entity entity;
     Transform trans;
-    Camera cam;
+   // Camera cam;
    
     ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
-    std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
-
+    UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>*mObjectCB = nullptr;
+    UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCBCamera = nullptr;
    
 
     XMFLOAT4X4 mWorld = MathHelper::Identity4x4();

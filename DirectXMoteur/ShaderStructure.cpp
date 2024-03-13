@@ -22,8 +22,9 @@ bool Shader::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device)
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 
 		// Create a single descriptor table of CBVs
-		range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-		parameter.InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_VERTEX);
+		//range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		//parameter.InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_VERTEX);
+		parameter.InitAsConstantBufferView(0);
 		rootSignatureDesc.Init(1, &parameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		ComPtr<ID3DBlob> signature;
