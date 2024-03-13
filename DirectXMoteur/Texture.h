@@ -7,7 +7,7 @@ public:
 	Texture2D();
 	~Texture2D();
 
-	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap);
+	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap, ID3D12Fence* fence);
 	void CreateTexture(const wchar_t* fileName);
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetDescriptorGPU();
@@ -33,8 +33,8 @@ private:
 
 	UINT m_textureIndex = 0;
 
-	ComPtr<ID3DBlob> signature;
-	ComPtr<ID3DBlob> error;
+	ComPtr<ID3DBlob> signature = nullptr;
+	ComPtr<ID3DBlob> error = nullptr;
 
 	
 

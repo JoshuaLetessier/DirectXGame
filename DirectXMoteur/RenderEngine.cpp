@@ -25,7 +25,7 @@ bool RenderEngine::Initialize()
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
-	tex.Initialize(md3dDevice.Get(), mCommandQueue.Get(), mDirectCmdListAlloc.Get(), mCommandList.Get(), mCbvHeap.Get());
+	tex.Initialize(md3dDevice.Get(), mCommandQueue.Get(), mDirectCmdListAlloc.Get(), mCommandList.Get(), mCbvHeap.Get(), mFence.Get());
 	shader.Initialize(md3dDevice);
 	shader.BuildShadersAndInputLayout();
 	mesh.Initialize(md3dDevice, mCommandList);

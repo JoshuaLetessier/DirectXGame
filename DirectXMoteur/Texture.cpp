@@ -8,13 +8,14 @@ Texture2D::~Texture2D()
 {
 }
 
-void Texture2D::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap)
+void Texture2D::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap, ID3D12Fence* fence)
 {
 	m_pDevice = device;
 	m_pCommandQueue = commandQueue;
 	m_pDirectCmdListAlloc = commandAllocator;
 	m_pCommandList = commandList;
 	m_pCbvHeap = cbvHeap;
+	m_pFence = fence;
 
 	//create the root signature
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
@@ -91,7 +92,7 @@ void Texture2D::FlushCommandQueue()
 	// the GPU timeline, the new fence point won't be set until the GPU finishes processing all
 	// the commands prior to this Signal().
 	HRESULT hrs = (m_pCommandQueue->Signal(m_pFence, m_CurrentFence));
-	assert(hrs== S_OK);
+	assert(hrs == S_OK);
 
 	// Wait until the GPU has completed commands up to this fence point.
 	if (m_pFence->GetCompletedValue() < m_CurrentFence)
@@ -99,7 +100,8 @@ void Texture2D::FlushCommandQueue()
 		HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
 
 		// Fire event when GPU hits current fence.
-		ThrowIfFailed(m_pFence->SetEventOnCompletion(m_CurrentFence, eventHandle));
+		HRESULT hrd = (m_pFence->SetEventOnCompletion(m_CurrentFence, eventHandle));
+		assert(hrd == S_OK);
 
 		// Wait until the GPU hits current fence event is fired.
 		if (eventHandle != 0)
