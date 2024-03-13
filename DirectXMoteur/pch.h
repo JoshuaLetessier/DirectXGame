@@ -30,13 +30,14 @@ using namespace Microsoft::WRL;
 #include <DirectXCollision.h>
 #include <memory>
 
-#include "ShaderStructure.h"
+#include "Shader.h"
 #include "Component.h"
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "Timer.h"
 #include "Score.h"
 #include "DDSTextureLoader.h"
+#include "Texture.h"
 
 // Helper functions
 #include "Helpers.h"

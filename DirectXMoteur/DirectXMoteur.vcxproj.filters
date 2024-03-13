@@ -25,6 +25,12 @@
     <Filter Include="Communs">
       <UniqueIdentifier>{7d945bfd-ca3a-4e01-a704-3a87a2bf21a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Shaders">
+      <UniqueIdentifier>{6c7bdbb9-573f-4ec4-a367-fc4bf1cc25ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Shaders">
+      <UniqueIdentifier>{293d49c2-f473-498e-9bfd-08596b4e10a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -54,9 +60,6 @@
     <ClInclude Include="d3dx12.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderStructure.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="d3dx12.h">
       <Filter>Fichiers de ressources\inc</Filter>
     </ClInclude>
@@ -72,19 +75,10 @@
     <ClInclude Include="Camera.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="WindowEngine.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="RenderEngine.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Score.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
@@ -99,10 +93,22 @@
     <ClInclude Include="Entity.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Fichiers d%27en-tête\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Fichiers d%27en-tête\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>Fichiers d%27en-tête\DX_inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
       <Filter>Fichiers d%27en-tête\DX_inc</Filter>
     </ClInclude>
   </ItemGroup>
@@ -140,17 +146,17 @@
     <ClCompile Include="DXmoteur.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderStructure.cpp">
-      <Filter>Fichiers sources\DX_src</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Fichiers sources\DX_src</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Fichiers sources\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Fichiers sources\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +173,8 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader.hlsl" />
+    <Text Include="Shader.hlsl">
+      <Filter>Fichiers sources\Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -10,9 +10,13 @@ public:
 	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap);
 	void CreateTexture(const wchar_t* fileName);
 
-			private:
+	CD3DX12_GPU_DESCRIPTOR_HANDLE GetDescriptorGPU();
 
-	ComPtr<ID3D12RootSignature> m_pRootSignature = nullptr;
+	CD3DX12_GPU_DESCRIPTOR_HANDLE hDescriptorGPU;
+
+private:
+
+	ID3D12RootSignature* m_pRootSignature = nullptr;
 
 	ID3D12Device* m_pDevice = nullptr;
 	ID3D12Fence* m_pFence = nullptr;
@@ -31,6 +35,8 @@ public:
 
 	ComPtr<ID3DBlob> signature;
 	ComPtr<ID3DBlob> error;
+
+	
 
 	void FlushCommandQueue();
 };

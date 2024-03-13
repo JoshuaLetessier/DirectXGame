@@ -25,6 +25,7 @@ bool RenderEngine::Initialize()
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
+	tex.Initialize(md3dDevice.Get(), mCommandQueue.Get(), mDirectCmdListAlloc.Get(), mCommandList.Get(), mCbvHeap.Get());
 	shader.Initialize(md3dDevice);
 	shader.BuildShadersAndInputLayout();
 	mesh.Initialize(md3dDevice, mCommandList);
@@ -83,7 +84,7 @@ void RenderEngine::Draw()
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), shader.mPSO.Get()));
+	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -104,8 +105,13 @@ void RenderEngine::Draw()
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
+	// BEGIN DRAW MESHES
+
+	tex.CreateTexture(L"../Textures/WoodCrate01.dds");
+
 	mCommandList->SetGraphicsRootSignature(shader.m_rootSignature.Get());
 
+	mCommandList->SetPipelineState(shader.mPSO.Get());
 	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
 	mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 
@@ -113,9 +119,14 @@ void RenderEngine::Draw()
 	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	Texture2D* pTexture2D = nullptr;
+	mCommandList->SetGraphicsRootDescriptorTable(0, pTexture2D->hDescriptorGPU);
+
+	mCommandList->SetGraphicsRootConstantBufferView(1, mObjectCB->Resource()->GetGPUVirtualAddress());
 
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+
+	// END DRAW MESHES
 
 	// Indicate a state transition on the resource usage.
 	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -141,7 +152,7 @@ void RenderEngine::Draw()
 void RenderEngine::BuildDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-	cbvHeapDesc.NumDescriptors = 1;
+	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
@@ -153,18 +164,18 @@ void RenderEngine::BuildConstantBuffers()
 {
 	mObjectCB = std::make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
 
-	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
-	// Offset to the ith object constant buffer in the buffer.
-	int boxCBufIndex = 0;
-	cbAddress += boxCBufIndex * objCBByteSize;
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	md3dDevice->CreateConstantBufferView(
-		&cbvDesc,
-		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	//UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	//
+	//D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
+	//// Offset to the ith object constant buffer in the buffer.
+	//int boxCBufIndex = 0;
+	//cbAddress += boxCBufIndex * objCBByteSize;
+	//
+	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	//cbvDesc.BufferLocation = cbAddress;
+	//cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	//
+	//md3dDevice->CreateConstantBufferView(
+	//	&cbvDesc,
+	//	mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }

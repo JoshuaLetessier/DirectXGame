@@ -20,10 +20,11 @@ void Texture2D::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueu
 	CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 	rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-	ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, signature.GetAddressOf(), error.GetAddressOf()));
-	ThrowIfFailed(m_pDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature)));
+	HRESULT hr1 = (D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, signature.GetAddressOf(), error.GetAddressOf()));
+	assert(hr1 == S_OK);
 
-	return;
+	HRESULT hr2 = (m_pDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature)));
+	assert(hr2 == S_OK);
 }
 
 void Texture2D::CreateTexture(const wchar_t* fileName)
@@ -47,7 +48,7 @@ void Texture2D::CreateTexture(const wchar_t* fileName)
 
 	// On decale d'une case dans le heap ( une case = 32 octets )
 	hDescriptor.Offset(m_textureIndex, m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-	m_textureIndex = m_textureIndex + 1;
+	m_textureIndex++;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -75,7 +76,10 @@ void Texture2D::CreateTexture(const wchar_t* fileName)
 
 	texture.Detach();
 
-	//return pTexture;
+	hDescriptorGPU = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_pCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	hDescriptorGPU.Offset(m_textureIndex - 1, m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+
+	//return hDescriptorGPU;
 }
 
 void Texture2D::FlushCommandQueue()
@@ -86,7 +90,8 @@ void Texture2D::FlushCommandQueue()
 	// Add an instruction to the command queue to set a new fence point.  Because we are on
 	// the GPU timeline, the new fence point won't be set until the GPU finishes processing all
 	// the commands prior to this Signal().
-	ThrowIfFailed(m_pCommandQueue->Signal(m_pFence, m_CurrentFence));
+	HRESULT hrs = (m_pCommandQueue->Signal(m_pFence, m_CurrentFence));
+	assert(hrs== S_OK);
 
 	// Wait until the GPU has completed commands up to this fence point.
 	if (m_pFence->GetCompletedValue() < m_CurrentFence)
@@ -103,4 +108,9 @@ void Texture2D::FlushCommandQueue()
 			CloseHandle(eventHandle);
 		}
 	}
+}
+
+CD3DX12_GPU_DESCRIPTOR_HANDLE Texture2D::GetDescriptorGPU()
+{
+	return hDescriptorGPU;
 }

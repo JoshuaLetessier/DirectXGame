@@ -25,8 +25,9 @@ private:
 	Mesh mesh;
 	Shader shader;
 	Entity entity;
+	Texture2D tex;
 
-	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
+	ID3D12RootSignature* mRootSignature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
 	std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB = nullptr;
