@@ -24,6 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (!renderEngine.Initialize())
 			return 0;
 
+
 		return renderEngine.Run();
 	}
 	catch (DxException& e)

@@ -177,6 +177,7 @@ void RenderEngine::Draw()
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
+	// per entity
 	mCommandList->SetGraphicsRootSignature(shader.m_rootSignature.Get());
 
 	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
@@ -190,6 +191,7 @@ void RenderEngine::Draw()
 	mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
 
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	// per entity
 
 	// Indicate a state transition on the resource usage.
 	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
