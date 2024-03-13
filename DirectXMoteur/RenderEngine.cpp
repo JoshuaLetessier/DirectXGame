@@ -85,66 +85,28 @@ void RenderEngine::Update()
 
 void RenderEngine::UpdateCamera()
 {
-	// Convert Spherical to Cartesian coordinates.
-	float x = mRadius * sinf(mPhi) * cosf(mTheta);
-	float z = mRadius * sinf(mPhi) * sinf(mTheta);
-	float y = mRadius * cosf(mPhi);
+	int x, y, z;
 
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR pos, target, up;
+	x = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (cosf(m_Camera->GetTheta()));
+	z = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (sinf(m_Camera->GetTheta()));
+	y = (m_Camera->GetRadius()) * (cosf(m_Camera->GetPhi()));
+
+		pos = XMVectorZero();
+		target = XMVectorSet(x, y, z, 1.0f);
+		up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&trans.mView, view);
-	//XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	/*XMMATRIX view = cam.GetView();
-	XMStoreFloat4x4(&mView, view);*/
+	XMStoreFloat4x4(&mView, view);
 
-	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
-	XMMATRIX proj = m_Camera->GetProj();
-
-	//wchar_t buffer[512];
-	//swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3],
-	//	world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3],
-	//	world.r[2].m128_f32[0], world.r[2].m128_f32[1], world.r[2].m128_f32[2], world.r[2].m128_f32[3],
-	//	world.r[3].m128_f32[0], world.r[3].m128_f32[1], world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
-	//OutputDebugString(buffer);
-	//
-	//wchar_t buffer1[512];
-	//swprintf_s(buffer1, L"%s\nview:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	buffer,
-	//	view.r[0].m128_f32[0], view.r[0].m128_f32[1], view.r[0].m128_f32[2], view.r[0].m128_f32[3],
-	//	view.r[1].m128_f32[0], view.r[1].m128_f32[1], view.r[1].m128_f32[2], view.r[1].m128_f32[3],
-	//	view.r[2].m128_f32[0], view.r[2].m128_f32[1], view.r[2].m128_f32[2], view.r[2].m128_f32[3],
-	//	view.r[3].m128_f32[0], view.r[3].m128_f32[1], view.r[3].m128_f32[2], view.r[3].m128_f32[3]);
-	//OutputDebugString(buffer1);
-
-	//wchar_t buffer2[512];
-	//swprintf_s(buffer2, L"%s\nproj:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	buffer,
-	//	proj.r[0].m128_f32[0], proj.r[0].m128_f32[1], proj.r[0].m128_f32[2], proj.r[0].m128_f32[3],
-	//	proj.r[1].m128_f32[0], proj.r[1].m128_f32[1], proj.r[1].m128_f32[2], proj.r[1].m128_f32[3],
-	//	proj.r[2].m128_f32[0], proj.r[2].m128_f32[1], proj.r[2].m128_f32[2], proj.r[2].m128_f32[3],
-	//	proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
-	//OutputDebugString(buffer2);
-
-	// Update the constant buffer with the latest worldViewProj matrix.
-	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
-
-	//world = XMMatrixTranspose(world);
-	//view = XMMatrixTranspose(view);
-	//proj = XMMatrixTranspose(proj);
-
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX worldViewProj = world * view * proj;
-
 
 	// Update the constant buffer with the latest worldViewProj matrix.
 	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
-
 	XMStoreFloat4x4(&mobjConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
 	mObjectCB->CopyData(0, mobjConstants);
 }
 
@@ -189,6 +151,7 @@ void RenderEngine::Draw()
 
 	//mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
+	//mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCBCamera->Resource()->GetGPUVirtualAddress());
 
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 	// per entity

@@ -113,8 +113,8 @@ void Transform::rotateCamera(float mPhi, float mTheta)
 	float y = mRadius * cosf(mPhi);
 
 	// Construire la matrice de vue
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR target = XMVectorSet(x, y, z, 1.0f);
+	XMVECTOR pos = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);

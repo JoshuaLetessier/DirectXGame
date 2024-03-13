@@ -50,7 +50,8 @@ public:
     int mClientWidth = 800;
     int mClientHeight = 600;
     
-    Camera* m_Camera;
+
+    Camera* m_Camera = new Camera();
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
@@ -70,8 +71,6 @@ protected:
     ID3D12Resource* CurrentBackBuffer()const;
     D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
     D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
-
-    void CalculateFrameStats();
 
     void LogAdapters();
     void LogAdapterOutputs(IDXGIAdapter* adapter);
@@ -128,5 +127,9 @@ public:
     DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+
+    float mTheta = 1.5f * XM_PI;
+    float mPhi = XM_PIDIV4;
+    float mRadius = 5.0f;
 };
 

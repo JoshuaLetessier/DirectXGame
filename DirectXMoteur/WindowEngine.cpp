@@ -679,41 +679,18 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
-		
+		float dx, dy;
 		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
-		m_Camera->Pitch(dy);
-		m_Camera->RotateY(dx);
-		
+		dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
+		dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
 
-		wchar_t buffer[256];
-		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
-		OutputDebugString(buffer);
+		// Update angles based on input to orbit camera around box.
+		mTheta += dx;
+		mPhi += dy;
 
-		UpdateCamera();
+		m_Camera->UpdateCam(dx, dy);
 	}
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-}
-
-void WindowEngine::OnKeyboardInput(Timer& gt)
-{
-	const float dt = gt.GetElapsedTime();
-
-	if (GetAsyncKeyState('W') & 0x8000)
-		m_Camera->Walk(10.0f * dt);
-		
-
-	if (GetAsyncKeyState('S') & 0x8000)
-		m_Camera->Walk(-10.0f * dt);
-
-	if (GetAsyncKeyState('A') & 0x8000)
-		m_Camera->Strafe(-10.0f * dt);
-
-	if (GetAsyncKeyState('D') & 0x8000)
-		m_Camera->Strafe(10.0f * dt);
-
-	m_Camera->UpdateViewMatrix();
 }
