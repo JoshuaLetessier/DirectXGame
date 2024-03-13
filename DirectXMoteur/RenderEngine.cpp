@@ -10,6 +10,7 @@ using Microsoft::WRL::ComPtr;
 
 RenderEngine::RenderEngine()
 {
+	
 }
 
 RenderEngine::~RenderEngine()
@@ -21,20 +22,23 @@ bool RenderEngine::Initialize(WindowEngine* wnd)
 {
 	window = wnd;
 
-	if (!window->Initialize())
-		return false;
-
+	
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), nullptr));
+	{
+		HRESULT hr__ = (window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), nullptr)); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\RenderEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), nullptr)", wfn, 27);
+		}
+	};
 
-	meshRenderer->BuildDescriptorHeaps();
+	
+	/*meshRenderer->BuildDescriptorHeaps(window);
 	meshRenderer->BuildConstantBuffers();
 	shader->Initialize(window->md3dDevice);
 	meshRenderer->BuildConstantBuffersCamera();
 	shader->Initialize(window->md3dDevice);
 	shader->BuildShadersAndInputLayout();
 	mesh->Initialize(window->md3dDevice, window->mCommandList);
-	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);
+	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);*/
 
 	// Execute the initialization commands.
 	ThrowIfFailed(window->mCommandList->Close());

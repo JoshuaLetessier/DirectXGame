@@ -31,6 +31,11 @@ WindowEngine::WindowEngine()
 	// Only one WindowEngine can be constructed.
 	assert(mApp == nullptr);
 	mApp = this;
+
+	m_Camera = new Camera();
+	inputManager = new InputManager();
+	renderEngine = new RenderEngine();
+
 }
 
 WindowEngine::WindowEngine(HINSTANCE hInstance)
@@ -38,6 +43,10 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 	// Only one WindowEngine can be constructed.
 	assert(mApp == nullptr);
 	mApp = this;
+
+	m_Camera = new Camera();
+	inputManager = new InputManager();
+	renderEngine = new RenderEngine();
 }
 
 WindowEngine::~WindowEngine()
@@ -46,6 +55,8 @@ WindowEngine::~WindowEngine()
 	{
 		FlushCommandQueue();
 		delete m_Camera;
+		delete inputManager;
+		delete renderEngine;
 	}
 }
 
@@ -110,22 +121,22 @@ int WindowEngine::Run(WindowEngine* window)
 				if (!mAppPaused)
 				{
 					//Left click pressed
-					if ((GetKeyState(VK_LBUTTON))) 
+					//if ((GetKeyState(VK_LBUTTON))) 
+					//{
+					//	//shoot.shoot();
+					//}
+					////Echap for menu
+					//if (GetAsyncKeyState(VK_ESCAPE)) 
+					//{
+					//	//Button quit game and return on the menu starts
+					//	if (QuitGame == true)
+					//	{
+					//		//to do
+					//	}
+					//}
+					if(window != NULL  && renderEngine->Initialize(window))
 					{
-						//shoot.shoot();
-					}
-					//Echap for menu
-					if (GetAsyncKeyState(VK_ESCAPE)) 
-					{
-						//Button quit game and return on the menu starts
-						if (QuitGame == true)
-						{
-							//to do
-						}
-					}
-					if(renderEngine->Initialize(window))
-					{
-						break;
+					
 					}
 				}
 				else
@@ -154,8 +165,6 @@ bool WindowEngine::Initialize()
 
 	// Do the initial resize code.
 	timer.Start();
-
-	m_Camera = new Camera();
 	
 	OnResize();
 

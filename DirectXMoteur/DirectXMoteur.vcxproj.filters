@@ -63,9 +63,6 @@
     <ClInclude Include="Mesh.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>header</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>header</Filter>
     </ClInclude>
@@ -96,6 +93,7 @@
     <ClInclude Include="WindowEngine.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathHelper.cpp">

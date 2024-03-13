@@ -50,7 +50,7 @@ public:
     int mClientWidth = 800;
     int mClientHeight = 600;
     
-    Camera* m_Camera;
+    
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
    
@@ -134,6 +134,7 @@ public:
 
     InputManager* inputManager;
     RenderEngine* renderEngine;
+    Camera* m_Camera;
 };
 
 

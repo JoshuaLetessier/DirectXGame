@@ -18,10 +18,10 @@ WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
 WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre principale
 
 // Déclarations anticipées des fonctions incluses dans ce module de code :
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+//ATOM                MyRegisterClass(HINSTANCE hInstance);
+//BOOL                InitInstance(HINSTANCE, int);
+//LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+//INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 WindowEngine* WindowEngine::mApp;
 
@@ -39,8 +39,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	try
 	{
 		WindowEngine::mApp = nullptr;
-		WindowEngine window;
-		window.Run(&window);
+		WindowEngine window(hInstance);
+		
+		if (window.Initialize())
+		{
+			window.Run(&window);
+		}
+		
 	}
 	catch (DxException& e)
 	{
@@ -55,4 +60,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		MessageBoxA(NULL, "MEMORY LEAKS", "DISCLAIMER", 0);
 	}
 #endif 
+}
+
+ATOM MyRegisterClass(HINSTANCE hInstance)
+{
+	return ATOM();
 }

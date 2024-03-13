@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WindowEngine.h"
+
 #include "ShaderStructure.h"
 #include "UploadBuffer.h"
 #include <DirectXMath.h>

@@ -8,6 +8,12 @@ MeshRenderer::~MeshRenderer()
 {
 	delete mObjectCBCamera;
 	delete mObjectCB;
+
+}
+
+bool MeshRenderer::Initialize()
+{
+	return false;
 }
 
 void MeshRenderer::Update()
@@ -138,15 +144,21 @@ void MeshRenderer::Draw()
 	window->FlushCommandQueue();
 }
 
-void MeshRenderer::BuildDescriptorHeaps()
+void MeshRenderer::BuildDescriptorHeaps(WindowEngine* wdw)
 {
+	window = wdw;
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
 	cbvHeapDesc.NumDescriptors = 100;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(window->md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
-		IID_PPV_ARGS(&mCbvHeap)));
+	{
+		HRESULT hr__ = (window->md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, __uuidof(**(&mCbvHeap)), IID_PPV_ARGS_Helper(&mCbvHeap))); 
+		std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); 
+		if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"window->md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap))", wfn, 154);
+		}
+	};
 }
 
 void MeshRenderer::BuildConstantBuffers()
