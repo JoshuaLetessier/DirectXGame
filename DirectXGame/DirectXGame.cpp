@@ -1,5 +1,5 @@
-#include <sal.h>
-#include <wtypes.h>
+//#include <sal.h>
+//#include <wtypes.h>
 // DirectXGame.cpp : Définit le point d'entrée de l'application.
 #include "..\DirectXMoteur\RenderEngine.h"
 
@@ -21,11 +21,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	try
 	{
 		RenderEngine renderEngine(hInstance);
+		WindowEngine window;
 		if (!renderEngine.Initialize())
 			return 0;
 
-
-		return renderEngine.Run();
+		return window.Run();
 	}
 	catch (DxException& e)
 	{

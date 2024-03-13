@@ -104,7 +104,7 @@ int WindowEngine::Run()
 					//Left click pressed
 					if ((GetKeyState(VK_LBUTTON))) 
 					{
-					
+						//shoot.shoot();
 					}
 					//Echap for menu
 					if (GetAsyncKeyState(VK_ESCAPE)) 
@@ -114,9 +114,16 @@ int WindowEngine::Run()
 						{
 							//to do
 						}
-					}
-					Draw();
-					Update();
+					}/*
+					newEntity = entity->createNewEntity();
+
+					newEntity->AddComponent();
+					newEntity->addMatrix();
+
+					box.SetEntity(newEntity);
+
+					box.Draw();
+					box.Update();*/
 				}
 				else
 				{

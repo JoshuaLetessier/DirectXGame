@@ -1,16 +1,18 @@
 #include "RenderEngine.h"
 #include "iostream"
+#include "pch.h"
 
-
+using namespace std;
 using Microsoft::WRL::ComPtr;
 
-RenderEngine::RenderEngine(HINSTANCE hInstance) :WindowEngine(hInstance)
+
+
+RenderEngine::RenderEngine(HINSTANCE hInstance)
 {
 }
 
 RenderEngine::RenderEngine() :Component()
 {
-
 }
 
 RenderEngine::~RenderEngine()
@@ -19,36 +21,36 @@ RenderEngine::~RenderEngine()
 
 bool RenderEngine::Initialize()
 {
-	if (!WindowEngine::Initialize())
+	if (!window.Initialize())
 		return false;
 
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(window.mCommandList->Reset(window.mDirectCmdListAlloc.Get(), nullptr));
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
-	shader.Initialize(md3dDevice);
+	shader.Initialize(window.md3dDevice);
 	shader.BuildShadersAndInputLayout();
-	mesh.Initialize(md3dDevice, mCommandList);
-	shader.BuildPSO(md3dDevice, m4xMsaaState, m4xMsaaQuality);
+	mesh.Initialize(window.md3dDevice, window.mCommandList);
+	shader.BuildPSO(window.md3dDevice, window.m4xMsaaState, window.m4xMsaaQuality);
 
 	// Execute the initialization commands.
-	ThrowIfFailed(mCommandList->Close());
-	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
-	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ThrowIfFailed(window.mCommandList->Close());
+	ID3D12CommandList* cmdsLists[] = { window.mCommandList.Get() };
+	window.mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
-	FlushCommandQueue();
+	window.FlushCommandQueue();
 
 	return true;
 }
 
 void RenderEngine::OnResize()
 {
-	WindowEngine::OnResize();
+	window.OnResize();
 
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, window.AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
 
@@ -81,65 +83,65 @@ void RenderEngine::Draw()
 {
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
-	ThrowIfFailed(mDirectCmdListAlloc->Reset());
+	ThrowIfFailed(window.mDirectCmdListAlloc->Reset());
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), shader.mPSO.Get()));
+	ThrowIfFailed(window.mCommandList->Reset(window.mDirectCmdListAlloc.Get(), shader.mPSO.Get()));
 
-	mCommandList->RSSetViewports(1, &mScreenViewport);
-	mCommandList->RSSetScissorRects(1, &mScissorRect);
+	window.mCommandList->RSSetViewports(1, &window.mScreenViewport);
+	window.mCommandList->RSSetScissorRects(1, &window.mScissorRect);
 
 	// Indicate a state transition on the resource usage.
-	CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	mCommandList->ResourceBarrier(1, &transition);
+	CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(window.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	window.mCommandList->ResourceBarrier(1, &transition);
 
 	// Clear the back buffer and depth buffer.
-	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
-	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	window.mCommandList->ClearRenderTargetView(window.CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	window.mCommandList->ClearDepthStencilView(window.DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
-	D3D12_CPU_DESCRIPTOR_HANDLE stockDepthStencilView = DepthStencilView();
-	D3D12_CPU_DESCRIPTOR_HANDLE stockCurrentBackBufferView = CurrentBackBufferView();
-	mCommandList->OMSetRenderTargets(1, &stockCurrentBackBufferView, true, &stockDepthStencilView);
+	D3D12_CPU_DESCRIPTOR_HANDLE stockDepthStencilView = window.DepthStencilView();
+	D3D12_CPU_DESCRIPTOR_HANDLE stockCurrentBackBufferView = window.CurrentBackBufferView();
+	window.mCommandList->OMSetRenderTargets(1, &stockCurrentBackBufferView, true, &stockDepthStencilView);
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
-	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	window.mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	// per entity
-	mCommandList->SetGraphicsRootSignature(shader.m_rootSignature.Get());
+	window.mCommandList->SetGraphicsRootSignature(shader.m_rootSignature.Get());
 
 	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh.mBoxGeo->VertexBufferView();
-	mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
+	window.mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 
 	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mesh.mBoxGeo->IndexBufferView();
-	mCommandList->IASetIndexBuffer(&stockIndexBufferView);
-	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	window.mCommandList->IASetIndexBuffer(&stockIndexBufferView);
+	window.mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	window.mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	window.mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 	// per entity
 
 	// Indicate a state transition on the resource usage.
-	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	mCommandList->ResourceBarrier(1, &transition2);
+	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(window.CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	window.mCommandList->ResourceBarrier(1, &transition2);
 
 	// Done recording commands.
-	ThrowIfFailed(mCommandList->Close());
+	ThrowIfFailed(window.mCommandList->Close());
 
 	// Add the command list to the queue for execution.
-	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
-	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ID3D12CommandList* cmdsLists[] = { window.mCommandList.Get() };
+	window.mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// swap the back and front buffers
-	ThrowIfFailed(mSwapChain->Present(0, 0));
-	mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+	ThrowIfFailed(window.mSwapChain->Present(0, 0));
+	window.mCurrBackBuffer = (window.mCurrBackBuffer + 1) % window.SwapChainBufferCount;
 
 	// Wait until frame commands are complete.  This waiting is inefficient and is
 	// done for simplicity.  Later we will show how to organize our rendering code
 	// so we do not have to wait per frame.
-	FlushCommandQueue();
+	window.FlushCommandQueue();
 }
 
 
@@ -150,13 +152,13 @@ void RenderEngine::BuildDescriptorHeaps()
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
-	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
+	ThrowIfFailed(window.md3dDevice->CreateDescriptorHeap(&cbvHeapDesc,
 		IID_PPV_ARGS(&mCbvHeap)));
 }
 
 void RenderEngine::BuildConstantBuffers()
 {
-	mObjectCB = std::make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(md3dDevice.Get(), 1, true);
+	mObjectCB = make_unique<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>>(window.md3dDevice.Get(), 1, true);
 
 	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
@@ -169,7 +171,7 @@ void RenderEngine::BuildConstantBuffers()
 	cbvDesc.BufferLocation = cbAddress;
 	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
 
-	md3dDevice->CreateConstantBufferView(
+	window.md3dDevice->CreateConstantBufferView(
 		&cbvDesc,
 		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }

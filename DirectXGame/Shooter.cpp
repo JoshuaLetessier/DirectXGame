@@ -23,9 +23,9 @@ void Shooter::shoot()
 
 	if (!m_Entity.empty())
 	{
-		m_Entity[indice + 1].AddComponent(&balle);
-		m_Entity[indice + 1].GetTransform().translate(0.0f, 0.0f, 0.02f);
-		indice = m_Entity.size();
+		Entity* entity = new Entity();
+		entity->AddComponent(&balle);
+		entity->GetTransform().translate(0.0f, 0.0f, 0.02f);
 	}
 	balle.Draw();
 }

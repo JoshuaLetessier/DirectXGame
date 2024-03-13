@@ -7,10 +7,15 @@
 
 #include "d3dUtil.h"
 #include "pch.h"
+//#include "RenderEngine.h"
+#include "Entity.h"
+
+class entityManager;
+class RenderEngine;
 
 class WindowEngine
 {
-protected:
+public:
 
 
     WindowEngine(HINSTANCE hInstance);
@@ -37,18 +42,16 @@ public:
 
     int mClientWidth = 800;
     int mClientHeight = 600;
-protected:
+public:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();
-    virtual void Update() = 0;
-    virtual void Draw() = 0;
 
     // Convenience overrides for handling mouse input.
     virtual void OnMouseDown(WPARAM btnState, int x, int y) { }
     virtual void OnMouseUp(WPARAM btnState, int x, int y) { }
     virtual void OnMouseMove(WPARAM btnState, int x, int y) { }
 
-protected:
+public:
 
     bool InitMainWindow();
     bool InitDirect3D();
@@ -122,5 +125,11 @@ public:
     DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
+    //Shooter shoot;
+
+    RenderEngine* render;
+    entityManager* entity;
+    Entity* newEntity;
 };
+
 
