@@ -21,9 +21,11 @@ void Shooter::shoot()
 {
 	int pointPos = Shooter::crossHair();
 
-	for (int i = 0; i < sizeof(m_Entity); i++) {
-		m_Entity[i].AddComponent(&balle);
-		m_Entity[i].GetTransform().translate(0.0f, 0.0f, 0.02f);
+	if (!m_Entity.empty())
+	{
+		m_Entity[indice + 1].AddComponent(&balle);
+		m_Entity[indice + 1].GetTransform().translate(0.0f, 0.0f, 0.02f);
+		indice = m_Entity.size();
 	}
 	balle.Draw();
 }

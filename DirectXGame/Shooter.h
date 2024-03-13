@@ -9,6 +9,7 @@ class Shooter
 private:
 	vector<Entity> m_Entity;
 	RenderEngine balle;
+	int indice = 0;
 public:
 	WindowEngine* window;
 

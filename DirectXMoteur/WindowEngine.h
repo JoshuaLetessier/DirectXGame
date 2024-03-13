@@ -79,7 +79,7 @@ public:
     bool      mResizing = false;   // are the resize bars being dragged?
     bool      mFullscreenState = false;// fullscreen enabled
 
-    bool StartGame = false; //Press button start game
+    bool StartGame = true; //Press button start game
     bool QuitGame = false; //Press button quit in game
     bool CloseWindow = false; //Press button close window
 
