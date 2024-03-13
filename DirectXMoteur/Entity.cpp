@@ -17,14 +17,15 @@ void Entity::AddComponent(Component* component)
 	component->SetEntity(this);
 	m_components.push_back(component);
 }
-
-void Entity::GetComponent(Component* component)
+ 
+//fnc templates
+Component* Entity::GetComponent(Component* component)
 {
 	for (int i = 0; i < m_components.size(); i++)
 	{
 		if (m_components[i] == component)
 		{
-			return;
+			return component;
 		}
 	}
 }

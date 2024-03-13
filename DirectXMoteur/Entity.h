@@ -1,6 +1,7 @@
 #pragma once
-#include "pch.h"
 #include "Transform.h"
+
+#include "pch.h"
 
 class Component;
 
@@ -18,7 +19,7 @@ public:
 	virtual ~Entity();
 
 	void AddComponent(Component* component);
-	void GetComponent(Component* component);
+	Component* GetComponent(Component* component);
 	XMFLOAT4X4 addMatrix();
 
 	Transform& GetTransform();

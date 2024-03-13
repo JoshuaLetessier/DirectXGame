@@ -1,7 +1,12 @@
 #pragma once
-#include "pch.h"
+//#include "pch.h"
+#include <DirectXMath.h>
+using namespace DirectX;
+class Transform {
+public:
 
-struct Transform {
+	Transform();
+	~Transform(){}
 
 	XMFLOAT3 vPos;
 	XMFLOAT4X4 mPos;
@@ -22,7 +27,7 @@ struct Transform {
 	void update();
 	void translate(float offsetX, float offsetY, float offsetZ);
 
-	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView;
 	
 	float mRadius = 5.0f;
 

@@ -2,6 +2,10 @@
 #include "Camera.h"
 Camera* m_Camera;
 
+Transform::Transform()
+{
+	mView = MathHelper::Identity4x4();
+}
 void Transform::identity()
 {
 	//Initialisation des variables membres du struct
