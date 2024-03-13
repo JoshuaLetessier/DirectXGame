@@ -14,6 +14,13 @@
 #include "d3dUtil.h"
 #include "Component.h"
 
+#define VSCPrint(buffer, msg, ...) \
+    do{ \
+        _snprintf_s(buffer, sizeof(buffer), _TRUNCATE, msg, __VA_ARGS__); \
+        OutputDebugStringA(buffer); \
+    } while(0)
+static char buff[200]; // Global within the class (in main.cpp, it's a member to avoid problems)
+
 class Camera : public Component
 {
 public:

@@ -28,7 +28,7 @@ bool RenderEngine::Initialize()
 		return false;
 
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(mCommandList->Reset(vDirectCmdListAlloc.Get(), nullptr));
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
@@ -85,16 +85,14 @@ void RenderEngine::Update()
 
 void RenderEngine::UpdateCamera()
 {
-	int x, y, z;
-
 	XMVECTOR pos, target, up;
-	x = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (cosf(m_Camera->GetTheta()));
-	z = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (sinf(m_Camera->GetTheta()));
-	y = (m_Camera->GetRadius()) * (cosf(m_Camera->GetPhi()));
+	x = mRadius * sinf(mPhi) * cosf(mTheta);
+	z = mRadius * sinf(mPhi) * sinf(mTheta);
+	y = mRadius * cosf(mPhi);
 
-		pos = XMVectorZero();
-		target = XMVectorSet(x, y, z, 1.0f);
-		up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	pos = XMVectorZero();
+	target = XMVectorSet(x, y, z, 1.0f);
+	up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
@@ -106,19 +104,19 @@ void RenderEngine::UpdateCamera()
 
 	// Update the constant buffer with the latest worldViewProj matrix.
 	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
-	XMStoreFloat4x4(&mobjConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	mObjectCB->CopyData(0, mobjConstants);
+	XMStoreFloat4x4(&mobjConstants.WorldViewProj, worldViewProj);
+	mObjectCBCamera->CopyData(0, mobjConstants);
 }
 
 void RenderEngine::Draw()
 {
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
-	ThrowIfFailed(mDirectCmdListAlloc->Reset());
+	ThrowIfFailed(vDirectCmdListAlloc->Reset());
 
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), shader.mPSO.Get()));
+	ThrowIfFailed(mCommandList->Reset(vDirectCmdListAlloc.Get(), shader.mPSO.Get()));
 
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
@@ -151,7 +149,7 @@ void RenderEngine::Draw()
 
 	//mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
-	//mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCBCamera->Resource()->GetGPUVirtualAddress());
+	//mCommandList->SetGraphicsRootConstantBufferView(1, mObjectCBCamera->Resource()->GetGPUVirtualAddress());
 
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 	// per entity
@@ -212,18 +210,15 @@ void RenderEngine::BuildConstantBuffersCamera()
 {
 	mObjectCBCamera = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(md3dDevice.Get(), 1, true);
 
-	//UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	//D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCBCamera->Resource()->GetGPUVirtualAddress();
-	//// Offset to the ith object constant buffer in the buffer.
-	//int boxCBufIndex = 0;
-	//cbAddress += boxCBufIndex * objCBByteSize;
-
-	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	//cbvDesc.BufferLocation = cbAddress;
-	//cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	//md3dDevice->CreateConstantBufferView(
-	//	&cbvDesc,
-	//	mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCBCamera->Resource()->GetGPUVirtualAddress();
+	// Offset to the ith object constant buffer in the buffer.
+	int boxCBufIndex = 0;
+	cbAddress += boxCBufIndex * objCBByteSize;
+	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+	cbvDesc.BufferLocation = cbAddress;
+	cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
+	md3dDevice->CreateConstantBufferView(
+		&cbvDesc,
+		mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }

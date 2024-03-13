@@ -9,7 +9,11 @@ using namespace std;
 using namespace DirectX;
 
 Timer timer;
-
+#define VSCPrint(buffer, msg, ...) \
+    do{ \
+        _snprintf_s(buffer, sizeof(buffer), _TRUNCATE, msg, __VA_ARGS__); \
+        OutputDebugStringA(buffer); \
+    } while(0)
 
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -104,6 +108,7 @@ int WindowEngine::Run()
 			{
 				Update();
 				Draw();
+				UpdateCamera();
 			}
 			else
 			{
@@ -157,12 +162,12 @@ void WindowEngine::OnResize()
 {
 	assert(md3dDevice);
 	assert(mSwapChain);
-	assert(mDirectCmdListAlloc);
+	assert(vDirectCmdListAlloc);
 
 	// Flush before changing any resources.
 	FlushCommandQueue();
 
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+	ThrowIfFailed(mCommandList->Reset(vDirectCmdListAlloc.Get(), nullptr));
 
 	// Release the previous resources we will be recreating.
 	for (int i = 0; i < SwapChainBufferCount; ++i)
@@ -499,12 +504,12 @@ void WindowEngine::CreateCommandObjects()
 
 	ThrowIfFailed(md3dDevice->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf())));
+		IID_PPV_ARGS(vDirectCmdListAlloc.GetAddressOf())));
 
 	ThrowIfFailed(md3dDevice->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		mDirectCmdListAlloc.Get(), // Associated command allocator
+		vDirectCmdListAlloc.Get(), // Associated command allocator
 		nullptr,                   // Initial PipelineStateObject
 		IID_PPV_ARGS(mCommandList.GetAddressOf())));
 
@@ -677,18 +682,17 @@ void WindowEngine::OnMouseUp(WPARAM btnState, int x, int y)
 
 void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 {
+	VSCPrint(buff, "Mouse has moved and is now at (%d, %d)\n", x, y);
+
 	if ((btnState & MK_LBUTTON) != 0)
 	{
-		float dx, dy;
-		// Make each pixel correspond to a quarter of a degree.
-		dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
-		dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));
+		float dx = XMConvertToRadians(1.5f * static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(1.5f * static_cast<float>(y - mLastMousePos.y));
 
-		// Update angles based on input to orbit camera around box.
 		mTheta += dx;
 		mPhi += dy;
 
-		m_Camera->UpdateCam(dx, dy);
+		m_Camera->UpdateCam(x, y);
 	}
 
 	mLastMousePos.x = x;

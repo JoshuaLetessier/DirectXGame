@@ -41,11 +41,11 @@ private:
     UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>*mObjectCB = nullptr;
     UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCBCamera = nullptr;
    
-
     XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
     XMFLOAT4X4 mView = MathHelper::Identity4x4();
     XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 
+    int x, y, z;
     float mTheta = 1.5f * XM_PI;
     float mPhi = XM_PIDIV4;
     float mRadius = 5.0f;

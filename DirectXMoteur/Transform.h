@@ -8,10 +8,12 @@ public:
 	Transform();
 	~Transform(){}
 
-	XMFLOAT3 vPos;
+	XMFLOAT3 vPos3;
+	XMFLOAT4 vPos4;
 	XMFLOAT4X4 mPos;
 
-	XMFLOAT3 vScaling;
+	XMFLOAT3 vScal3;
+	XMFLOAT4 vScal4;
 	XMFLOAT4X4 mScaling;
 
 	XMFLOAT3 vDir /*= { 0.0f, 0.0f, 1.0f }*/;
