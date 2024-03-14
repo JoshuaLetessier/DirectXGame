@@ -104,48 +104,38 @@ void RenderEngine::UpdateCamera()
 	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
 	XMMATRIX proj = m_Camera->GetProj();
 
-	//wchar_t buffer[512];
-	//swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3],
-	//	world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3],
-	//	world.r[2].m128_f32[0], world.r[2].m128_f32[1], world.r[2].m128_f32[2], world.r[2].m128_f32[3],
-	//	world.r[3].m128_f32[0], world.r[3].m128_f32[1], world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
-	//OutputDebugString(buffer);
-	//
-	//wchar_t buffer1[512];
-	//swprintf_s(buffer1, L"%s\nview:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	buffer,
-	//	view.r[0].m128_f32[0], view.r[0].m128_f32[1], view.r[0].m128_f32[2], view.r[0].m128_f32[3],
-	//	view.r[1].m128_f32[0], view.r[1].m128_f32[1], view.r[1].m128_f32[2], view.r[1].m128_f32[3],
-	//	view.r[2].m128_f32[0], view.r[2].m128_f32[1], view.r[2].m128_f32[2], view.r[2].m128_f32[3],
-	//	view.r[3].m128_f32[0], view.r[3].m128_f32[1], view.r[3].m128_f32[2], view.r[3].m128_f32[3]);
-	//OutputDebugString(buffer1);
-
-	//wchar_t buffer2[512];
-	//swprintf_s(buffer2, L"%s\nproj:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-	//	buffer,
-	//	proj.r[0].m128_f32[0], proj.r[0].m128_f32[1], proj.r[0].m128_f32[2], proj.r[0].m128_f32[3],
-	//	proj.r[1].m128_f32[0], proj.r[1].m128_f32[1], proj.r[1].m128_f32[2], proj.r[1].m128_f32[3],
-	//	proj.r[2].m128_f32[0], proj.r[2].m128_f32[1], proj.r[2].m128_f32[2], proj.r[2].m128_f32[3],
-	//	proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
-	//OutputDebugString(buffer2);
-
-	// Update the constant buffer with the latest worldViewProj matrix.
-	//mObjectCB = mesh.UpdateBuffer(world, view, proj);
+	wchar_t buffer[512];
+	swprintf_s(buffer, L"world:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+		world.r[0].m128_f32[0], world.r[0].m128_f32[1], world.r[0].m128_f32[2], world.r[0].m128_f32[3],
+		world.r[1].m128_f32[0], world.r[1].m128_f32[1], world.r[1].m128_f32[2], world.r[1].m128_f32[3],
+		world.r[2].m128_f32[0], world.r[2].m128_f32[1], world.r[2].m128_f32[2], world.r[2].m128_f32[3],
+		world.r[3].m128_f32[0], world.r[3].m128_f32[1], world.r[3].m128_f32[2], world.r[3].m128_f32[3]);
+	OutputDebugString(buffer);
+	wchar_t buffer1[512];
+	swprintf_s(buffer1, L"%s\nview:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+		buffer,
+		view.r[0].m128_f32[0], view.r[0].m128_f32[1], view.r[0].m128_f32[2], view.r[0].m128_f32[3],
+		view.r[1].m128_f32[0], view.r[1].m128_f32[1], view.r[1].m128_f32[2], view.r[1].m128_f32[3],
+		view.r[2].m128_f32[0], view.r[2].m128_f32[1], view.r[2].m128_f32[2], view.r[2].m128_f32[3],
+		view.r[3].m128_f32[0], view.r[3].m128_f32[1], view.r[3].m128_f32[2], view.r[3].m128_f32[3]);
+	OutputDebugString(buffer1);
+	wchar_t buffer2[512];
+	swprintf_s(buffer2, L"%s\nproj:\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+		buffer,
+		proj.r[0].m128_f32[0], proj.r[0].m128_f32[1], proj.r[0].m128_f32[2], proj.r[0].m128_f32[3],
+		proj.r[1].m128_f32[0], proj.r[1].m128_f32[1], proj.r[1].m128_f32[2], proj.r[1].m128_f32[3],
+		proj.r[2].m128_f32[0], proj.r[2].m128_f32[1], proj.r[2].m128_f32[2], proj.r[2].m128_f32[3],
+		proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
+	OutputDebugString(buffer2);
 
 	//world = XMMatrixTranspose(world);
 	//view = XMMatrixTranspose(view);
 	//proj = XMMatrixTranspose(proj);
 
 	XMMATRIX worldViewProj = world * view * proj;
-
-
-	// Update the constant buffer with the latest worldViewProj matrix.
 	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
-
 	XMStoreFloat4x4(&mobjConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	//std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> mObjectCB;
-	mObjectCB->CopyData(0, mobjConstants);
+	mObjectCBCamera->CopyData(0, mobjConstants);
 }
 
 void RenderEngine::Draw()
@@ -248,19 +238,4 @@ void RenderEngine::BuildConstantBuffers()
 void RenderEngine::BuildConstantBuffersCamera()
 {
 	mObjectCBCamera = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(md3dDevice.Get(), 1, true);
-
-	//UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	//D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCBCamera->Resource()->GetGPUVirtualAddress();
-	//// Offset to the ith object constant buffer in the buffer.
-	//int boxCBufIndex = 0;
-	//cbAddress += boxCBufIndex * objCBByteSize;
-
-	//D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-	//cbvDesc.BufferLocation = cbAddress;
-	//cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(Mesh::ModelViewProjectionConstantBuffer));
-
-	//md3dDevice->CreateConstantBufferView(
-	//	&cbvDesc,
-	//	mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 }
