@@ -12,7 +12,7 @@ public:
 	virtual ~Shader();
 
 	bool Initialize() override;
-	bool Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device);
+	bool Initialize(ID3D12Device* device);
 	void Update();
 
 	void BuildShadersAndInputLayout();
@@ -23,7 +23,7 @@ public:
 	ComPtr<ID3DBlob> mpsByteCode = nullptr;
 
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
-	ComPtr<ID3D12RootSignature> m_rootSignature = nullptr;
+	ID3D12RootSignature* m_rootSignature = nullptr;
 	ComPtr<ID3D12PipelineState> mPSO = nullptr;
 private:
 	

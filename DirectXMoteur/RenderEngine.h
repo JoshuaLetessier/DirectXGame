@@ -24,7 +24,7 @@ private:
     Shader* shader;
     Mesh* mesh;
 
-    ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
+    //ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
 

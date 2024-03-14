@@ -107,7 +107,7 @@ void MeshRenderer::Draw()
 	window->mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	// per entity
-	window->mCommandList->SetGraphicsRootSignature(shader->m_rootSignature.Get());
+	window->mCommandList->SetGraphicsRootSignature(shader->m_rootSignature);
 
 	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh->mBoxGeo->VertexBufferView();
 	window->mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);

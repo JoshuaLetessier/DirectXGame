@@ -20,8 +20,10 @@ RenderEngine::~RenderEngine()
 
 bool RenderEngine::Initialize(WindowEngine* wnd)
 {
-	window = wnd;
-
+	window = wnd;	//Ne pas garder ?
+	meshRenderer = new MeshRenderer();
+	shader = new Shader();
+	mesh = new Mesh();
 	
 	// Reset the command list to prep for initialization commands.
 	{
@@ -31,14 +33,14 @@ bool RenderEngine::Initialize(WindowEngine* wnd)
 	};
 
 	
-	/*meshRenderer->BuildDescriptorHeaps(window);
+	meshRenderer->BuildDescriptorHeaps(window);
 	meshRenderer->BuildConstantBuffers();
-	shader->Initialize(window->md3dDevice);
+	shader->Initialize(window->md3dDevice.Get());
 	meshRenderer->BuildConstantBuffersCamera();
-	shader->Initialize(window->md3dDevice);
+	shader->Initialize(window->md3dDevice.Get());
 	shader->BuildShadersAndInputLayout();
 	mesh->Initialize(window->md3dDevice, window->mCommandList);
-	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);*/
+	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);
 
 	// Execute the initialization commands.
 	ThrowIfFailed(window->mCommandList->Close());

@@ -53,10 +53,10 @@ WindowEngine::~WindowEngine()
 {
 	if (md3dDevice != nullptr)
 	{
-		FlushCommandQueue();
+		FlushCommandQueue();/*
 		delete m_Camera;
 		delete inputManager;
-		delete renderEngine;
+		delete renderEngine;*/
 	}
 }
 

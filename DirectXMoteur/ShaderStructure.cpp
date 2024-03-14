@@ -13,7 +13,7 @@ bool Shader::Initialize()
 	return false;
 }
 
-bool Shader::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device)
+bool Shader::Initialize(ID3D12Device* device)
 {
 	// Create the root signature
 	{
@@ -36,15 +36,16 @@ bool Shader::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> device)
 		}
 		ThrowIfFailed(hr);
 
-		ThrowIfFailed(device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+		hr = device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature));
+		ThrowIfFailed(hr);
 	}
 
 	{
-		ComPtr<ID3DBlob> vertexShader;
-		ComPtr<ID3DBlob> pixelShader;
-		ComPtr<ID3DBlob> error;
+		//ComPtr<ID3DBlob> vertexShader;
+		//ComPtr<ID3DBlob> pixelShader;
+		//ComPtr<ID3DBlob> error;
 
-		UINT compileFlags = 0;
+		//UINT compileFlags = 0;
 	}
 
 	return true;
@@ -73,7 +74,7 @@ void Shader::BuildPSO(Microsoft::WRL::ComPtr<ID3D12Device> device, bool m4xMsaaS
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	psoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
-	psoDesc.pRootSignature = m_rootSignature.Get();
+	psoDesc.pRootSignature = m_rootSignature;
 	psoDesc.VS =
 	{
 		reinterpret_cast<BYTE*>( mvsByteCode->GetBufferPointer()),

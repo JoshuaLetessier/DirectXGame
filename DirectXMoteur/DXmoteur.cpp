@@ -5,6 +5,7 @@
 #include "DXMoteur.h"
 
 #include "WindowEngine.h"
+#include "entityManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -44,6 +45,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 		if (window.Initialize())
 		{
 			window.Run(&window);
+			entityManager entityManager;
+			//entityManager.createNewEntity()->AddComponent();
 		}
 		
 	}

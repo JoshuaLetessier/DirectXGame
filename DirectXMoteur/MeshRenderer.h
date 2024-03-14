@@ -39,7 +39,7 @@ public:
     float mRadius = 5.0f;
 
     UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCB = nullptr;
-    UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCBCamera = nullptr;
+    //UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCBCamera = nullptr;
 
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
