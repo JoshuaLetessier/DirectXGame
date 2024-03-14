@@ -25,7 +25,7 @@ bool Mesh::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft
 	const UINT vbByteSize = (UINT)cubeVertices.size() * sizeof(vertex);
 	const UINT ibByteSize = (UINT)cubeIndices.size() * sizeof(std::uint16_t);
 
-	mBoxGeo = std::make_unique<MeshGeometry>();
+	mBoxGeo = std::unique_ptr<MeshGeometry>(new MeshGeometry());
 	mBoxGeo->Name = "boxGeo";
 
 	ThrowIfFailed(D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU));

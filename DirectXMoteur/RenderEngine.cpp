@@ -12,12 +12,14 @@ RenderEngine::RenderEngine()
 {
 	g_EntityManager = new entityManager();
 	shader = new Shader();
+	mesh = new Mesh();
 }
 
 RenderEngine::~RenderEngine()
 {
 	delete g_EntityManager;
 	delete shader;
+	delete mesh;
 }
 
 bool RenderEngine::Initialize(WindowEngine* wnd)

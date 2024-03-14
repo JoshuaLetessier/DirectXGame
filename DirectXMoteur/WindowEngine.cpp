@@ -46,6 +46,7 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 	//m_Camera = new Camera();
 	inputManager = new InputManager();
 	renderEngine = new RenderEngine();
+	shader = new Shader();
 }
 
 WindowEngine::~WindowEngine()
@@ -56,6 +57,7 @@ WindowEngine::~WindowEngine()
 		delete m_Camera;
 		delete inputManager;
 		delete renderEngine;*/
+		delete shader;
 	}
 }
 
@@ -138,7 +140,7 @@ int WindowEngine::Run(WindowEngine* window)
 					//}
 					if(window != NULL  && renderEngine->Initialize(window))
 					{
-					
+						Draw();
 					}
 				}
 				else
@@ -779,7 +781,8 @@ void WindowEngine::Draw()
 	// Reusing the command list reuses memory.
 	{
 		//Shader* pShader = (Shader*)entity.GetComponent("shader");
-		HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), shader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+		HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), shader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); 
+		if ((((HRESULT)(hr__)) < 0)) {
 			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), shader->mPSO.Get())", wfn, 76);
 		}
 	};
