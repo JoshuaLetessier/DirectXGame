@@ -18,6 +18,7 @@
     <ClCompile Include="d3dUtil.cpp">
       <Filter>header</Filter>
     </ClCompile>
+    <ClCompile Include="scriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dx12.h" />
@@ -94,6 +95,7 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="scriptManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MathHelper.cpp">

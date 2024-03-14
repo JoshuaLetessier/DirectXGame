@@ -149,6 +149,7 @@
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="scriptManager.h" />
     <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="scriptManager.cpp" />
     <ClCompile Include="ShaderStructure.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />

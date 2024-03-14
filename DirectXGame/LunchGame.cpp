@@ -3,6 +3,8 @@
 
 void LunchGame::update(const GameTimer& gt)
 {
+    //ScriptShip* pS = manaer):>createNewScript<ScriptShip>();
+
     ennemy.spawnEnnemies();
 
     // Convert Spherical to Cartesian coordinates.
