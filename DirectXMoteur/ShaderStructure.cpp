@@ -34,10 +34,8 @@ bool Shader::Initialize(ID3D12Device* device)
 		{
 			::OutputDebugStringA((char*)error->GetBufferPointer());
 		}
-		ThrowIfFailed(hr);
 
 		hr = device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature));
-		ThrowIfFailed(hr);
 	}
 
 	{

@@ -25,7 +25,6 @@ protected:
 public:
     void Draw(Entity entity);
     void UpdateCamera();
-    void BuildDescriptorHeaps(WindowEngine* window);
     void BuildConstantBuffers();
 
     XMFLOAT4X4 mProj = MathHelper::Identity4x4();

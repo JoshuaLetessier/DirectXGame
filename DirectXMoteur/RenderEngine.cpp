@@ -11,24 +11,26 @@ using Microsoft::WRL::ComPtr;
 RenderEngine::RenderEngine()
 {
 	g_EntityManager = new entityManager();
+	shader = new Shader();
 }
 
 RenderEngine::~RenderEngine()
 {
 	delete g_EntityManager;
+	delete shader;
 }
 
 bool RenderEngine::Initialize(WindowEngine* wnd)
 {
-	window = wnd;	//Ne pas garder ?
+	//window = wnd;	//Ne pas garder ?
 	//meshRenderer = new MeshRenderer();
 	//shader = new Shader();
 	//mesh = new Mesh();
 	
 	// Reset the command list to prep for initialization commands.
 	{
-		HRESULT hr__ = (window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), nullptr)); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\RenderEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
-			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), nullptr)", wfn, 27);
+		HRESULT hr__ = (wnd->mCommandList->Reset(wnd->mDirectCmdListAlloc.Get(), nullptr)); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\RenderEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"wnd->mCommandList->Reset(wnd->mDirectCmdListAlloc.Get(), nullptr)", wfn, 27);
 		}
 	};
 
@@ -36,21 +38,20 @@ bool RenderEngine::Initialize(WindowEngine* wnd)
 	
 	//meshRenderer->BuildDescriptorHeaps(window);
 	//meshRenderer->BuildConstantBuffers();
-	shader->Initialize(window->md3dDevice.Get());
-	shader->Initialize(window->md3dDevice.Get());
+	shader->Initialize(wnd->md3dDevice.Get());
 	shader->BuildShadersAndInputLayout();
-	mesh->Initialize(window->md3dDevice, window->mCommandList);
-	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);
+	mesh->Initialize(wnd->md3dDevice, wnd->mCommandList);
+	shader->BuildPSO(wnd->md3dDevice, wnd->m4xMsaaState, wnd->m4xMsaaQuality);
 
 
 
 	// Execute the initialization commands.
-	ThrowIfFailed(window->mCommandList->Close());
-	ID3D12CommandList* cmdsLists[] = { window->mCommandList.Get() };
-	window->mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	ThrowIfFailed(wnd->mCommandList->Close());
+	ID3D12CommandList* cmdsLists[] = { wnd->mCommandList.Get() };
+	wnd->mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
-	window->FlushCommandQueue();
+	wnd->FlushCommandQueue();
 
 	return true;
 }

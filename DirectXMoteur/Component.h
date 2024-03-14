@@ -10,7 +10,7 @@ public:
 	Component() {};
 	virtual ~Component() = default;
 
-	void SetComponent(Entity* pEntity, std::string p_type) {
+	void SetComponent(Entity* pEntity, const char* p_type) {
 		m_pEntity = pEntity;
 		m_type = p_type;
 	}
@@ -20,5 +20,5 @@ public:
 
 public:
 	Entity* m_pEntity = nullptr;
-	std::string m_type = nullptr;
+	const char* m_type = 0;
 };

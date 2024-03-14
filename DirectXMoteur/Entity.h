@@ -21,8 +21,8 @@ public:
 	Entity();
 	virtual ~Entity();
 
-	void AddComponent(Component* component, std::string type);
-	Component* GetComponent(std::string type);
+	void AddComponent(Component* component, const char* type);
+	Component* GetComponent(const char* type);
 	XMFLOAT4X4 addMatrix();
 
 	Transform* GetTransform();

@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "Timer.h"
 #include "InputManager.h"
-//#include "RenderEngine.h"
+#include "ShaderStructure.h"
 
 class RenderEngine;
 
@@ -138,6 +138,7 @@ public:
     InputManager* inputManager;
     RenderEngine* renderEngine;
     Camera* m_Camera;
+    Shader* shader;
 };
 
 

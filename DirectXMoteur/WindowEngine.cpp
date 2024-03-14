@@ -778,9 +778,9 @@ void WindowEngine::Draw()
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
 	{
-		Shader* pShader = (Shader*)entity.GetComponent("shader");
-		HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), pShader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
-			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), pShader->mPSO.Get())", wfn, 76);
+		//Shader* pShader = (Shader*)entity.GetComponent("shader");
+		HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), shader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), shader->mPSO.Get())", wfn, 76);
 		}
 	};
 
@@ -805,8 +805,8 @@ void WindowEngine::Draw()
 
 
 	//  toutes les entites
-	for ()
-	ent->drqz
+	//for ()
+	//ent->drqz
 
 	// Indicate a state transition on the resource usage.
 	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);

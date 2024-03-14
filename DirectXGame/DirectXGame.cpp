@@ -7,6 +7,8 @@
 #include "LunchGame.h"
 
 
+#pragma optimize("", off)
+
 WindowEngine* WindowEngine::mApp;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -47,3 +49,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 #endif 
 }
+
+#pragma optimize("", on)

@@ -17,14 +17,14 @@ Entity::~Entity()
 {
 }
 
-void Entity::AddComponent(Component* component, std::string type)
+void Entity::AddComponent(Component* component, const char* type)
 {
 	component->SetComponent(this, type);
 	m_components.push_back(component);
 }
  
 //fnc templates
-Component* Entity::GetComponent(std::string type)
+Component* Entity::GetComponent(const char* type)
 {
 	for (int i = 0; i < m_components.size(); i++)
 	{
