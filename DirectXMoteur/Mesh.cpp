@@ -15,9 +15,9 @@ bool Mesh::Initialize()
 
 bool Mesh::Initialize(Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList)
 {
-	VertexPositionColor vertex;
+	VertexPositionUv vertex;
 
-	std::vector<VertexPositionColor> cubeVertices = CubeVertices();
+	std::vector<VertexPositionUv> cubeVertices = CubeVertices();
 	std::vector<std::uint16_t> cubeIndices = CubeIndices();
 
 	const UINT vbByteSize = (UINT)cubeVertices.size() * sizeof(vertex);
@@ -58,18 +58,45 @@ void Mesh::Update()
 	return;
 }
 
-std::vector<Mesh::VertexPositionColor> Mesh::CubeVertices()
+std::vector<Mesh::VertexPositionUv> Mesh::CubeVertices()
 {
-	std::vector<VertexPositionColor> cubeVertices =
+	std::vector<VertexPositionUv> cubeVertices =
 	{
-		 VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(.0f, 0.0f, 0.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT4(0.0f, 1.0f, 1.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT4(1.0f, 0.0f, 1.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT4(1.0f, 1.0f, 0.0f,1.0f) }),
-		 VertexPositionColor({ XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT4(1.0f, 1.0f, 1.0f,1.0f) }),
+		//Front Face
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT2(1.0f, 1.0f) },
+
+		//Back Face
+		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT2(0.0f, 1.0f) },
+
+		//Top Face
+		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT2(1.0f, 1.0f) },
+
+		//Bottom Face
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT2(0.0f, 1.0f) },
+
+		//Left Face
+		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1.0f, 1.0f) },
+
+		//Right Face
+		{ XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT2(1.0f, 1.0f) },
 	};
 	return cubeVertices;
 }
@@ -78,23 +105,29 @@ std::vector<std::uint16_t> Mesh::CubeIndices()
 {
 	std::vector<std::uint16_t> cubeIndices =
 	{
-			0, 2, 1, // -x
-			1, 2, 3,
+			//Front Face
+			0, 1, 2,
+			0, 2, 3,
 
-			4, 5, 6, // +x
-			5, 7, 6,
+			//Back Face
+			4, 5, 6,
+			4, 6, 7,
 
-			0, 1, 5, // -y
-			0, 5, 4,
+			//Top Face
+			8, 9, 10, 
+			8, 10, 11,
 
-			2, 6, 7, // +y
-			2, 7, 3,
+			//Bottom Face
+			12, 13, 14, 
+			12, 14, 15,
 
-			0, 4, 6, // -z
-			0, 6, 2,
+			//Left Face
+			16, 17, 18, 
+			16, 18, 19,
 
-			1, 3, 7, // +z
-			1, 7, 5,
+			//Right Face
+			20, 21, 22, 
+			20, 22, 23,
 	};
 	return cubeIndices;
 }

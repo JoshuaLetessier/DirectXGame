@@ -3,7 +3,6 @@
 #include "pch.h"
 #include "WindowEngine.h"
 
-
 /*
 	//struct Shape
 	//{
@@ -87,13 +86,13 @@ public:
 		DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
 	};
 
-	struct VertexPositionColor
+	struct VertexPositionUv
 	{
 		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT4 color;
+		DirectX::XMFLOAT2 Uv;
 	};
 
-	std::vector<VertexPositionColor> CubeVertices();
+	std::vector<VertexPositionUv> CubeVertices();
 	std::vector<std::uint16_t> CubeIndices();
 
 public:

@@ -10,8 +10,6 @@ public:
 	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator, ID3D12GraphicsCommandList* commandList, ID3D12DescriptorHeap* cbvHeap, ID3D12Fence* fence);
 	void CreateTexture(const wchar_t* fileName);
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE GetDescriptorGPU();
-
 	CD3DX12_GPU_DESCRIPTOR_HANDLE hDescriptorGPU;
 
 private:
@@ -35,8 +33,6 @@ private:
 
 	ComPtr<ID3DBlob> signature = nullptr;
 	ComPtr<ID3DBlob> error = nullptr;
-
-	
 
 	void FlushCommandQueue();
 };

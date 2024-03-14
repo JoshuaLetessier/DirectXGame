@@ -147,7 +147,7 @@ void WindowEngine::CreateRtvAndDsvDescriptorHeaps()
 	dsvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
-	
+
 	D3D12_DESCRIPTOR_HEAP_DESC CbvHeapDesc;
 	CbvHeapDesc.NumDescriptors = 1;
 	CbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
@@ -155,8 +155,6 @@ void WindowEngine::CreateRtvAndDsvDescriptorHeaps()
 	CbvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&CbvHeapDesc, IID_PPV_ARGS(mCbvHeap.GetAddressOf())));
-
-
 }
 
 void WindowEngine::OnResize()

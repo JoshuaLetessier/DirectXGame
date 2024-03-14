@@ -111,8 +111,3 @@ void Texture2D::FlushCommandQueue()
 		}
 	}
 }
-
-CD3DX12_GPU_DESCRIPTOR_HANDLE Texture2D::GetDescriptorGPU()
-{
-	return hDescriptorGPU;
-}

@@ -21,23 +21,30 @@ bool RenderEngine::Initialize()
 		return false;
 
 	// Reset the command list to prep for initialization commands.
-	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
+	{ HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr)); std::wstring wfn = AnsiToWString("C:\\Users\\apreynat\\Documents\\GitHub\\DirectXGame\\DirectXMoteur\\RenderEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+		throw DxException(hr__, L"mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr)", wfn, 24);
+	} };
 
 	BuildDescriptorHeaps();
 	BuildConstantBuffers();
-	tex.Initialize(md3dDevice.Get(), mCommandQueue.Get(), mDirectCmdListAlloc.Get(), mCommandList.Get(), mCbvHeap.Get(), mFence.Get());
+
 	shader.Initialize(md3dDevice);
 	shader.BuildShadersAndInputLayout();
 	mesh.Initialize(md3dDevice, mCommandList);
 	shader.BuildPSO(md3dDevice, m4xMsaaState, m4xMsaaQuality);
 
 	// Execute the initialization commands.
-	ThrowIfFailed(mCommandList->Close());
+	{ HRESULT hr__ = (mCommandList->Close()); std::wstring wfn = AnsiToWString("C:\\Users\\apreynat\\Documents\\GitHub\\DirectXGame\\DirectXMoteur\\RenderEngine.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+		throw DxException(hr__, L"mCommandList->Close()", wfn, 37);
+	} };
 	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// Wait until initialization is complete.
 	FlushCommandQueue();
+
+	tex.Initialize(md3dDevice.Get(), mCommandQueue.Get(), mDirectCmdListAlloc.Get(), mCommandList.Get(), mCbvHeap.Get(), mFence.Get());
+	tex.CreateTexture(L"../Textures/tile.dds");
 
 	return true;
 }
@@ -107,8 +114,6 @@ void RenderEngine::Draw()
 
 	// BEGIN DRAW MESHES
 
-	tex.CreateTexture(L"../Textures/WoodCrate01.dds");
-
 	mCommandList->SetGraphicsRootSignature(shader.m_rootSignature.Get());
 
 	mCommandList->SetPipelineState(shader.mPSO.Get());
@@ -120,11 +125,15 @@ void RenderEngine::Draw()
 	mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	Texture2D* pTexture2D = nullptr;
-	mCommandList->SetGraphicsRootDescriptorTable(0, pTexture2D->hDescriptorGPU);
+	if (pTexture2D == nullptr)
+		mCommandList->SetGraphicsRootDescriptorTable(0, tex.hDescriptorGPU);
+
 
 	mCommandList->SetGraphicsRootConstantBufferView(1, mObjectCB->Resource()->GetGPUVirtualAddress());
 
+
 	mCommandList->DrawIndexedInstanced(mesh.mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	//mCommandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 	// END DRAW MESHES
 

@@ -174,7 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shader.hlsl">
-      <Filter>Fichiers sources\Shaders</Filter>
+      <Filter>Fichiers d%27en-tête\Shaders</Filter>
     </Text>
   </ItemGroup>
 </Project>
