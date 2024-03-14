@@ -57,3 +57,23 @@ void Camera::UpdateCam(int ARGiNewPosX, int ARGiNewPosY)
 	MousePose.y = ARGiNewPosY;
 
 }
+
+Transform Camera::GetTransform()
+{
+	return mtrans;
+}
+
+float Camera::GetTheta()
+{
+	return _fTheta;
+}
+
+float Camera::GetPhi()
+{
+	return _fPhi;
+}
+
+float Camera::GetRadius()
+{
+	return _fRadius;
+}

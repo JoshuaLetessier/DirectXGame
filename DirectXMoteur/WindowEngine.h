@@ -51,7 +51,7 @@ public:
     int mClientHeight = 600;
     
 
-    Camera* m_Camera = new Camera();
+    Camera* m_Camera;
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
     virtual void OnResize();

@@ -13,6 +13,7 @@
 
 #include "d3dUtil.h"
 #include "Component.h"
+#include "Transform.h"
 
 #define VSCPrint(buffer, msg, ...) \
     do{ \
@@ -20,6 +21,8 @@
         OutputDebugStringA(buffer); \
     } while(0)
 static char buff[200]; // Global within the class (in main.cpp, it's a member to avoid problems)
+
+//class Transform;
 
 class Camera : public Component
 {
@@ -33,18 +36,20 @@ public:
 
 	void UpdateCam(int ARGiNewPosX, int ARGiNewPosY);
 
+	Transform GetTransform();
+
 	// Getters to construct View Matrix with the Camera
-	float GetTheta() { return _fTheta; }
-	float GetPhi() { return _fPhi; }
-	float GetRadius() { return _fRadius; }
+	float GetTheta();
+	float GetPhi();
+	float GetRadius();
 
 private:
-
+	Transform mtrans;
 	// Variables needed to rotate the Camera around
 	// Phi is the angle for Up & Down, Theta is the angle for Left & Right
 	float _fTheta;
 	float _fPhi;
-	float _fRadius;
+	float _fRadius = 5.0f;
 
 	// Mouse pos stuff to do cool calculus
 	POINT MousePose;

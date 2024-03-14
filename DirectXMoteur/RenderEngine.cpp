@@ -86,16 +86,16 @@ void RenderEngine::Update()
 void RenderEngine::UpdateCamera()
 {
 	XMVECTOR pos, target, up;
-	x = mRadius * sinf(mPhi) * cosf(mTheta);
-	z = mRadius * sinf(mPhi) * sinf(mTheta);
-	y = mRadius * cosf(mPhi);
+	x = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (cosf(m_Camera->GetTheta()));
+	z = (m_Camera->GetRadius()) * (sinf(m_Camera->GetPhi())) * (sinf(m_Camera->GetTheta()));
+	y = (m_Camera->GetRadius()) * (cosf(m_Camera->GetPhi()));
 
 	pos = XMVectorZero();
 	target = XMVectorSet(x, y, z, 1.0f);
 	up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	//XMStoreFloat4x4(&mView, view);
+	XMStoreFloat4x4(&mView, view);
 
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
@@ -128,9 +128,9 @@ void RenderEngine::UpdateCamera()
 	XMMATRIX worldViewProj = world * view * proj;
 
 	// Update the constant buffer with the latest worldViewProj matrix.
-	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
-	XMStoreFloat4x4(&mobjConstants.WorldViewProj, worldViewProj);
-	mObjectCBCamera->CopyData(0, mobjConstants);
+	Mesh::ModelViewProjectionConstantBuffer mobjConstantsC;
+	XMStoreFloat4x4(&mobjConstantsC.WorldViewProj, worldViewProj);
+	mObjectCBCamera->CopyData(0, mobjConstantsC);
 }
 
 void RenderEngine::Draw()
@@ -234,4 +234,5 @@ void RenderEngine::BuildConstantBuffers()
 void RenderEngine::BuildConstantBuffersCamera()
 {
 	mObjectCBCamera = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(md3dDevice.Get(), 1, true);
+	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCBCamera->Resource()->GetGPUVirtualAddress();
 }

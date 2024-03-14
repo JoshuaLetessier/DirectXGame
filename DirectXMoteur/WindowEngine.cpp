@@ -692,7 +692,7 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		mTheta += dx;
 		mPhi += dy;
 
-		m_Camera->UpdateCam(x, y);
+		m_Camera->GetTransform().rotateCamera(x,y);
 	}
 
 	mLastMousePos.x = x;
