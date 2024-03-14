@@ -104,6 +104,7 @@ int WindowEngine::Run()
 			{
 				Update();
 				Draw();
+				UpdateCamera();
 			}
 			else
 			{
@@ -686,34 +687,34 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 		m_Camera->Pitch(dy);
 		m_Camera->RotateY(dx);
 		
-
+		m_Camera->UpdateViewMatrix();
 		wchar_t buffer[256];
 		swprintf_s(buffer, L"Roll: %f, Pitch: %f\n", dx, dy);
 		OutputDebugString(buffer);
-
-		UpdateCamera();
 	}
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 }
 
-void WindowEngine::OnKeyboardInput(Timer& gt)
+int x = 0;
+void WindowEngine::OnKeyboardInput()
 {
-	const float dt = gt.GetElapsedTime();
 
-	if (GetAsyncKeyState('W') & 0x8000)
-		m_Camera->Walk(10.0f * dt);
-		
+	if (GetAsyncKeyState('W') & 0x8000) {
+
+		m_Camera->Walk(60.0f);
+		x++;
+	}
 
 	if (GetAsyncKeyState('S') & 0x8000)
-		m_Camera->Walk(-10.0f * dt);
+		m_Camera->Walk(-10.0f);
 
 	if (GetAsyncKeyState('A') & 0x8000)
-		m_Camera->Strafe(-10.0f * dt);
+		m_Camera->Strafe(-10.0f);
 
 	if (GetAsyncKeyState('D') & 0x8000)
-		m_Camera->Strafe(10.0f * dt);
+		m_Camera->Strafe(10.0f);
 
 	m_Camera->UpdateViewMatrix();
 }

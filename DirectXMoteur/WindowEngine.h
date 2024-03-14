@@ -15,7 +15,6 @@ class WindowEngine
 {
 private:
     
-    POINT mLastMousePos;
 protected:
 
 
@@ -25,6 +24,7 @@ protected:
     virtual ~WindowEngine();
 
 public:
+    POINT mLastMousePos;
 
     WindowEngine();
     static WindowEngine* GetApp();
@@ -45,7 +45,7 @@ public:
     void OnMouseUp(WPARAM btnState, int x, int y);
     void OnMouseMove(WPARAM btnState, int x, int y);
 
-    void OnKeyboardInput(Timer& gt);
+    void OnKeyboardInput();
 
     int mClientWidth = 800;
     int mClientHeight = 600;
@@ -70,8 +70,6 @@ protected:
     ID3D12Resource* CurrentBackBuffer()const;
     D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
     D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
-
-    void CalculateFrameStats();
 
     void LogAdapters();
     void LogAdapterOutputs(IDXGIAdapter* adapter);

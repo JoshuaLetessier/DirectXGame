@@ -91,15 +91,12 @@ void RenderEngine::UpdateCamera()
 	float y = mRadius * cosf(mPhi);
 
 	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR pos = XMVectorSet(0, 0, 0, 0);
+	XMVECTOR target = XMVectorSet(x, y, z, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMMATRIX view = m_Camera->GetView();
 	XMStoreFloat4x4(&trans.mView, view);
-	//XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	/*XMMATRIX view = cam.GetView();
-	XMStoreFloat4x4(&mView, view);*/
 
 	XMMATRIX world = XMLoadFloat4x4(&trans.matrix);
 	XMMATRIX proj = m_Camera->GetProj();
@@ -128,14 +125,10 @@ void RenderEngine::UpdateCamera()
 		proj.r[3].m128_f32[0], proj.r[3].m128_f32[1], proj.r[3].m128_f32[2], proj.r[3].m128_f32[3]);
 	OutputDebugString(buffer2);
 
-	//world = XMMatrixTranspose(world);
-	//view = XMMatrixTranspose(view);
-	//proj = XMMatrixTranspose(proj);
-
 	XMMATRIX worldViewProj = world * view * proj;
 	Mesh::ModelViewProjectionConstantBuffer mobjConstants;
 	XMStoreFloat4x4(&mobjConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
-	mObjectCBCamera->CopyData(0, mobjConstants);
+	mObjectCB->CopyData(0, mobjConstants);
 }
 
 void RenderEngine::Draw()

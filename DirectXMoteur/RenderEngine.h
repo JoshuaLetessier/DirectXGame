@@ -22,14 +22,13 @@ private:
     virtual void OnResize()override;
     virtual void Update()override;
 
-
-    
     void BuildDescriptorHeaps();
     void BuildConstantBuffers();
     void BuildConstantBuffersCamera();
-   
 
 private:
+
+    int X;
 
     Mesh mesh;
     Shader shader;
