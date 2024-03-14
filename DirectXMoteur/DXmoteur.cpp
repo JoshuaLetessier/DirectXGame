@@ -1,4 +1,8 @@
-// DirectXMoteur.cpp : Définit le point d'entrée de l'application.
+//// DirectXMoteur.cpp : Définit le point d'entrée de l'application.
+////
+//#include <iostream>
+//#include "framework.h"
+//#include "DXMoteur.h"
 //
 #include <iostream>
 #include "framework.h"
