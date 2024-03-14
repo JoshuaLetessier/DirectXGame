@@ -5,13 +5,14 @@
 #include "../DirectXMoteur/Component.h"
 #include "../DirectXMoteur/MeshRenderer.h"
 #include "../DirectXMoteur/ShaderStructure.h"
+#include "../DirectXMoteur/Script.h"
 
 struct Cords
 {
 	float x, y, z;
 };
 
-class Ennemies
+class Ennemies : public Script
 {
 private:
 	entityManager entityManager;
@@ -23,7 +24,10 @@ public:
 	Cords offsetCalcul(float x, float y, float z);
 	void deleteEnnemies(int i);
 
-	
+
+	bool Initialize() override { return true;  }
+	void Update() override {}
+
 
 	Entity m_Entity;
 	Component* m_Component;

@@ -25,7 +25,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (window.Initialize())
 		{
 			window.Run(&window);
-			ennemies.spawnEnnemies();
+			//start
+			// Draw
+			// 
+			//ennemies.spawnEnnemies();
+
 		}
 
 	}

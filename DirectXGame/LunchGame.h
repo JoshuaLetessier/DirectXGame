@@ -37,7 +37,7 @@ private:
     float mRadius = 5.0f;
 
     GameTimer mTimer;
-    Ennemies ennemy;
+
     InputManager input;
 
 protected:

@@ -7,7 +7,10 @@ using namespace std;
 class Script : public Component
 {
 public:
-	Script();
-	~Script();
+	Script() {}
+	~Script() {}
+
+	//bool Initialize() overrider
+	//void Update() override;
 };
 

@@ -45,6 +45,9 @@
     <ClInclude Include="GameTimer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalScript.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXGame.cpp">
@@ -60,6 +63,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalScript.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

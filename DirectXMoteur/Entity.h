@@ -27,7 +27,19 @@ public:
 
 	Transform* GetTransform();
 
+	template <typename T>
+	T* addComponent();
+
 	int GetId() const;
 
 	void Update();
 };
+
+template <typename T>
+//Create script
+T* Entity::addComponent()
+{
+	T* c = new T();
+	m_components.push_back((Component*)c);
+	return c;
+}

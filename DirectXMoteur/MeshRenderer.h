@@ -42,8 +42,6 @@ public:
     UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCB = nullptr;
     //UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>* mObjectCBCamera = nullptr;
 
-    ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
-
     Component* component;
     Transform* trans;
     WindowEngine* window;

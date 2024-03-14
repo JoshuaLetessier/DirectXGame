@@ -31,7 +31,7 @@ WindowEngine::WindowEngine()
 	assert(mApp == nullptr);
 	mApp = this;
 
-	m_Camera = new Camera();
+	//m_Camera = new Camera();
 	inputManager = new InputManager();
 	renderEngine = new RenderEngine();
 
@@ -43,7 +43,7 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 	assert(mApp == nullptr);
 	mApp = this;
 
-	m_Camera = new Camera();
+	//m_Camera = new Camera();
 	inputManager = new InputManager();
 	renderEngine = new RenderEngine();
 }
@@ -110,6 +110,9 @@ int WindowEngine::Run(WindowEngine* window)
 		// Otherwise, do animation/game stuff.
 		else
 		{
+			// update
+			// draw
+			// 
 			//Button start game
 			if (StartGame == true)
 			{
@@ -188,6 +191,13 @@ void WindowEngine::CreateRtvAndDsvDescriptorHeaps()
 	dsvHeapDesc.NodeMask = 0;
 	ThrowIfFailed(md3dDevice->CreateDescriptorHeap(
 		&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf())));
+
+	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+	cbvHeapDesc.NumDescriptors = 100;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.NodeMask = 0;
+	md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, __uuidof(**(&mCbvHeap)), IID_PPV_ARGS_Helper(&mCbvHeap));
 }
 
 void WindowEngine::OnResize()
@@ -757,3 +767,65 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 //
 //	m_Camera->UpdateViewMatrix();
 //}
+
+void WindowEngine::Draw()
+{
+
+		// Reuse the memory associated with command recording.
+		// We can only reset when the associated command lists have finished execution on the GPU.
+	ThrowIfFailed(mDirectCmdListAlloc->Reset());
+
+	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+	// Reusing the command list reuses memory.
+	{
+		Shader* pShader = (Shader*)entity.GetComponent("shader");
+		HRESULT hr__ = (mCommandList->Reset(mDirectCmdListAlloc.Get(), pShader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), pShader->mPSO.Get())", wfn, 76);
+		}
+	};
+
+	mCommandList->RSSetViewports(1, &mScreenViewport);
+	mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+	// Indicate a state transition on the resource usage.
+	CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	mCommandList->ResourceBarrier(1, &transition);
+
+	// Clear the back buffer and depth buffer.
+	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+	// Specify the buffers we are going to render to.
+	D3D12_CPU_DESCRIPTOR_HANDLE stockDepthStencilView = DepthStencilView();
+	D3D12_CPU_DESCRIPTOR_HANDLE stockCurrentBackBufferView = CurrentBackBufferView();
+	mCommandList->OMSetRenderTargets(1, &stockCurrentBackBufferView, true, &stockDepthStencilView);
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
+	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+
+	//  toutes les entites
+	for ()
+	ent->drqz
+
+	// Indicate a state transition on the resource usage.
+	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	mCommandList->ResourceBarrier(1, &transition2);
+
+	// Done recording commands.
+	ThrowIfFailed(mCommandList->Close());
+
+	// Add the command list to the queue for execution.
+	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+	// swap the back and front buffers
+	ThrowIfFailed(mSwapChain->Present(0, 0));
+	mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+
+	// Wait until frame commands are complete.  This waiting is inefficient and is
+	// done for simplicity.  Later we will show how to organize our rendering code
+	// so we do not have to wait per frame.
+	FlushCommandQueue();
+
+}

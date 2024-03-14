@@ -10,12 +10,12 @@ using Microsoft::WRL::ComPtr;
 
 RenderEngine::RenderEngine()
 {
-	
+	g_EntityManager = new entityManager();
 }
 
 RenderEngine::~RenderEngine()
 {
-	
+	delete g_EntityManager;
 }
 
 bool RenderEngine::Initialize(WindowEngine* wnd)
@@ -32,14 +32,17 @@ bool RenderEngine::Initialize(WindowEngine* wnd)
 		}
 	};
 
+
 	
-	meshRenderer->BuildDescriptorHeaps(window);
-	meshRenderer->BuildConstantBuffers();
+	//meshRenderer->BuildDescriptorHeaps(window);
+	//meshRenderer->BuildConstantBuffers();
 	shader->Initialize(window->md3dDevice.Get());
 	shader->Initialize(window->md3dDevice.Get());
 	shader->BuildShadersAndInputLayout();
 	mesh->Initialize(window->md3dDevice, window->mCommandList);
 	shader->BuildPSO(window->md3dDevice, window->m4xMsaaState, window->m4xMsaaQuality);
+
+
 
 	// Execute the initialization commands.
 	ThrowIfFailed(window->mCommandList->Close());

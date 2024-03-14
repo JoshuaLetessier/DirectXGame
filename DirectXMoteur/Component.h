@@ -7,7 +7,7 @@ class Entity;
 class Component
 {
 public:
-	Component();
+	Component() {};
 	virtual ~Component() = default;
 
 	void SetComponent(Entity* pEntity, std::string p_type) {

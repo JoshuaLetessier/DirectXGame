@@ -75,6 +75,8 @@ public:
     void LogAdapterOutputs(IDXGIAdapter* adapter);
     void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
+    void Draw();
+
 public:
 
     static WindowEngine* mApp;
@@ -116,6 +118,7 @@ public:
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mCbvHeap;
 
     D3D12_VIEWPORT mScreenViewport;
     D3D12_RECT mScissorRect;

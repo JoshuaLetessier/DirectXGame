@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
+#include "entityManager.h"
 
 class RenderEngine
 {
@@ -23,6 +24,7 @@ private:
     WindowEngine* window;
     Shader* shader;
     Mesh* mesh;
+    entityManager* g_EntityManager;
 
     //ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;

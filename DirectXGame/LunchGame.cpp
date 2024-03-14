@@ -5,7 +5,7 @@ void LunchGame::update(const GameTimer& gt)
 {
     //ScriptShip* pS = manaer):>createNewScript<ScriptShip>();
 
-    ennemy.spawnEnnemies();
+    //ennemy.spawnEnnemies();
 
     // Convert Spherical to Cartesian coordinates.
     float x = mRadius * sinf(mPhi) * cosf(mTheta);
@@ -20,7 +20,7 @@ void LunchGame::update(const GameTimer& gt)
     XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
     XMStoreFloat4x4(&mView, view);
 
-    for (int i = 0; i < sizeof(ennemy.m_Entity); i++)
+    /*for (int i = 0; i < sizeof(ennemy.m_Entity); i++)
     {
         //XMMATRIX world = XMLoadFloat4x4(&ennemy.m_Entity[i].GetTransform().matrix);
         //XMMATRIX proj = XMLoadFloat4x4(&mProj);
@@ -30,7 +30,7 @@ void LunchGame::update(const GameTimer& gt)
         //Mesh::ModelViewProjectionConstantBuffer objConstants;
         //XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
         //mObjectCB->CopyData(0, objConstants);
-    }
+    }*/
 }
 
 int LunchGame::run()

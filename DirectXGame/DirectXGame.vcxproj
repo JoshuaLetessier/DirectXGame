@@ -143,6 +143,7 @@
     <ClInclude Include="Ennemies.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="GlobalScript.h" />
     <ClInclude Include="LunchGame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Shooter.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="DirectXGame.cpp" />
     <ClCompile Include="Ennemies.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="GlobalScript.cpp" />
     <ClCompile Include="LunchGame.cpp" />
     <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
