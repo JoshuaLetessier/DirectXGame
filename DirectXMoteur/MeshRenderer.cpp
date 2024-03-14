@@ -6,7 +6,7 @@ MeshRenderer::MeshRenderer()
 
 MeshRenderer::~MeshRenderer()
 {
-	delete mObjectCBCamera;
+	//delete mObjectCBCamera;
 	delete mObjectCB;
 
 }
@@ -73,7 +73,7 @@ void MeshRenderer::UpdateCamera()
 	mObjectCB->CopyData(0, mobjConstants);
 }
 
-void MeshRenderer::Draw()
+void MeshRenderer::Draw(Entity entity)
 {
 	// Reuse the memory associated with command recording.
 	// We can only reset when the associated command lists have finished execution on the GPU.
@@ -82,8 +82,9 @@ void MeshRenderer::Draw()
 	// A command list can be reset after it has been added to the command queue via ExecuteCommandList.
 	// Reusing the command list reuses memory.
 	{
-		HRESULT hr__ = (window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), shader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
-			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), shader->mPSO.Get())", wfn, 76);
+		Shader* pShader = (Shader*)entity.GetComponent("shader");
+		HRESULT hr__ = (window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), pShader->mPSO.Get())); std::wstring wfn = AnsiToWString("C:\\Users\\Faoll\\source\\repos\\DirectXGame\\DirectXMoteur\\MeshRenderer.cpp"); if ((((HRESULT)(hr__)) < 0)) {
+			throw DxException(hr__, L"window->mCommandList->Reset(window->mDirectCmdListAlloc.Get(), pShader->mPSO.Get())", wfn, 76);
 		}
 	};
 
@@ -107,20 +108,23 @@ void MeshRenderer::Draw()
 	window->mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	// per entity
-	window->mCommandList->SetGraphicsRootSignature(shader->m_rootSignature);
-
-	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = mesh->mBoxGeo->VertexBufferView();
+	Shader* pShader = (Shader*)entity.GetComponent("shader");
+	window->mCommandList->SetGraphicsRootSignature(pShader->m_rootSignature);
+	
+	Mesh* pMesh = (Mesh*)entity.GetComponent("mesh");
+	
+	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = pMesh->mBoxGeo->VertexBufferView();
 	window->mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
+	
 
-	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = mesh->mBoxGeo->IndexBufferView();
+	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = pMesh->mBoxGeo->IndexBufferView();
 	window->mCommandList->IASetIndexBuffer(&stockIndexBufferView);
 	window->mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	window->mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	//mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 	window->mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
 
-	window->mCommandList->DrawIndexedInstanced(mesh->mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	window->mCommandList->DrawIndexedInstanced(pMesh->mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 	// per entity
 
 	// Indicate a state transition on the resource usage.
@@ -166,7 +170,3 @@ void MeshRenderer::BuildConstantBuffers()
 	mObjectCB = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(window->md3dDevice.Get(), 1, true);
 }
 
-void MeshRenderer::BuildConstantBuffersCamera()
-{
-	mObjectCBCamera = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(window->md3dDevice.Get(), 1, true);
-}

@@ -11,9 +11,9 @@ void Ennemies::spawnEnnemies()
 	Cords offsetres = offsetCalcul(spawn.x, spawn.y, spawn.z);
 
 	
-	entityManager.entityList.back()->AddComponent(&mesh);
-	entityManager.entityList.back()->AddComponent(&meshRender);
-	entityManager.entityList.back()->AddComponent(&shader);
+	entityManager.entityList.back()->AddComponent(&mesh, "mesh");
+	entityManager.entityList.back()->AddComponent(&meshRender, "meshRender");
+	entityManager.entityList.back()->AddComponent(&shader, "shader");
 
 	entityManager.entityList.back()->Update();
 

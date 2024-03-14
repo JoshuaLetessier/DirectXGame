@@ -5,6 +5,8 @@
 #include "d3dUtil.h"
 #include "WindowEngine.h"
 #include "DirectXMath.h"
+#include "Entity.h"
+#include "ShaderStructure.h"
 
 using namespace DirectX;
 
@@ -21,11 +23,10 @@ protected:
 
 
 public:
-    void Draw();
+    void Draw(Entity entity);
     void UpdateCamera();
     void BuildDescriptorHeaps(WindowEngine* window);
     void BuildConstantBuffers();
-    void BuildConstantBuffersCamera();
 
     XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 public:
@@ -43,6 +44,7 @@ public:
 
     ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
 
+    Component* component;
     Transform* trans;
     WindowEngine* window;
     Shader* shader;
