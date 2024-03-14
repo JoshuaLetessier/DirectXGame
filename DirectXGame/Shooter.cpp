@@ -27,7 +27,7 @@ void Shooter::shoot()
 		//entity->AddComponent(&balle);
 		//entity->GetTransform().translate(0.0f, 0.0f, 0.02f);
 	}
-	balle.Draw();
+	//balle.Draw();
 }
 
 void Shooter::deleteBall(int i)

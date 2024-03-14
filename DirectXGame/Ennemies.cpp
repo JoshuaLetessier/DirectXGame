@@ -7,12 +7,19 @@ Ennemies::Ennemies()
 void Ennemies::spawnEnnemies()
 {
 	Cords spawn = spawnAleatoire();
+	entityManager.createNewEntity();
 	Cords offsetres = offsetCalcul(spawn.x, spawn.y, spawn.z);
-	for (int i = 0; i < sizeof(m_Entity); i++) {
-		m_Entity[i].AddComponent(&ennemy);
-		//m_Entity[i].GetTransform().translate(offsetres.x, offsetres.y, offsetres.z);
-	}
-	ennemy.Draw();
+
+	
+	entityManager.entityList.back()->AddComponent(&mesh);
+	entityManager.entityList.back()->AddComponent(&meshRender);
+	entityManager.entityList.back()->AddComponent(&shader);
+
+	entityManager.entityList.back()->Update();
+
+	entityManager.entityList.back()->GetTransform()->translate(offsetres.x, offsetres.y, offsetres.z);//update
+	
+	//ennemy.Draw();
 }
 
 Cords Ennemies::spawnAleatoire()
@@ -41,5 +48,6 @@ Cords Ennemies::offsetCalcul(float x, float y, float z)
 
 void Ennemies::deleteEnnemies(int i)
 {
-	m_Entity[i].~Entity();
+	entityManager.entityList[i]->~Entity();
 }
+

@@ -1,7 +1,10 @@
 #pragma once
 #include "../DirectXMoteur/Entity.h"
 #include "../DirectXMoteur/pch.h"
-#include "../DirectXMoteur/RenderEngine.h"
+#include "../DirectXMoteur/entityManager.h"
+#include "../DirectXMoteur/Component.h"
+#include "../DirectXMoteur/MeshRenderer.h"
+#include "../DirectXMoteur/ShaderStructure.h"
 
 struct Cords
 {
@@ -11,8 +14,7 @@ struct Cords
 class Ennemies
 {
 private:
-	RenderEngine ennemy;
-
+	entityManager entityManager;
 
 public:
 	Ennemies();
@@ -21,5 +23,12 @@ public:
 	Cords offsetCalcul(float x, float y, float z);
 	void deleteEnnemies(int i);
 
-	vector<Entity> m_Entity;
+	
+
+	Entity m_Entity;
+	Component* m_Component;
+	Mesh mesh;
+	MeshRenderer meshRender;
+	Shader shader;
+
 };
