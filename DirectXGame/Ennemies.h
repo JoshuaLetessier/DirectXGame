@@ -19,7 +19,8 @@ private:
 
 public:
 	Ennemies();
-	void spawnEnnemies();
+	~Ennemies();
+	void spawnEnnemies(Entity* ennemy, WindowEngine* wng);
 	Cords spawnAleatoire();
 	Cords offsetCalcul(float x, float y, float z);
 	void deleteEnnemies(int i);
@@ -32,7 +33,7 @@ public:
 	Entity m_Entity;
 	Component* m_Component;
 	Mesh mesh;
-	MeshRenderer meshRender;
+	MeshRenderer* meshRender;
 	Shader shader;
 
 };

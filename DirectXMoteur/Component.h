@@ -20,5 +20,5 @@ public:
 
 public:
 	Entity* m_pEntity = nullptr;
-	const char* m_type = 0;
+	const char* m_type;
 };

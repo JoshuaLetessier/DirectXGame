@@ -11,9 +11,12 @@
 #include "InputManager.h"
 #include "ShaderStructure.h"
 #include "entityManager.h"
+#include "MeshRenderer.h"
 
 class RenderEngine;
 class entityManager;
+class MeshRenderer;
+
 
 class WindowEngine
 {
@@ -74,7 +77,7 @@ public:
     void LogAdapterOutputs(IDXGIAdapter* adapter);
     void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
 
-    void Draw();
+    void Draw(WindowEngine* wng);
 
 public:
 
@@ -137,4 +140,5 @@ public:
     Camera* m_Camera;
     Shader* shader;
     entityManager* g_entityManager;
+    MeshRenderer* meshRenderer;
 };

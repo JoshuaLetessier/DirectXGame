@@ -11,10 +11,11 @@ MeshRenderer::~MeshRenderer()
 
 }
 
-bool MeshRenderer::Initialize()
+bool MeshRenderer::Initialize(WindowEngine* wnd)
 {
-	BuildConstantBuffers();
-	return false;
+	WindowEngine* win = wnd; //Pourquoi ?
+	BuildConstantBuffers(win);
+	return true;
 }
 
 void MeshRenderer::Update()
@@ -40,6 +41,11 @@ void MeshRenderer::Update()
 	Mesh::ModelViewProjectionConstantBuffer objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 	mObjectCB->CopyData(0, objConstants);
+}
+
+bool MeshRenderer::Initialize()
+{
+	return false;
 }
 
 void MeshRenderer::UpdateCamera()
@@ -74,31 +80,28 @@ void MeshRenderer::UpdateCamera()
 	mObjectCB->CopyData(0, mobjConstants);
 }
 
-void MeshRenderer::Draw(Entity entity)
+void MeshRenderer::Draw(Entity entity, WindowEngine* wng)
 {
 	Shader* pShader = (Shader*)entity.GetComponent("shader");
-	window->mCommandList->SetGraphicsRootSignature(pShader->m_rootSignature);
+	wng->mCommandList->SetGraphicsRootSignature(pShader->m_rootSignature);
 	
 	Mesh* pMesh = (Mesh*)entity.GetComponent("mesh");
 	
 	D3D12_VERTEX_BUFFER_VIEW stockVertexBufferView = pMesh->mBoxGeo->VertexBufferView();
-	window->mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
+	wng->mCommandList->IASetVertexBuffers(0, 1, &stockVertexBufferView);
 	
 
 	D3D12_INDEX_BUFFER_VIEW stockIndexBufferView = pMesh->mBoxGeo->IndexBufferView();
-	window->mCommandList->IASetIndexBuffer(&stockIndexBufferView);
-	window->mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	wng->mCommandList->IASetIndexBuffer(&stockIndexBufferView);
+	wng->mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	window->mCommandList->SetGraphicsRootDescriptorTable(0, window->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	window->mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
+	wng->mCommandList->SetGraphicsRootDescriptorTable(0, wng->mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+	wng->mCommandList->SetGraphicsRootConstantBufferView(0, mObjectCB->Resource()->GetGPUVirtualAddress());
 
-	window->mCommandList->DrawIndexedInstanced(pMesh->mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	wng->mCommandList->DrawIndexedInstanced(pMesh->mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
 }
 
-
-
-void MeshRenderer::BuildConstantBuffers()
+void MeshRenderer::BuildConstantBuffers(WindowEngine* wnd)
 {
-	mObjectCB = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(window->md3dDevice.Get(), 1, true);
+	mObjectCB = new UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>(wnd->md3dDevice.Get(), 1, true);
 }
-

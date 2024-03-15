@@ -1,11 +1,14 @@
 #pragma once
 #include "Transform.h"
 #include <iostream>
-#include <string>
 #include <vector>
+#include "MeshRenderer.h"
+#include "WindowEngine.h"
 
 
 class Component;
+class MeshRenderer;
+class WindowEngine;
 
 class Entity
 {
@@ -14,8 +17,9 @@ private:
 	static int nextId;
 	int m_id;
 	std::vector<Component*> m_components;
-	Component* comp;
+	//Component* comp;
 	Transform m_transform;
+	MeshRenderer* meshRenderer;
 
 public:
 	Entity();
@@ -32,7 +36,7 @@ public:
 
 	int GetId() const;
 
-	void Update();
+	void Update(WindowEngine* wng);
 };
 
 template <typename T>

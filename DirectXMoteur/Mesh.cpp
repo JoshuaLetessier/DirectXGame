@@ -119,5 +119,3 @@ std::unique_ptr<UploadBuffer<Mesh::ModelViewProjectionConstantBuffer>> Mesh::Upd
 
 	return mObjectCB;
 }
-
-

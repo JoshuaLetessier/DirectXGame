@@ -11,13 +11,13 @@ GlobalScript::~GlobalScript()
 	delete entityManage;
 }
 
-void GlobalScript::start()
+void GlobalScript::start(WindowEngine* wng)
 {
 	
 	Entity* ennemy = entityManage->createNewEntity();
 
 	Ennemies* pScript = ennemy->addComponent<Ennemies>();
-	//pScript->
+	pScript->spawnEnnemies(ennemy, wng);
 }
 
 void GlobalScript::update()

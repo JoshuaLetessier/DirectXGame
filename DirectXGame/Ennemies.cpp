@@ -2,22 +2,27 @@
 
 Ennemies::Ennemies()
 {
+	meshRender = new MeshRenderer();
 }
 
-void Ennemies::spawnEnnemies()
+Ennemies::~Ennemies()
+{
+	delete meshRender;
+}
+
+void Ennemies::spawnEnnemies(Entity* ennemy, WindowEngine* wng)
 {
 	Cords spawn = spawnAleatoire();
 	entityManager.createNewEntity();
-	Cords offsetres = offsetCalcul(spawn.x, spawn.y, spawn.z);
-
+	Cords offsetres = offsetCalcul(10, 10, 10);
 	
-	entityManager.entityList.back()->AddComponent(&mesh, "mesh");
-	entityManager.entityList.back()->AddComponent(&meshRender, "meshRender");
-	entityManager.entityList.back()->AddComponent(&shader, "shader");
+	ennemy->AddComponent(&mesh, "mesh");
+	ennemy->AddComponent(meshRender, "meshRender");
+	ennemy->AddComponent(&shader, "shader");
 
-	entityManager.entityList.back()->Update();
+	ennemy->Update(wng);
 
-	entityManager.entityList.back()->GetTransform()->translate(offsetres.x, offsetres.y, offsetres.z);//update
+	//entityManager.entityList.back()->GetTransform()->translate(offsetres.x, offsetres.y, offsetres.z);//update
 	
 	//ennemy.Draw();
 }

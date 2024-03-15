@@ -10,7 +10,7 @@ public:
 	Script() {}
 	~Script() {}
 
-	//bool Initialize() overrider
-	//void Update() override;
+	bool Initialize() { return true; }
+	void Update() {};
 };
 

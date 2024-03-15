@@ -3,6 +3,9 @@
 #include "Entity.h"
 #include "MeshRenderer.h"
 
+
+class WindowEngine;
+
 class entityManager
 {
 public:
@@ -12,7 +15,7 @@ public:
 	Entity* createNewEntity();
 	//draw meshR
 	//update list
-	void Update();
+	void Update(WindowEngine* wng);
 
 	vector<Entity*> entityList;
 };

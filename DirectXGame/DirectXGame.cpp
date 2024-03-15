@@ -27,6 +27,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (window.Initialize())
 		{
 			window.Run(&window);
+			globalScript->start(&window);
+			
+
 			//start
 			// Draw
 			// 

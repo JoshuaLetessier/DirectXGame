@@ -10,11 +10,12 @@ Entity::Entity()
 	m_id = nextId;
 	nextId++;
 
-	
+	meshRenderer = new MeshRenderer();
 }
 
 Entity::~Entity()
 {
+	delete meshRenderer;
 }
 
 void Entity::AddComponent(Component* component, const char* type)
@@ -26,7 +27,7 @@ void Entity::AddComponent(Component* component, const char* type)
 //fnc templates
 Component* Entity::GetComponent(const char* type)
 {
-	for (int i = 0; i < m_components.size(); i++)
+	for (int i = 1; i < m_components.size(); i++)
 	{
 		if (m_components[i]->m_type == type)
 		{
@@ -52,12 +53,10 @@ int Entity::GetId() const
 	return m_id;
 }
 
-void Entity::Update()
+void Entity::Update(WindowEngine* wng)
 {
 	for (int i = 0; i < m_components.size(); i++)
 	{
-		//m_components[i]->Update();
-		// 
-		//on met tout dedans
+		meshRenderer->Draw(*this, wng );
 	}
 }

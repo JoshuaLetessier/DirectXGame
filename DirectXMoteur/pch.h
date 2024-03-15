@@ -36,12 +36,9 @@ using namespace Microsoft::WRL;
 #include "Mesh.h"
 #include "UploadBuffer.h"
 #include "Timer.h"
-#include "Score.h"
 
 
 
-// Helper functions
-#include "Helpers.h"
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>

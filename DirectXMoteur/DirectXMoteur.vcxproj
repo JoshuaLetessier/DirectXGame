@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Downloads\Texture.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.h" />
@@ -142,13 +143,11 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MathHelper.h" />
-    <ClInclude Include="Helpers.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="Score.h" />
     <ClInclude Include="scriptManager.h" />
     <ClInclude Include="ShaderStructure.h" />
     <ClInclude Include="targetver.h" />
@@ -158,6 +157,7 @@
     <ClInclude Include="WindowEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Downloads\Texture.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="entityManager.cpp" />
@@ -166,7 +166,6 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
-    <ClCompile Include="Score.cpp" />
     <ClCompile Include="scriptManager.cpp" />
     <ClCompile Include="ShaderStructure.cpp" />
     <ClCompile Include="Timer.cpp" />

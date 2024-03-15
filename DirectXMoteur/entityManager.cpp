@@ -1,4 +1,5 @@
 #include "entityManager.h"
+#include "WindowEngine.h"
 
 
 entityManager::entityManager() {};
@@ -10,7 +11,7 @@ Entity* entityManager::createNewEntity() {
 	entityList.push_back(newEntity);
 	return newEntity;
 }
-void entityManager::Update()
+void entityManager::Update(WindowEngine* wng)
 {
 	for (int i = 0; i < entityList.size(); i++)
 	{
@@ -18,7 +19,7 @@ void entityManager::Update()
 		if (entityList[i]->GetComponent("meshRenderer"))
 		{
 			pMeshRender->Update();
-			pMeshRender->Draw(*entityList[i]);
+			pMeshRender->Draw(*entityList[i], wng);
 		}
 	}
 }

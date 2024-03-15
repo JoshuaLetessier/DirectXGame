@@ -48,6 +48,7 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 	renderEngine = new RenderEngine();
 	shader = new Shader();
 	g_entityManager = new entityManager();
+	meshRenderer = new MeshRenderer();
 }
 
 WindowEngine::~WindowEngine()
@@ -60,6 +61,7 @@ WindowEngine::~WindowEngine()
 		delete renderEngine;
 		delete shader;
 		delete g_entityManager;
+		delete meshRenderer;
 	}
 }
 
@@ -142,7 +144,11 @@ int WindowEngine::Run(WindowEngine* window)
 					//}
 					if(window != NULL  && renderEngine->Initialize(window))
 					{
-						Draw();
+						if (meshRenderer->Initialize(window))
+						{
+							Draw(window);
+							break;
+						}
 					}
 				}
 				else
@@ -769,7 +775,7 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 //	m_Camera->UpdateViewMatrix();
 //}
 
-void WindowEngine::Draw()
+void WindowEngine::Draw(WindowEngine* wng)
 {
 		// Reuse the memory associated with command recording.
 		// We can only reset when the associated command lists have finished execution on the GPU.
@@ -804,7 +810,7 @@ void WindowEngine::Draw()
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	g_entityManager->Update();
+	g_entityManager->Update(wng);
 
 	// Indicate a state transition on the resource usage.
 	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);

@@ -20,13 +20,14 @@ public:
     MeshRenderer();
     ~MeshRenderer();
 
-    bool Initialize()override;
+    bool Initialize(WindowEngine* wnd);
     void Update() override;
+    bool Initialize() override;
 
 public:
-    void Draw(Entity entity);
+    void Draw(Entity entity, WindowEngine* wng);
     void UpdateCamera();
-    void BuildConstantBuffers();
+    void BuildConstantBuffers(WindowEngine* wnd);
 
     XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 public:
