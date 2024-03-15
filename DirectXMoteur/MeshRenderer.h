@@ -1,14 +1,18 @@
 #pragma once
-#include "Component.h"
-#include "Mesh.h"
-#include "Transform.h"
-#include "d3dUtil.h"
+
 #include "WindowEngine.h"
-#include "DirectXMath.h"
+
 #include "Entity.h"
-#include "ShaderStructure.h"
+#include "Component.h"
+#include "Transform.h"
+
+#include "d3dUtil.h"
+#include "DirectXMath.h"
+
 
 using namespace DirectX;
+
+class WindowEngine;
 
 class MeshRenderer : public Component
 {
@@ -18,9 +22,6 @@ public:
 
     bool Initialize()override;
     void Update() override;
-
-protected:
-
 
 public:
     void Draw(Entity entity);
@@ -33,7 +34,6 @@ public:
     XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
     XMFLOAT4X4 mView = MathHelper::Identity4x4();
    
-
     float mTheta = 1.5f * XM_PI;
     float mPhi = XM_PIDIV4;
     float mRadius = 5.0f;

@@ -10,13 +10,14 @@
 #include "Timer.h"
 #include "InputManager.h"
 #include "ShaderStructure.h"
+#include "entityManager.h"
 
 class RenderEngine;
+class entityManager;
 
 class WindowEngine
 {
 public:
-
 
     WindowEngine(HINSTANCE hInstance);
     WindowEngine(const WindowEngine& rhs) = delete;
@@ -43,13 +44,11 @@ public:
     void OnMouseDown(WPARAM btnState, int x, int y);
     void OnMouseUp(WPARAM btnState, int x, int y);
     void OnMouseMove(WPARAM btnState, int x, int y);
-    
 
     //void OnKeyboardInput(Timer& gt);
 
     int mClientWidth = 800;
     int mClientHeight = 600;
-    
     
 protected:
     virtual void CreateRtvAndDsvDescriptorHeaps();
@@ -133,12 +132,9 @@ public:
     DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-    //Shooter shoot;
-
     InputManager* inputManager;
     RenderEngine* renderEngine;
     Camera* m_Camera;
     Shader* shader;
+    entityManager* g_entityManager;
 };
-
-

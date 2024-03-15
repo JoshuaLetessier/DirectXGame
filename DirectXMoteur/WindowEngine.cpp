@@ -47,17 +47,19 @@ WindowEngine::WindowEngine(HINSTANCE hInstance)
 	inputManager = new InputManager();
 	renderEngine = new RenderEngine();
 	shader = new Shader();
+	g_entityManager = new entityManager();
 }
 
 WindowEngine::~WindowEngine()
 {
 	if (md3dDevice != nullptr)
 	{
-		FlushCommandQueue();/*
-		delete m_Camera;
+		FlushCommandQueue();
+		
 		delete inputManager;
-		delete renderEngine;*/
+		delete renderEngine;
 		delete shader;
+		delete g_entityManager;
 	}
 }
 
@@ -747,9 +749,6 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 	inputManager->mLastMousePos.y = y;
 }
 
-
-
-
 //void WindowEngine::OnKeyboardInput(Timer& gt)
 //{
 //	const float dt = gt.GetElapsedTime();
@@ -772,7 +771,6 @@ void WindowEngine::OnMouseMove(WPARAM btnState, int x, int y)
 
 void WindowEngine::Draw()
 {
-
 		// Reuse the memory associated with command recording.
 		// We can only reset when the associated command lists have finished execution on the GPU.
 	ThrowIfFailed(mDirectCmdListAlloc->Reset());
@@ -806,10 +804,7 @@ void WindowEngine::Draw()
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
 	mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-
-	//  toutes les entites
-	//for ()
-	//ent->drqz
+	g_entityManager->Update();
 
 	// Indicate a state transition on the resource usage.
 	CD3DX12_RESOURCE_BARRIER transition2 = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
